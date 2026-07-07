@@ -269,10 +269,7 @@ def forgot_password_verify_otp(request):
 
         if current_time - otp_created_at > 120:
             request.session.pop("reset_otp", None)
-            request.session.pop(
-                "reset_otp_created_at",
-                None
-            )
+            request.session.pop("reset_otp_created_at",None)
 
             messages.error(request, "OTP expired.")
             return redirect("forgot_password")
@@ -284,15 +281,9 @@ def forgot_password_verify_otp(request):
         request.session["reset_otp_verified"] = True
 
         request.session.pop("reset_otp", None)
-        request.session.pop(
-            "reset_otp_created_at",
-            None
-        )
+        request.session.pop("reset_otp_created_at",None)
 
-        messages.success(
-            request,
-            "OTP verified successfully."
-        )
+        messages.success(request,"OTP verified successfully.")
         return redirect("reset_password")
 
     return render(
@@ -400,28 +391,19 @@ def edit_profile(request):
 
     if request.method == "POST":
         full_name = request.POST.get(
-            "full_name",
-            ""
-        ).strip()
+            "full_name","").strip()
 
         phone_number = request.POST.get(
-            "phone_number",
-            ""
-        ).strip()
+            "phone_number","").strip()
 
         date_of_birth = request.POST.get(
-            "date_of_birth",
-            ""
-        ).strip()
+            "date_of_birth","").strip()
 
         profile_photo = request.FILES.get("profile_photo")
         remove_photo = request.POST.get("remove_photo")
 
         if not full_name:
-            messages.error(
-                request,
-                "Full name is required."
-            )
+            messages.error(request,"Full name is required.")
             return redirect("edit_profile")
 
         user.full_name = full_name
@@ -471,10 +453,7 @@ def edit_profile(request):
 
         user.save()
 
-        messages.success(
-            request,
-            "Profile updated successfully."
-        )
+        messages.success(request,"Profile updated successfully.")
         return redirect("profile")
 
     return render(
@@ -675,9 +654,7 @@ def change_password(request):
         confirm_password = request.POST.get("confirm_password", "")
 
         if (
-            not current_password
-            or not new_password
-            or not confirm_password
+            not current_password or not new_password or not confirm_password
         ):
             messages.error(request, "All fields are required.")
             return redirect("change_password")

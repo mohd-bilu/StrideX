@@ -95,34 +95,48 @@
                     </div>
                 </div>
 
-                <div class="input-box">
-                    <label>Password</label>
+               <div class="input-box">
+    <label>Password</label>
 
-                    <div class="input-field">
-                        <i class="fa-solid fa-lock"></i>
+    <div class="input-field">
+        <i class="fa-solid fa-lock"></i>
 
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="••••••••"
-                            required>
-                    </div>
-                </div>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+        >
 
-                <div class="input-box">
-                    <label>Confirm Password</label>
+        <i
+            class="fa-regular fa-eye password-eye"
+            onclick="togglePassword('password', this)"
+        ></i>
+    </div>
+</div>
 
-                    <div class="input-field">
-                        <i class="fa-solid fa-lock"></i>
 
-                        <input
-                            type="password"
-                            name="confirm_password"
-                            placeholder="••••••••"
-                            required>
-                    </div>
-                </div>
+<div class="input-box">
+    <label>Confirm Password</label>
 
+    <div class="input-field">
+        <i class="fa-solid fa-lock"></i>
+
+        <input
+            type="password"
+            id="confirmPassword"
+            name="confirm_password"
+            placeholder="••••••••"
+            required
+        >
+
+        <i
+            class="fa-regular fa-eye password-eye"
+            onclick="togglePassword('confirmPassword', this)"
+        ></i>
+    </div>
+</div>
                 <div class="checkbox">
 
                     <input
@@ -357,6 +371,17 @@ img{
 
 .input-field input::placeholder{
     color:#777;
+}
+.password-eye{
+    margin-left:auto !important;
+    margin-right:0 !important;
+    color:#888;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.password-eye:hover{
+    color:#ff8a1d;
 }
 
 /* ===========================
@@ -610,9 +635,29 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% endif %}
+<script>
+function togglePassword(inputId, icon){
 
+    const input = document.getElementById(inputId);
 
+    if(input.type === "password"){
 
+        input.type = "text";
+
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+
+    }else{
+
+        input.type = "password";
+
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+
+    }
+
+}
+</script>
 
 <script>
     window.history.forward();

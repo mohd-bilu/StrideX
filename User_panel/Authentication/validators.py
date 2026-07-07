@@ -8,7 +8,7 @@ def validate_signup(fullname, email, password, confirm_password):
     if fullname == "":
         return "Enter Full Name"
 
-    if len(fullname) < 3:
+    if len(fullname) <  3:
         return "Name should contain minimum 3 characters"
 
     name_pattern = r"^[A-Za-z][A-Za-z\s'-]*$"
