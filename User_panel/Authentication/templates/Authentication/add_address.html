@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>StrideX | Add Address</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+body{
+min-height:100vh;
+background:#080909;
+color:#fff;
+}
+a{
+text-decoration:none;
+}
+.header{
+height:78px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 32px;
+background:#080909;
+border-bottom:1px solid rgba(255,255,255,.03);
+}
+.logo{
+font-size:28px;
+font-weight:800;
+font-style:italic;
+letter-spacing:-2px;
+color:#fff;
+}
+.header-left{
+display:flex;
+align-items:center;
+}
+.nav{
+display:flex;
+align-items:center;
+gap:34px;
+margin-left:40px;
+}
+.nav a{
+font-size:12px;
+font-weight:500;
+color:#d2d2d2;
+transition:.2s;
+}
+.nav a:hover{
+color:#ff7417;
+}
+.header-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+.search-box{
+width:245px;
+height:40px;
+display:flex;
+align-items:center;
+padding:0 15px;
+background:#211711;
+border:1px solid #332119;
+border-radius:22px;
+}
+.search-box input{
+width:100%;
+background:none;
+border:none;
+outline:none;
+color:#fff;
+font-size:11px;
+}
+.search-box input::placeholder{
+color:#706760;
+}
+.search-box i{
+color:#8d8179;
+font-size:14px;
+}
+.header-icon{
+position:relative;
+font-size:18px;
+color:#ddd;
+cursor:pointer;
+}
+.cart-count{
+position:absolute;
+top:-10px;
+right:-9px;
+width:17px;
+height:17px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:50%;
+background:#ff7417;
+font-size:9px;
+font-weight:600;
+color:#fff;
+}
+.profile-icon{
+width:30px;
+height:30px;
+display:flex;
+align-items:center;
+justify-content:center;
+border:1px solid #8d8179;
+border-radius:50%;
+color:#ddd;
+}
+.page-layout{
+display:flex;
+max-width:1450px;
+margin:0 auto;
+padding:35px 32px 70px;
+}
+.sidebar{
+width:260px;
+flex-shrink:0;
+padding:15px 30px 0 0;
+}
+.account-title{
+font-size:13px;
+font-weight:500;
+letter-spacing:.4px;
+color:#ddd;
+}
+.account-email{
+margin-top:8px;
+margin-bottom:32px;
+font-size:11px;
+color:#a6a6a6;
+word-break:break-word;
+}
+.sidebar-menu{
+display:flex;
+flex-direction:column;
+gap:5px;
+}
+.menu-item{
+position:relative;
+height:47px;
+display:flex;
+align-items:center;
+gap:14px;
+padding:0 8px;
+font-size:13px;
+color:#c4c4c4;
+transition:.2s;
+}
+.menu-item i{
+width:18px;
+font-size:16px;
+text-align:center;
+}
+.menu-item:hover{
+color:#ff7417;
+}
+.menu-item.active{
+color:#ff7417;
+}
+.menu-item.active::after{
+content:"";
+position:absolute;
+right:-1px;
+top:10px;
+width:3px;
+height:27px;
+border-radius:4px;
+background:#ff7417;
+}
+.main-content{
+flex:1;
+padding-left:45px;
+}
+.page-heading{
+margin-bottom:34px;
+}
+.page-heading h1{
+font-size:43px;
+font-weight:800;
+line-height:1.1;
+letter-spacing:-1.5px;
+}
+.page-heading p{
+margin-top:12px;
+font-size:13px;
+color:#a5a5a5;
+}
+.address-card{
+width:100%;
+max-width:930px;
+padding:48px 48px 45px;
+background:linear-gradient(135deg,#130d0a,#170d08);
+border:1px solid #2d1911;
+border-radius:16px;
+box-shadow:0 25px 60px rgba(0,0,0,.3);
+}
+.form-group{
+margin-bottom:28px;
+}
+.form-label{
+display:block;
+margin-bottom:10px;
+font-size:11px;
+font-weight:400;
+color:#d2cbc7;
+text-transform:uppercase;
+}
+.form-control{
+width:100%;
+height:58px;
+padding:0 18px;
+border:1px solid #513226;
+border-radius:9px;
+outline:none;
+background:#281a15;
+color:#fff;
+font-size:13px;
+transition:.25s;
+}
+.form-control::placeholder{
+color:#a49b96;
+}
+.form-control:focus{
+border-color:#ff7417;
+box-shadow:0 0 0 3px rgba(255,116,23,.08);
+}
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus{
+-webkit-text-fill-color:#fff;
+-webkit-box-shadow:0 0 0 1000px #281a15 inset;
+transition:background-color 5000s ease-in-out 0s;
+}
+select.form-control{
+appearance:auto;
+cursor:pointer;
+}
+.form-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+.checkbox-row{
+display:flex;
+align-items:center;
+gap:11px;
+margin:2px 0 38px;
+}
+.checkbox-row input{
+width:18px;
+height:18px;
+appearance:none;
+border:1px solid #5b3b2e;
+border-radius:3px;
+background:#281a15;
+cursor:pointer;
+position:relative;
+}
+.checkbox-row input:checked{
+background:#ff7417;
+border-color:#ff7417;
+}
+.checkbox-row input:checked::after{
+content:"✓";
+position:absolute;
+top:-2px;
+left:3px;
+font-size:13px;
+font-weight:700;
+color:#fff;
+}
+.checkbox-row label{
+font-size:12px;
+color:#c5bdb9;
+cursor:pointer;
+}
+.button-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+}
+.save-btn,
+.cancel-btn{
+height:56px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:8px;
+font-size:12px;
+font-weight:500;
+cursor:pointer;
+transition:.25s;
+}
+.save-btn{
+border:none;
+background:#ff7417;
+color:#fff;
+}
+.save-btn:hover{
+background:#e9650d;
+transform:translateY(-1px);
+box-shadow:0 10px 25px rgba(255,116,23,.2);
+}
+.cancel-btn{
+border:1px solid #513226;
+background:transparent;
+color:#d5d0cd;
+}
+.cancel-btn:hover{
+border-color:#ff7417;
+color:#ff7417;
+}
+@media(max-width:1100px){
+.nav{
+display:none;
+}
+.page-layout{
+padding-left:25px;
+padding-right:25px;
+}
+.sidebar{
+width:220px;
+}
+.main-content{
+padding-left:30px;
+}
+.address-card{
+padding:35px;
+}
+}
+@media(max-width:850px){
+.header{
+padding:0 20px;
+}
+.search-box{
+display:none;
+}
+.page-layout{
+display:block;
+}
+.sidebar{
+width:100%;
+padding:0;
+margin-bottom:35px;
+}
+.account-title,
+.account-email{
+display:none;
+}
+.sidebar-menu{
+flex-direction:row;
+overflow-x:auto;
+gap:8px;
+}
+.menu-item{
+min-width:max-content;
+padding:0 15px;
+}
+.menu-item.active::after{
+top:auto;
+right:15px;
+left:15px;
+bottom:0;
+width:auto;
+height:2px;
+}
+.main-content{
+padding-left:0;
+}
+.page-heading h1{
+font-size:36px;
+}
+}
+@media(max-width:600px){
+.header{
+height:65px;
+}
+.logo{
+font-size:23px;
+}
+.header-right{
+gap:15px;
+}
+.page-layout{
+padding:25px 15px 50px;
+}
+.page-heading{
+margin-bottom:25px;
+}
+.page-heading h1{
+font-size:30px;
+}
+.page-heading p{
+font-size:12px;
+}
+.address-card{
+padding:25px 18px;
+}
+.form-row{
+grid-template-columns:1fr;
+gap:0;
+}
+.form-group{
+margin-bottom:22px;
+}
+.form-control{
+height:54px;
+}
+.button-row{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="header-left">
+<a href="{% url 'user_home' %}" class="logo">StrideX</a>
+<nav class="nav">
+<a href="{% url 'user_home' %}">HOME</a>
+<a href="#">CATEGORIES</a>
+<a href="#">WALLET</a>
+<a href="#">ABOUT</a>
+</nav>
+</div>
+<div class="header-right">
+<div class="search-box">
+<input type="text" placeholder="Search outfits...">
+<i class="fa-solid fa-magnifying-glass"></i>
+</div>
+<i class="fa-regular fa-heart header-icon"></i>
+<div class="header-icon">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count">3</span>
+</div>
+<div class="profile-icon">
+<i class="fa-regular fa-user"></i>
+</div>
+</div>
+</header>
+
+<div class="page-layout">
+<aside class="sidebar">
+<h3 class="account-title">MY ACCOUNT</h3>
+<p class="account-email">{{ request.user.email }}</p>
+<div class="sidebar-menu">
+<a href="{% url 'profile' %}" class="menu-item">
+<i class="fa-regular fa-user"></i>
+<span>Profile</span>
+</a>
+<a href="{% url 'address_list' %}" class="menu-item active">
+<i class="fa-solid fa-location-dot"></i>
+<span>Address</span>
+</a>
+<a href="#" class="menu-item">
+<i class="fa-solid fa-bag-shopping"></i>
+<span>My Orders</span>
+</a>
+<a href="#" class="menu-item">
+<i class="fa-regular fa-credit-card"></i>
+<span>Wallet</span>
+</a>
+</div>
+</aside>
+
+<main class="main-content">
+<div class="page-heading">
+<h1>ADD NEW ADDRESS</h1>
+<p>Add a primary shipping address for your future orders.</p>
+</div>
+
+<div class="address-card">
+<form method="POST" id="addressForm">
+{% csrf_token %}
+
+<div class="form-group">
+<label class="form-label" for="full_name">Full Name</label>
+<input type="text" id="full_name" name="full_name" class="form-control" placeholder="Enter your full name" required>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="address_line1">Street Address</label>
+<input type="text" id="address_line1" name="address_line1" class="form-control" placeholder="House number and street name" required>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="address_line2">Address Line 2 (Optional)</label>
+<input type="text" id="address_line2" name="address_line2" class="form-control" placeholder="Apartment, suite, unit, etc.">
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" for="city">City</label>
+<input type="text" id="city" name="city" class="form-control" placeholder="City" required>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="state">State / Region</label>
+<input type="text" id="state" name="state" class="form-control" placeholder="State / Province" required>
+</div>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" for="pincode">Postal Code</label>
+<input type="text" id="pincode" name="pincode" class="form-control" placeholder="Enter 6-digit pincode" inputmode="numeric" autocomplete="postal-code" required>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="country">Country</label>
+<select id="country" name="country" class="form-control" required>
+<option value="">Select Country</option>
+<option value="India" selected>India</option>
+</select>
+</div>
+</div>
+
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" for="phone_number">Phone Number</label>
+<input type="tel" id="phone_number" name="phone_number" class="form-control" placeholder="+91 00000 00000" required>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="type">Address Type</label>
+<select id="type" name="type" class="form-control" required>
+<option value="">Select Address Type</option>
+<option value="Home">Home</option>
+<option value="Office">Office</option>
+<option value="Other">Other</option>
+</select>
+</div>
+</div>
+
+<div class="checkbox-row">
+<input type="checkbox" id="default" name="is_default">
+<label for="default">Set as default shipping address</label>
+</div>
+
+<div class="button-row">
+<button type="submit" class="save-btn">SAVE ADDRESS</button>
+<a href="{% url 'address_list' %}" class="cancel-btn">CANCEL</a>
+</div>
+</form>
+</div>
+</main>
+</div>
+
+{% if messages %}
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+{% for message in messages %}
+Swal.fire({
+toast:true,
+position:"top-end",
+icon:"{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+title:"{{ message|escapejs }}",
+showConfirmButton:false,
+timer:3000,
+timerProgressBar:true,
+background:"#21130e",
+color:"#fff"
+});
+{% endfor %}
+});
+</script>
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const addressForm=document.getElementById("addressForm");
+const pincode=document.getElementById("pincode");
+
+addressForm.addEventListener("submit",function(event){
+const value=pincode.value.trim();
+
+if(!/^\d{6}$/.test(value)){
+event.preventDefault();
+
+Swal.fire({
+toast:true,
+position:"top-end",
+icon:"error",
+title:"Pincode must contain exactly 6 digits.",
+showConfirmButton:false,
+timer:3000,
+timerProgressBar:true,
+background:"#21130e",
+color:"#fff"
+});
+
+pincode.focus();
+}
+});
+});
+</script>
+
+<script>
+window.history.forward();
+</script>
+</body>
+</html>

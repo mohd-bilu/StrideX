@@ -1,0 +1,1195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>StrideX | Edit Address</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#050403;
+    color:#fff;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+
+/* =====================================
+   NAVBAR
+===================================== */
+
+.navbar{
+    height:76px;
+    padding:0 55px;
+
+    display:flex;
+    align-items:center;
+
+    background:
+        linear-gradient(
+            90deg,
+            #140b07,
+            #24120a
+        );
+
+    border-bottom:1px solid #2d1b13;
+}
+
+.logo{
+    font-size:27px;
+    font-weight:800;
+    font-style:italic;
+    margin-right:60px;
+}
+
+.nav-links{
+    display:flex;
+    gap:35px;
+}
+
+.nav-links a{
+    color:#d7ccc7;
+    font-size:12px;
+    font-weight:500;
+}
+
+.nav-links a:hover{
+    color:#ff741f;
+}
+
+.nav-actions{
+    margin-left:auto;
+
+    display:flex;
+    align-items:center;
+    gap:22px;
+}
+
+.search-box{
+    width:250px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+
+    padding:0 15px;
+
+    background:#2a1b15;
+    border-radius:25px;
+}
+
+.search-box input{
+    width:100%;
+
+    border:none;
+    outline:none;
+
+    background:transparent;
+    color:#fff;
+}
+
+.search-box i{
+    color:#aaa;
+}
+
+.nav-icon{
+    font-size:18px;
+    color:#ddd;
+}
+
+
+/* =====================================
+   PAGE LAYOUT
+===================================== */
+
+.page-layout{
+    max-width:1450px;
+    margin:auto;
+
+    display:grid;
+    grid-template-columns:280px 1fr;
+
+    min-height:calc(100vh - 76px);
+}
+
+
+/* =====================================
+   SIDEBAR
+===================================== */
+
+.sidebar{
+    padding:65px 30px;
+
+    border-right:1px solid #251a15;
+
+    background:#050403;
+}
+
+.user-name{
+    font-size:23px;
+    font-weight:700;
+    line-height:1.15;
+}
+
+.member-text{
+    margin-top:10px;
+    margin-bottom:45px;
+
+    color:#9c918b;
+    font-size:12px;
+}
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu-item{
+    height:54px;
+
+    padding:0 16px;
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    border-radius:8px;
+
+    color:#bdb3ae;
+    font-size:14px;
+
+    transition:.25s;
+}
+
+.menu-item:hover{
+    color:#fff;
+    background:#1c110d;
+}
+
+.menu-item.active{
+    color:#fff;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3a1d11,
+            #21110b
+        );
+
+    border-left:3px solid #ff7622;
+
+    box-shadow:
+        0 0 15px rgba(255,118,34,.18);
+}
+
+.menu-item.active i{
+    color:#ff7622;
+}
+
+.sidebar-divider{
+    height:1px;
+
+    margin:28px 0;
+
+    background:#3b2c25;
+}
+
+.logout-link{
+    color:#c0b2ac;
+}
+
+.logout-link i{
+    color:#ff7658;
+}
+
+
+/* =====================================
+   CONTENT
+===================================== */
+
+.content{
+    padding:65px 55px 90px;
+}
+
+.form-card{
+    width:100%;
+    max-width:1050px;
+
+    padding:65px 55px 55px;
+
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(86,39,16,.24),
+            transparent 35%
+        ),
+        #110a07;
+
+    border:1px solid #281811;
+
+    border-radius:24px;
+
+    box-shadow:
+        0 25px 55px rgba(0,0,0,.45);
+}
+
+
+/* =====================================
+   HEADING
+===================================== */
+
+.page-title{
+    font-size:43px;
+    line-height:1;
+    font-weight:800;
+
+    margin-bottom:28px;
+
+    letter-spacing:-1px;
+}
+
+.page-description{
+    color:#a99d97;
+
+    font-size:13px;
+
+    margin-bottom:45px;
+}
+
+
+/* =====================================
+   FORM
+===================================== */
+
+.form-group{
+    margin-bottom:24px;
+}
+
+.form-group label{
+    display:block;
+
+    margin-bottom:10px;
+
+    color:#c5b7b0;
+
+    font-size:12px;
+    font-weight:500;
+
+    letter-spacing:.8px;
+
+    text-transform:uppercase;
+}
+
+.form-control{
+    width:100%;
+    height:59px;
+
+    padding:0 20px;
+
+    border:1px solid #49352c;
+    border-radius:10px;
+
+    outline:none;
+
+    background:#3a2a23;
+    color:#fff;
+
+    font-size:14px;
+
+    transition:.25s;
+}
+
+.form-control:focus{
+    border-color:#ff7622;
+
+    box-shadow:
+        0 0 0 3px rgba(255,118,34,.10);
+}
+
+.form-control::placeholder{
+    color:#897b74;
+}
+
+
+/* =====================================
+   FORM ROWS
+===================================== */
+
+.three-column-row{
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        1fr;
+
+    gap:20px;
+}
+
+.two-column-row{
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:20px;
+}
+
+
+/* =====================================
+   ADDRESS TYPE
+===================================== */
+
+.address-type-title{
+    display:block;
+
+    margin-bottom:12px;
+
+    color:#c5b7b0;
+
+    font-size:12px;
+
+    letter-spacing:.8px;
+
+    text-transform:uppercase;
+}
+
+.address-type-options{
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        1fr;
+
+    gap:15px;
+
+    margin-bottom:25px;
+}
+
+.type-radio{
+    display:none;
+}
+
+.type-label{
+    height:57px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid #584339;
+    border-radius:9px;
+
+    background:#fff;
+    color:#111;
+
+    font-size:12px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.type-radio:checked + .type-label{
+    background:#ff7622;
+    color:#fff;
+
+    border-color:#ff7622;
+
+    box-shadow:
+        0 8px 20px rgba(255,118,34,.20);
+}
+
+
+/* =====================================
+   DEFAULT CHECKBOX
+===================================== */
+
+.default-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin:28px 0 35px;
+
+    color:#d1c4bd;
+
+    font-size:13px;
+}
+
+.default-row input{
+    width:20px;
+    height:20px;
+
+    accent-color:#ff7622;
+
+    cursor:pointer;
+}
+
+
+/* =====================================
+   BUTTONS
+===================================== */
+
+.form-divider{
+    height:1px;
+
+    margin-bottom:35px;
+
+    background:#453229;
+}
+
+.form-actions{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.update-btn{
+    min-width:220px;
+    height:58px;
+
+    padding:0 30px;
+
+    border:none;
+    border-radius:30px;
+
+    background:#ff7622;
+    color:#fff;
+
+    font-size:13px;
+    font-weight:600;
+
+    letter-spacing:1px;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.update-btn:hover{
+    background:#ff8a3d;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 12px 30px rgba(255,118,34,.25);
+}
+
+.cancel-btn{
+    min-width:145px;
+    height:58px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid #594239;
+    border-radius:30px;
+
+    color:#fff;
+
+    font-size:13px;
+    letter-spacing:1px;
+
+    transition:.25s;
+}
+
+.cancel-btn:hover{
+    border-color:#ff7622;
+    color:#ff7622;
+}
+
+
+/* =====================================
+   SHIPPING NOTE
+===================================== */
+
+.shipping-note{
+    margin-top:35px;
+
+    padding:25px;
+
+    display:flex;
+    gap:15px;
+
+    background:#281810;
+
+    border:1px solid #42271b;
+    border-radius:12px;
+}
+
+.shipping-note i{
+    margin-top:3px;
+
+    color:#ff7622;
+
+    font-size:18px;
+}
+
+.note-title{
+    margin-bottom:8px;
+
+    color:#fff;
+
+    font-size:12px;
+    font-weight:600;
+}
+
+.note-text{
+    color:#b9aaa3;
+
+    font-size:12px;
+    line-height:1.7;
+}
+
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media(max-width:1000px){
+
+    .page-layout{
+        grid-template-columns:1fr;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .content{
+        padding:40px 25px;
+    }
+
+    .navbar{
+        padding:0 25px;
+    }
+
+    .nav-links{
+        display:none;
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .form-card{
+        padding:35px 22px;
+    }
+
+    .page-title{
+        font-size:32px;
+    }
+
+    .three-column-row,
+    .two-column-row{
+        grid-template-columns:1fr;
+        gap:0;
+    }
+
+    .address-type-options{
+        grid-template-columns:1fr;
+    }
+
+    .form-actions{
+        flex-direction:column;
+    }
+
+    .update-btn,
+    .cancel-btn{
+        width:100%;
+    }
+
+    .search-box{
+        display:none;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     NAVBAR
+===================================== -->
+
+<header class="navbar">
+
+    <div class="logo">
+        StrideX
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="{% url 'user_home' %}">
+            HOME
+        </a>
+
+        <a href="#">
+            CATEGORIES
+        </a>
+
+        <a href="#">
+            WALLET
+        </a>
+
+        <a href="#">
+            ABOUT
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                placeholder="Search outfits...">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </div>
+
+        <i class="fa-regular fa-heart nav-icon"></i>
+
+        <i class="fa-solid fa-bag-shopping nav-icon"></i>
+
+        <i class="fa-regular fa-circle-user nav-icon"></i>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================
+     PAGE
+===================================== -->
+
+<div class="page-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="user-name">
+
+            {{ request.user.full_name|default:request.user.email }}
+
+        </div>
+
+        <div class="member-text">
+
+            Nike Member since
+            {{ request.user.date_joined|date:"Y" }}
+
+        </div>
+
+
+        <div class="sidebar-menu">
+
+            <a
+                href="{% url 'profile' %}"
+                class="menu-item">
+
+                <i class="fa-regular fa-user"></i>
+
+                Profile
+
+            </a>
+
+
+            <a
+                href="{% url 'address_list' %}"
+                class="menu-item active">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                Address
+
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item">
+
+                <i class="fa-solid fa-cube"></i>
+
+                My Orders
+
+            </a>
+
+
+            <a
+                href="#"
+                class="menu-item">
+
+                <i class="fa-regular fa-credit-card"></i>
+
+                Wallet
+
+            </a>
+
+
+            <div class="sidebar-divider"></div>
+
+
+            <a
+                href="#"
+                class="menu-item logout-link">
+
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================
+         EDIT ADDRESS CONTENT
+    ====================================== -->
+
+    <main class="content">
+
+        <section class="form-card">
+
+
+            <h1 class="page-title">
+                EDIT ADDRESS
+            </h1>
+
+
+            <p class="page-description">
+
+                Update your shipping details to ensure smooth
+                delivery of your next pair.
+
+            </p>
+
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="full_name"
+                        class="form-control"
+                        value="{{ address.full_name }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- STREET ADDRESS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Street Address
+                    </label>
+
+                    <input
+                        type="text"
+                        name="address_line1"
+                        class="form-control"
+                        value="{{ address.address_line1 }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- ADDRESS LINE 2 -->
+
+                <div class="form-group">
+
+                    <label>
+                        Address Line 2 (Optional)
+                    </label>
+
+                    <input
+                        type="text"
+                        name="address_line2"
+                        class="form-control"
+                        value="{{ address.address_line2|default:'' }}"
+                        placeholder="Apartment, suite, unit, etc.">
+
+                </div>
+
+
+
+                <!-- CITY STATE PINCODE -->
+
+                <div class="three-column-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            City
+                        </label>
+
+                        <input
+                            type="text"
+                            name="city"
+                            class="form-control"
+                            value="{{ address.city }}"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            State / Region
+                        </label>
+
+                        <input
+                            type="text"
+                            name="state"
+                            class="form-control"
+                            value="{{ address.state }}"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Postal Code
+                        </label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            id="pincode"
+                            class="form-control"
+                            value="{{ address.pincode }}"
+                            inputmode="numeric"
+                            autocomplete="postal-code"
+                            title="Pincode must contain exactly 6 digits"
+                            required>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- COUNTRY PHONE -->
+
+                <div class="two-column-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Country
+                        </label>
+
+                        <input
+                            type="text"
+                            name="country"
+                            class="form-control"
+                            value="{{ address.country }}"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="text"
+                            name="phone_number"
+                            class="form-control"
+                            value="{{ address.phone_number }}"
+                            required>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ADDRESS TYPE -->
+
+                <span class="address-type-title">
+                    Address Type
+                </span>
+
+
+                <div class="address-type-options">
+
+
+                    <input
+                        type="radio"
+                        name="type"
+                        value="Home"
+                        id="typeHome"
+                        class="type-radio"
+                        {% if address.type == "Home" %}checked{% endif %}>
+
+                    <label
+                        for="typeHome"
+                        class="type-label">
+
+                        HOME
+
+                    </label>
+
+
+
+                    <input
+                        type="radio"
+                        name="type"
+                        value="Office"
+                        id="typeOffice"
+                        class="type-radio"
+                        {% if address.type == "Office" %}checked{% endif %}>
+
+                    <label
+                        for="typeOffice"
+                        class="type-label">
+
+                        WORK
+
+                    </label>
+
+
+
+                    <input
+                        type="radio"
+                        name="type"
+                        value="Other"
+                        id="typeOther"
+                        class="type-radio"
+                        {% if address.type == "Other" %}checked{% endif %}>
+
+                    <label
+                        for="typeOther"
+                        class="type-label">
+
+                        OTHER
+
+                    </label>
+
+
+                </div>
+
+
+
+                <!-- DEFAULT ADDRESS -->
+
+                <label class="default-row">
+
+                    <input
+                        type="checkbox"
+                        name="is_default"
+                        {% if address.is_default %}checked{% endif %}>
+
+                    <span>
+                        Set as default shipping address
+                    </span>
+
+                </label>
+
+
+
+                <div class="form-divider"></div>
+
+
+
+                <!-- BUTTONS -->
+
+                <div class="form-actions">
+
+
+                    <button
+                        type="submit"
+                        class="update-btn">
+
+                        UPDATE ADDRESS
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'address_list' %}"
+                        class="cancel-btn">
+
+                        CANCEL
+
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+
+            <!-- SHIPPING NOTE -->
+
+            <div class="shipping-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <div>
+
+                    <div class="note-title">
+                        SHIPPING NOTE
+                    </div>
+
+                    <div class="note-text">
+
+                        Changes made to your shipping address will
+                        apply to future orders only. If you need to
+                        redirect an existing order, please contact
+                        our support team immediately.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================
+     DJANGO MESSAGES
+===================================== -->
+
+{% if messages %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        {% for message in messages %}
+
+        Swal.fire({
+
+            toast:true,
+
+            position:"top-end",
+
+            icon:"{{ message.tags }}",
+
+            title:"{{ message|escapejs }}",
+
+            showConfirmButton:false,
+
+            timer:3000,
+
+            timerProgressBar:true,
+
+            background:"#21130e",
+
+            color:"#fff"
+
+        });
+
+        {% endfor %}
+
+    }
+);
+
+</script>
+
+{% endif %}
+<script>
+    window.history.forward();
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>StrideX | Admin Dashboard</title>
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+/* =================================
+   GLOBAL
+================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+body {
+    background: #f7f7f7;
+    color: #171717;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+button {
+    font-family: inherit;
+}
+/* =================================
+   LAYOUT
+================================= */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+/* =================================
+   SIDEBAR
+================================= */
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #ffffff;
+    border-right: 1px solid #e5e5e5;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+.logo-section {
+    height: 105px;
+    padding: 28px 20px;
+    border-bottom: 1px solid #eeeeee;
+}
+.logo {
+    font-size: 30px;
+    font-weight: 800;
+    color: #a94f00;
+    letter-spacing: -2px;
+}
+.logo-subtitle {
+    margin-top: 3px;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: #777777;
+    font-weight: 600;
+}
+/* =================================
+   NAVIGATION
+================================= */
+.nav-menu {
+    padding-top: 18px;
+    flex: 1;
+}
+.nav-item {
+    height: 46px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #5e554e;
+    font-size: 13px;
+    border-left: 4px solid transparent;
+    transition: 0.2s;
+}
+.nav-item i {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+}
+.nav-item:hover {
+    background: #faf2eb;
+    color: #9a4d0c;
+}
+.nav-item.active {
+    background: #faeee4;
+    color: #9a4d0c;
+    border-left-color: #a6530d;
+    font-weight: 600;
+}
+/* =================================
+   ADMIN PROFILE
+================================= */
+.admin-profile {
+    border-top: 1px solid #eeeeee;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.admin-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e7d8c9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+.admin-details {
+    flex: 1;
+}
+.admin-name {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 3px;
+}
+.admin-role {
+    font-size: 9px;
+    color: #999999;
+}
+.logout-form {
+    display: flex;
+}
+.logout-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #666666;
+    font-size: 16px;
+}
+/* =================================
+   MAIN
+================================= */
+.main {
+    margin-left: 230px;
+    width: calc(100% - 230px);
+    min-height: 100vh;
+}
+/* =================================
+   TOP BAR
+================================= */
+.topbar {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 35px;
+    gap: 25px;
+}
+.search-box {
+    width: 250px;
+    height: 38px;
+    background: #f7f7f7;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 10px;
+    color: #999999;
+}
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 11px;
+}
+.notification {
+    position: relative;
+    font-size: 16px;
+    color: #5c4638;
+}
+.notification-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c32020;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+}
+/* =================================
+   CONTENT
+================================= */
+.content {
+    padding: 35px;
+    max-width: 1250px;
+    margin: auto;
+}
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    letter-spacing: -1px;
+}
+/* =================================
+   TOTAL SALES
+================================= */
+.total-sales-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    margin-bottom: 25px;
+}
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.small-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #5e554e;
+}
+.total-amount {
+    font-size: 32px;
+    font-weight: 800;
+    margin-top: 15px;
+}
+.growth {
+    background: #dcfae6;
+    color: #199c5b;
+    padding: 7px 9px;
+    border-radius: 15px;
+    font-size: 9px;
+    font-weight: 700;
+}
+.trend-icon {
+    color: #2fba7c;
+    margin-top: 18px;
+    text-align: right;
+}
+/* =================================
+   STATS GRID
+================================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 25px;
+}
+.stat-card {
+    min-height: 170px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.stat-title {
+    font-size: 10px;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.badge {
+    padding: 7px 10px;
+    border-radius: 15px;
+    font-size: 8px;
+    font-weight: 600;
+    background: #f4ede6;
+    color: #a96a35;
+}
+.badge.gray {
+    background: #eeeeee;
+    color: #777777;
+}
+.stat-value {
+    font-size: 40px;
+    font-weight: 800;
+    margin-top: 35px;
+    letter-spacing: -2px;
+}
+.warning {
+    color: #d69224;
+    font-size: 14px;
+}
+/* =================================
+   MIDDLE GRID
+================================= */
+.middle-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+/* =================================
+   PANELS
+================================= */
+.panel {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+.panel-header {
+    min-height: 70px;
+    padding: 0 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eeeeee;
+}
+.panel-title {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+.view-all {
+    font-size: 10px;
+    text-decoration: underline;
+    font-weight: 600;
+}
+/* =================================
+   ORDER TABLE
+================================= */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.order-table th {
+    text-align: left;
+    padding: 16px 12px;
+    font-size: 8px;
+    color: #6b625c;
+    font-weight: 700;
+    border-bottom: 1px solid #ded5ce;
+}
+.order-table td {
+    padding: 17px 12px;
+    font-size: 11px;
+    line-height: 1.5;
+    border-bottom: 1px solid #eeeeee;
+}
+.order-table tr:last-child td {
+    border-bottom: none;
+}
+.order-id {
+    font-weight: 700;
+}
+.status {
+    display: inline-block;
+    padding: 7px 9px;
+    border-radius: 14px;
+    font-size: 7px;
+    font-weight: 700;
+}
+.delivered {
+    color: #159b5d;
+    background: #dcf8e8;
+}
+.processing {
+    color: #6f6257;
+    background: #eeeeee;
+}
+.shipped {
+    color: #3971bf;
+    background: #e3edff;
+}
+.pending {
+    color: #b77915;
+    background: #fff1ce;
+}
+/* =================================
+   HOT RELEASES
+================================= */
+.release-list {
+    padding: 20px;
+}
+.release-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.release-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 6px;
+    background: #dedbf0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa5d2;
+    font-size: 18px;
+}
+.release-info {
+    flex: 1;
+}
+.release-name {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+.release-sold {
+    font-size: 8px;
+    margin-top: 3px;
+    color: #555555;
+}
+.release-price {
+    font-size: 11px;
+    font-weight: 700;
+}
+.report-button {
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 7px;
+    background: #171717;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+/* =================================
+   BOTTOM GRID
+================================= */
+.bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+.bottom-card {
+    min-height: 330px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+.bottom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.bottom-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+.bottom-description {
+    font-size: 11px;
+    color: #777777;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+.season-select {
+    border: none;
+    background: #f5f5f5;
+    padding: 12px 14px;
+    font-size: 9px;
+    outline: none;
+}
+/* =================================
+   CATEGORY CHART
+================================= */
+.category-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    margin-top: 35px;
+}
+.donut {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background:
+        conic-gradient(
+            #1a1a1a 0 42%,
+            #bdbdbd 42% 73%,
+            #eeeeee 73% 100%
+        );
+    position: relative;
+}
+.donut::after {
+    content: "";
+    position: absolute;
+    width: 105px;
+    height: 105px;
+    background: #ffffff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.donut-center {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.donut-percent {
+    font-size: 30px;
+    font-weight: 800;
+}
+.donut-label {
+    font-size: 9px;
+    margin-top: 2px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 10px;
+}
+.legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #1a1a1a;
+}
+.legend-dot.second {
+    background: #bdbdbd;
+}
+.legend-dot.third {
+    background: #eeeeee;
+    border: 1px solid #dddddd;
+}
+/* =================================
+   SALES CHART
+================================= */
+.chart-tabs {
+    display: flex;
+}
+.chart-tab {
+    padding: 9px 14px;
+    border: none;
+    background: #f5f5f5;
+    font-size: 8px;
+    cursor: pointer;
+}
+.chart-tab.active {
+    background: #171717;
+    color: #ffffff;
+}
+.bar-chart {
+    height: 210px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    border-bottom: 1px solid #eeeeee;
+}
+.bar {
+    width: 42px;
+    background: #e9e9e9;
+}
+.bar:nth-child(1) {
+    height: 65px;
+}
+.bar:nth-child(2) {
+    height: 95px;
+}
+.bar:nth-child(3) {
+    height: 125px;
+}
+.bar:nth-child(4) {
+    height: 180px;
+    background: #171717;
+}
+.bar:nth-child(5) {
+    height: 145px;
+}
+.bar:nth-child(6) {
+    height: 105px;
+}
+/* =================================
+   RESPONSIVE
+================================= */
+@media (max-width: 1000px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .middle-grid {
+        grid-template-columns: 1fr;
+    }
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 700px) {
+    .sidebar {
+        display: none;
+    }
+    .main {
+        margin-left: 0;
+        width: 100%;
+    }
+    .content {
+        padding: 20px;
+    }
+    .topbar {
+        padding: 0 20px;
+    }
+    .search-box {
+        width: 200px;
+    }
+    .order-table {
+        min-width: 650px;
+    }
+    .panel {
+        overflow-x: auto;
+    }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<!-- =================================
+     SIDEBAR
+================================= -->
+<aside class="sidebar">
+    <div class="logo-section">
+        <div class="logo">
+            StrideX
+        </div>
+        <div class="logo-subtitle">
+            PREMIUM MANAGEMENT
+        </div>
+    </div>
+    <nav class="nav-menu">
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="nav-item active"
+        >
+            <i class="fa-solid fa-table-cells-large"></i>
+            Dashboard
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            Sales
+        </a>
+        <a
+            href="{% url 'user_management' %}"
+            class="nav-item"
+        >
+            <i class="fa-solid fa-users"></i>
+            Users
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-box"></i>
+            Products
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-regular fa-images"></i>
+            Collections
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-regular fa-star"></i>
+            Reviews
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-tag"></i>
+            Offers
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-ticket"></i>
+            Coupons
+        </a>
+    </nav>
+    <div class="admin-profile">
+        <div class="admin-avatar">
+            {{ request.user.full_name|default:"A"|slice:":1"|upper }}
+        </div>
+        <div class="admin-details">
+            <div class="admin-name">
+                {{ request.user.full_name|default:"Admin" }}
+            </div>
+            <div class="admin-role">
+                Admin Account
+            </div>
+        </div>
+        <form
+    method="POST"
+    action="{% url 'admin_logout' %}"
+    id="logoutForm"
+>
+    {% csrf_token %}
+    <button
+        type="button"
+        class="logout-btn"
+        id="logoutBtn"
+        title="Logout"
+    >
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </button>
+</form>
+    </div>
+</aside>
+<!-- =================================
+     MAIN
+================================= -->
+<main class="main">
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                placeholder="Search orders, stock..."
+            >
+        </div>
+        <div class="notification">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notification-dot"></span>
+        </div>
+    </header>
+    <!-- =================================
+         CONTENT
+    ================================= -->
+    <div class="content">
+        <h1 class="page-title">
+            Admin Dashboard
+        </h1>
+        <!-- =================================
+             TOTAL SALES
+        ================================= -->
+        <section class="total-sales-card">
+            <div class="card-top">
+                <div>
+                    <div class="small-title">
+                        TOTAL SALES
+                    </div>
+                    <div class="total-amount">
+                        ₹35,00,000
+                    </div>
+                </div>
+                <div>
+                    <span class="growth">
+                        +12.5%
+                    </span>
+                    <div class="trend-icon">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- =================================
+             STATS
+        ================================= -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">
+                        STOCK<br>
+                        LEVELS
+                    </div>
+                    <span class="badge">
+                        Low Stock
+                    </span>
+                </div>
+                <div class="stat-value">
+                    92.4%
+                    <span class="warning">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">
+                        ACTIVE<br>
+                        ORDERS
+                    </div>
+                    <span class="badge gray">
+                        Today
+                    </span>
+                </div>
+                <div class="stat-value">
+                    1,240
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">
+                        CUSTOMERS
+                    </div>
+                    <span class="growth">
+                        +18.1%
+                    </span>
+                </div>
+                <div class="stat-value">
+                    856
+                </div>
+            </div>
+        </section>
+        <!-- =================================
+             MIDDLE SECTION
+        ================================= -->
+        <section class="middle-grid">
+            <!-- RECENT ORDERS -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        Recent Orders
+                    </h2>
+                    <a href="#" class="view-all">
+                        View All
+                    </a>
+                </div>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>ORDER ID</th>
+                            <th>CUSTOMER</th>
+                            <th>SNEAKER MODEL</th>
+                            <th>AMOUNT</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="order-id">
+                                #NK-8821
+                            </td>
+                            <td>
+                                John Doe
+                            </td>
+                            <td>
+                                Air Jordan 1
+                                <br>
+                                Retro High OG
+                            </td>
+                            <td>
+                                ₹20,999
+                            </td>
+                            <td>
+                                <span class="status delivered">
+                                    DELIVERED
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">
+                                #NK-8822
+                            </td>
+                            <td>
+                                Sarah
+                                <br>
+                                Jenkins
+                            </td>
+                            <td>
+                                Nike Air Max
+                                <br>
+                                270 'Volt'
+                            </td>
+                            <td>
+                                ₹12,999
+                            </td>
+                            <td>
+                                <span class="status processing">
+                                    PROCESSING
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">
+                                #NK-8823
+                            </td>
+                            <td>
+                                Mike Ross
+                            </td>
+                            <td>
+                                Nike Dunk Low
+                                <br>
+                                Panda
+                            </td>
+                            <td>
+                                ₹9,999
+                            </td>
+                            <td>
+                                <span class="status shipped">
+                                    SHIPPED
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">
+                                #NK-8824
+                            </td>
+                            <td>
+                                Harvey
+                                <br>
+                                Specter
+                            </td>
+                            <td>
+                                Air Jordan 4
+                                <br>
+                                Military Black
+                            </td>
+                            <td>
+                                ₹18,499
+                            </td>
+                            <td>
+                                <span class="status pending">
+                                    PENDING
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- =================================
+                 HOTTEST RELEASES
+            ================================= -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        Hottest Releases
+                    </h2>
+                </div>
+                <div class="release-list">
+                    <div class="release-item">
+                        <div class="release-image">
+                            <i class="fa-solid fa-shoe-prints"></i>
+                        </div>
+                        <div class="release-info">
+                            <div class="release-name">
+                                Nike Air Max 270
+                            </div>
+                            <div class="release-sold">
+                                850 SOLD THIS WEEK
+                            </div>
+                        </div>
+                        <div class="release-price">
+                            ₹12,999
+                        </div>
+                    </div>
+                    <div class="release-item">
+                        <div class="release-image">
+                            <i class="fa-solid fa-shoe-prints"></i>
+                        </div>
+                        <div class="release-info">
+                            <div class="release-name">
+                                Nike Dunk Low
+                            </div>
+                            <div class="release-sold">
+                                724 SOLD THIS WEEK
+                            </div>
+                        </div>
+                        <div class="release-price">
+                            ₹9,999
+                        </div>
+                    </div>
+                    <div class="release-item">
+                        <div class="release-image">
+                            <i class="fa-solid fa-shoe-prints"></i>
+                        </div>
+                        <div class="release-info">
+                            <div class="release-name">
+                                Air Jordan 1 High
+                            </div>
+                            <div class="release-sold">
+                                612 SOLD THIS WEEK
+                            </div>
+                        </div>
+                        <div class="release-price">
+                            ₹18,499
+                        </div>
+                    </div>
+                    <button class="report-button">
+                        STOCK REPLENISHMENT REPORT
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- =================================
+             BOTTOM SECTION
+        ================================= -->
+        <section class="bottom-grid">
+            <!-- CATEGORY DISTRIBUTION -->
+            <div class="bottom-card">
+                <div class="bottom-header">
+                    <div>
+                        <h2 class="bottom-title">
+                            Category Distribution
+                        </h2>
+                        <p class="bottom-description">
+                            Inventory volume by sneaker line
+                        </p>
+                    </div>
+                    <select class="season-select">
+                        <option>
+                            Current Season
+                        </option>
+                    </select>
+                </div>
+                <div class="category-content">
+                    <div class="donut">
+                        <div class="donut-center">
+                            <div class="donut-percent">
+                                42%
+                            </div>
+                            <div class="donut-label">
+                                RUNNING
+                            </div>
+                        </div>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-dot"></span>
+                            Lifestyle (42%)
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot second"></span>
+                            Jordan (31%)
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot third"></span>
+                            Performance (27%)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SALES TRAJECTORY -->
+            <div class="bottom-card">
+                <div class="bottom-header">
+                    <div>
+                        <h2 class="bottom-title">
+                            Sales Trajectory
+                        </h2>
+                        <p class="bottom-description">
+                            Quarterly revenue performance in ₹
+                        </p>
+                    </div>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active">
+                            Revenue
+                        </button>
+                        <button class="chart-tab">
+                            Orders
+                        </button>
+                    </div>
+                </div>
+                <div class="bar-chart">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+</div>
+<!-- =================================
+     DJANGO TOAST MESSAGES
+================================= -->
+{% if messages %}
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+        {% for message in messages %}
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon:
+            "{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+            title:
+            "{{ message|escapejs }}",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+        {% endfor %}
+    }
+);
+</script>
+{% endif %}
+<script>
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutForm = document.getElementById("logoutForm");
+    logoutBtn.addEventListener("click", function() {
+        Swal.fire({
+            title: "Logout?",
+            text: "Are you sure you want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Logout",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            confirmButtonColor: "#a44a0c"
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                logoutForm.submit();
+            }
+        });
+    });
+</script>
+<script>
+window.history.forward();
+</script>
+</body>
+</html>

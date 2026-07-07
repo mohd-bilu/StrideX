@@ -1,0 +1,1112 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>StrideX | Verify OTP</title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<style>
+
+
+/* ===========================
+   GLOBAL
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+
+body{
+    background:#0f1117;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+
+a{
+    text-decoration:none;
+}
+
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+
+.container{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+}
+
+
+/* ===========================
+   LEFT SECTION
+=========================== */
+
+.left{
+width:50%;
+min-height:100vh;
+position:relative;
+display:flex;
+align-items:flex-start;
+overflow:hidden;
+background-image:url("{% static 'Authentication/images/verify_otp.png' %}");
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+}
+
+.overlay{
+position:absolute;
+inset:0;
+background:linear-gradient(
+90deg,
+rgba(0,0,0,.75) 0%,
+rgba(0,0,0,.45) 50%,
+rgba(0,0,0,.15) 100%
+);
+z-index:1;
+}
+
+.left-content{
+position:relative;
+z-index:2;
+margin-top:70px;
+margin-left:60px;
+padding-right:40px;
+}
+
+.left-content h1{
+font-size:64px;
+font-weight:800;
+line-height:1.1;
+letter-spacing:2px;
+text-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+
+.left-content p{
+margin-top:20px;
+width:360px;
+color:#e2e2e2;
+font-size:18px;
+line-height:1.8;
+text-shadow:0 2px 10px rgba(0,0,0,.8);
+}
+
+
+
+
+
+/* ===========================
+   RIGHT SECTION
+=========================== */
+
+.right{
+    width:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+
+    background:#11151d;
+}
+
+
+.card{
+    width:470px;
+
+    background:
+    rgba(255,255,255,.05);
+
+    backdrop-filter:
+    blur(18px);
+
+    border:
+    1px solid
+    rgba(255,255,255,.08);
+
+    border-radius:24px;
+
+    padding:40px;
+
+    box-shadow:
+    0 25px 60px
+    rgba(0,0,0,.35);
+}
+
+
+.card h2{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+
+.subtitle{
+    color:#bdbdbd;
+
+    line-height:1.7;
+
+    margin-bottom:35px;
+}
+
+
+.subtitle strong{
+    color:#ff8a1d;
+}
+
+
+/* ===========================
+   OTP BOXES
+=========================== */
+
+.otp-container{
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-bottom:35px;
+}
+
+
+.otp-input{
+    width:58px;
+    height:58px;
+
+    display:block;
+
+    background:#1d222d;
+
+    color:#ffffff;
+
+    border:
+    1px solid #4a4a4a;
+
+    border-radius:12px;
+
+    outline:none;
+
+    text-align:center;
+
+    font-size:22px;
+    font-weight:600;
+
+    cursor:text;
+
+    transition:.3s;
+}
+
+
+.otp-input:hover{
+    border-color:#6a6a6a;
+}
+
+
+.otp-input:focus{
+    border-color:#ff8a1d;
+
+    box-shadow:
+    0 0 12px
+    rgba(255,138,29,.3);
+}
+
+
+/* ===========================
+   VERIFY BUTTON
+=========================== */
+
+.verify-btn{
+    width:100%;
+    height:56px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ff8a1d;
+
+    color:#fff;
+
+    font-size:17px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+
+.verify-btn:hover{
+    background:#ff7300;
+
+    transform:
+    translateY(-2px);
+
+    box-shadow:
+    0 15px 30px
+    rgba(255,138,29,.35);
+}
+
+
+.verify-btn i{
+    margin-left:10px;
+}
+
+
+/* ===========================
+   TIMER
+=========================== */
+
+.timer{
+    margin-top:25px;
+
+    text-align:center;
+
+    color:#bbb;
+}
+
+
+#countdown{
+    color:#ff8a1d;
+
+    font-weight:700;
+
+    font-size:18px;
+}
+
+
+/* ===========================
+   RESEND OTP
+=========================== */
+
+.resend{
+    margin-top:20px;
+
+    text-align:center;
+
+    color:#bdbdbd;
+}
+
+
+.resend a{
+    color:#ff8a1d;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+
+/* OTP still active */
+
+.resend a.disabled{
+    opacity:.5;
+
+    cursor:not-allowed;
+
+    pointer-events:auto;
+}
+
+
+/* OTP expired */
+
+.resend a.enabled{
+    opacity:1;
+
+    cursor:pointer;
+}
+
+
+.resend a.enabled:hover{
+    text-decoration:underline;
+}
+
+
+/* ===========================
+   BACK
+=========================== */
+
+.back{
+    margin-top:30px;
+
+    text-align:center;
+}
+
+
+.back a{
+    color:#ff8a1d;
+
+    font-weight:600;
+}
+
+
+.back a:hover{
+    text-decoration:underline;
+}
+
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:992px){
+
+    .container{
+        flex-direction:column;
+    }
+
+
+    .left,
+    .right{
+        width:100%;
+    }
+
+
+    .left{
+        height:450px;
+    }
+
+
+    .left-content{
+        top:40px;
+        left:35px;
+    }
+
+
+    .left-content h1{
+        font-size:44px;
+    }
+
+
+    .left-content p{
+        width:300px;
+
+        font-size:16px;
+    }
+
+
+    .shoe img{
+        width:420px;
+    }
+
+
+    .card{
+        width:100%;
+
+        max-width:500px;
+    }
+
+}
+
+
+@media(max-width:576px){
+
+    .right{
+        padding:20px;
+    }
+
+
+    .card{
+        padding:25px;
+    }
+
+
+    .left-content h1{
+        font-size:34px;
+    }
+
+
+    .left-content p{
+        width:240px;
+
+        font-size:14px;
+    }
+
+
+    .otp-input{
+        width:45px;
+        height:50px;
+
+        font-size:20px;
+    }
+
+
+    .card h2{
+        font-size:28px;
+    }
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ======================
+         LEFT SECTION
+    ======================= -->
+
+    <div class="left">
+
+
+        <div class="overlay"></div>
+
+
+        <div class="left-content">
+
+
+            <h1>
+
+                VERIFY<br>
+
+                YOUR<br>
+
+                EMAIL
+
+            </h1>
+
+
+            <p>
+
+                We have sent a 6-digit verification
+                code to your registered email.
+
+                <br><br>
+
+                Complete verification to activate
+                your StrideX account.
+
+            </p>
+
+
+        </div>
+
+
+        {% comment %} <div class="shoe">
+
+
+            <img
+                src="{% static 'Authentication/images/verify_otp.png' %}"
+                alt="StrideX shoe"
+            >
+
+
+        </div> {% endcomment %}
+
+
+    </div>
+
+
+
+    <!-- ======================
+         RIGHT SECTION
+    ======================= -->
+
+    <div class="right">
+
+
+        <div class="card">
+
+
+            <h2>
+
+                Email Verification
+
+            </h2>
+
+
+            <p class="subtitle">
+
+                Enter the verification code sent to
+
+                <br>
+
+                <strong>
+
+                    {{ email }}
+
+                </strong>
+
+            </p>
+
+
+
+            <!-- OTP FORM -->
+
+            <form
+                method="POST"
+                id="otpForm"
+            >
+
+
+                {% csrf_token %}
+
+
+                <div class="otp-container">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                    >
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                    >
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                    >
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                    >
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                    >
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                    >
+
+
+                </div>
+
+
+
+                <input
+                    type="hidden"
+                    name="otp"
+                    id="otp"
+                >
+
+
+
+                <button
+                    type="submit"
+                    class="verify-btn"
+                >
+
+                    Verify OTP
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- TIMER -->
+
+            <div class="timer">
+
+
+                Time Remaining :
+
+
+                <span id="countdown">
+
+                    02:00
+
+                </span>
+
+
+            </div>
+
+
+
+            <!-- RESEND OTP -->
+
+            <div class="resend">
+
+
+                Didn't receive the OTP?
+
+
+                <a
+                    href="{% url 'resend_otp' %}"
+                    id="resendBtn"
+                    class="disabled"
+                    aria-disabled="true"
+                >
+
+                    Resend OTP
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- BACK -->
+
+            <p class="back">
+
+
+                <a href="{% url 'signup' %}">
+
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+
+                    Back to Signup
+
+
+                </a>
+
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ===========================
+   OTP INPUT LOGIC
+=========================== */
+
+
+const inputs =
+document.querySelectorAll(
+    ".otp-input"
+);
+
+
+const hiddenInput =
+document.getElementById(
+    "otp"
+);
+
+
+
+function updateHiddenOTP(){
+
+    hiddenInput.value =
+    Array.from(inputs)
+    .map(input => input.value)
+    .join("");
+
+}
+
+
+
+inputs.forEach(
+    (input,index)=>{
+
+
+        input.addEventListener(
+            "input",
+            function(){
+
+
+                this.value =
+                this.value.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+                if(
+                    this.value
+                    &&
+                    index < inputs.length - 1
+                ){
+
+                    inputs[
+                        index + 1
+                    ].focus();
+
+                }
+
+
+                updateHiddenOTP();
+
+            }
+        );
+
+
+
+        input.addEventListener(
+            "keydown",
+            function(event){
+
+
+                if(
+                    event.key === "Backspace"
+                    &&
+                    !this.value
+                    &&
+                    index > 0
+                ){
+
+                    inputs[
+                        index - 1
+                    ].focus();
+
+                }
+
+            }
+        );
+
+
+    }
+);
+
+
+
+/* ===========================
+   PASTE FULL OTP
+=========================== */
+
+
+inputs[0].addEventListener(
+    "paste",
+    function(event){
+
+
+        event.preventDefault();
+
+
+        const data =
+        (
+            event.clipboardData
+            ||
+            window.clipboardData
+        )
+        .getData("text")
+        .replace(/\D/g,"")
+        .substring(0,6);
+
+
+
+        data
+        .split("")
+        .forEach(
+            (number,index)=>{
+
+
+                if(inputs[index]){
+
+                    inputs[index].value =
+                    number;
+
+                }
+
+
+            }
+        );
+
+
+        updateHiddenOTP();
+
+
+        if(data.length === 6){
+
+            inputs[5].focus();
+
+        }
+
+
+    }
+);
+
+
+
+/* ===========================
+   RESEND OTP PROTECTION
+=========================== */
+
+
+let seconds = 120;
+
+
+const timer =
+document.getElementById(
+    "countdown"
+);
+
+
+const resendBtn =
+document.getElementById(
+    "resendBtn"
+);
+
+
+
+/*
+Prevent clicking while OTP
+is still active
+*/
+
+resendBtn.addEventListener(
+    "click",
+    function(event){
+
+
+        if(
+            this.classList.contains(
+                "disabled"
+            )
+        ){
+
+            event.preventDefault();
+
+            return false;
+
+        }
+
+
+    }
+);
+
+
+
+/* ===========================
+   COUNTDOWN
+=========================== */
+
+
+const interval =
+setInterval(
+    function(){
+
+
+        const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+        const remainingSeconds =
+        seconds % 60;
+
+
+        timer.textContent =
+
+            String(minutes)
+            .padStart(2,"0")
+
+            +
+
+            ":"
+
+            +
+
+            String(remainingSeconds)
+            .padStart(2,"0");
+
+
+
+        if(seconds <= 0){
+
+
+            clearInterval(
+                interval
+            );
+
+
+            timer.textContent =
+                "Expired";
+
+
+            resendBtn
+            .classList
+            .remove(
+                "disabled"
+            );
+
+
+            resendBtn
+            .classList
+            .add(
+                "enabled"
+            );
+
+
+            resendBtn
+            .setAttribute(
+                "aria-disabled",
+                "false"
+            );
+
+
+            return;
+
+        }
+
+
+        seconds--;
+
+
+    },
+    1000
+);
+
+
+</script>
+
+
+
+<!-- ===========================
+     DJANGO TOAST MESSAGES
+=========================== -->
+
+
+{% if messages %}
+
+
+<script>
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+
+        {% for message in messages %}
+
+
+        Swal.fire({
+
+
+            toast:true,
+
+
+            position:
+            "top-end",
+
+
+            icon:
+            "{{ message.tags }}",
+
+
+            title:
+            "{{ message|escapejs }}",
+
+
+            showConfirmButton:
+            false,
+
+
+            timer:
+            3000,
+
+
+            timerProgressBar:
+            true,
+
+
+            background:
+            "#1d222d",
+
+
+            color:
+            "#ffffff"
+
+
+        });
+
+
+        {% endfor %}
+
+
+    }
+);
+
+
+</script>
+
+
+{% endif %}
+
+
+</body>
+
+</html>

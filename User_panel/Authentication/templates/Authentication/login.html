@@ -1,0 +1,357 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>StrideX | Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+html,body{
+width:100%;
+min-height:100%;
+}
+body{
+background:#0f1117;
+color:#fff;
+overflow-x:hidden;
+}
+a{
+text-decoration:none;
+}
+.container{
+width:100%;
+min-height:100vh;
+display:flex;
+}
+.left{
+width:50%;
+min-height:100vh;
+overflow:hidden;
+background:#05070c;
+}
+.login-image{
+width:100%;
+height:100vh;
+display:block;
+object-fit:cover;
+object-position:center;
+}
+.right{
+width:50%;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:40px;
+background:#11151d;
+}
+.card{
+width:470px;
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.08);
+border-radius:24px;
+padding:40px;
+box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+.card h2{
+font-size:34px;
+margin-bottom:12px;
+}
+.subtitle{
+color:#bdbdbd;
+line-height:1.7;
+margin-bottom:35px;
+}
+.input-box{
+margin-bottom:22px;
+}
+.input-box label{
+display:block;
+margin-bottom:8px;
+color:#ddd;
+font-size:14px;
+}
+.input-field{
+display:flex;
+align-items:center;
+height:58px;
+padding:0 18px;
+background:#1d222d;
+border:1px solid transparent;
+border-radius:12px;
+transition:.3s;
+}
+.input-field:hover{
+border-color:#ff8a1d;
+}
+.input-field:focus-within{
+border-color:#ff8a1d;
+box-shadow:0 0 15px rgba(255,138,29,.25);
+}
+.input-field i:first-child{
+color:#888;
+margin-right:12px;
+}
+.input-field input{
+width:100%;
+background:none;
+border:none;
+outline:none;
+color:#fff;
+font-size:15px;
+}
+.input-field input::placeholder{
+color:#888;
+}
+.toggle-password{
+cursor:pointer;
+color:#888;
+}
+.options{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:20px 0 30px;
+font-size:14px;
+}
+.options label{
+color:#bbb;
+}
+.options input{
+margin-right:6px;
+}
+.options a{
+color:#ff8a1d;
+}
+.options a:hover{
+text-decoration:underline;
+}
+.login-btn{
+width:100%;
+height:56px;
+border:none;
+border-radius:14px;
+background:#ff8a1d;
+color:#fff;
+font-size:17px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+.login-btn:hover{
+background:#ff7300;
+transform:translateY(-2px);
+box-shadow:0 15px 30px rgba(255,138,29,.35);
+}
+.login-btn i{
+margin-left:10px;
+}
+.divider{
+display:flex;
+align-items:center;
+margin:30px 0;
+}
+.divider::before,
+.divider::after{
+content:"";
+flex:1;
+height:1px;
+background:#333;
+}
+.divider span{
+margin:0 15px;
+color:#aaa;
+font-size:13px;
+}
+.google-login-btn{
+width:100%;
+height:54px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+border:1px solid #5a4338;
+border-radius:28px;
+background:#fff;
+color:#111;
+font-size:12px;
+font-weight:600;
+letter-spacing:.7px;
+cursor:pointer;
+transition:.25s;
+}
+.google-login-btn:hover{
+background:#f1f1f1;
+transform:translateY(-1px);
+}
+.signup{
+margin-top:30px;
+text-align:center;
+color:#bbb;
+}
+.signup a{
+color:#ff8a1d;
+font-weight:600;
+}
+.signup a:hover{
+text-decoration:underline;
+}
+@media(max-width:992px){
+.container{
+flex-direction:column;
+}
+.left,
+.right{
+width:100%;
+}
+.left{
+min-height:auto;
+height:600px;
+}
+.login-image{
+width:100%;
+height:600px;
+object-fit:cover;
+object-position:center;
+}
+.right{
+min-height:auto;
+padding:60px 40px;
+}
+.card{
+width:100%;
+max-width:500px;
+}
+}
+@media(max-width:576px){
+.left{
+height:420px;
+}
+.login-image{
+height:420px;
+}
+.right{
+padding:30px 20px;
+}
+.card{
+padding:25px;
+}
+.card h2{
+font-size:28px;
+}
+.subtitle{
+font-size:14px;
+}
+.options{
+font-size:12px;
+}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="left">
+<img src="{% static 'Authentication/images/user_login.png' %}" alt="StrideX Login" class="login-image">
+</div>
+<div class="right">
+<div class="card">
+<h2>Login</h2>
+<p class="subtitle">Sign in to your StrideX account</p>
+<form method="POST" action="{% url 'login' %}">
+{% csrf_token %}
+<div class="input-box">
+<label>Email Address</label>
+<div class="input-field">
+<i class="fa-solid fa-envelope"></i>
+<input type="email" name="email" placeholder="name@example.com" required>
+</div>
+</div>
+<div class="input-box">
+<label>Password</label>
+<div class="input-field">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" name="password" placeholder="••••••••" required>
+<i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+</div>
+</div>
+<div class="options">
+<label>
+<input type="checkbox" name="remember">
+Remember Me
+</label>
+<a href="{% url 'forgot_password' %}">Forgot Password?</a>
+</div>
+<button type="submit" class="login-btn">
+Login
+<i class="fa-solid fa-arrow-right"></i>
+</button>
+</form>
+<div class="divider">
+<span>OR</span>
+</div>
+<a href="{% provider_login_url 'google' process='login' %}" class="google-login-btn">
+<i class="fa-brands fa-google"></i>
+<span>CONTINUE WITH GOOGLE</span>
+</a>
+<p class="signup">
+Don't have an account?
+<a href="{% url 'signup' %}">Create Account</a>
+</p>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const togglePassword=document.getElementById("togglePassword");
+const password=document.getElementById("password");
+togglePassword.addEventListener("click",function(){
+if(password.type==="password"){
+password.type="text";
+this.classList.remove("fa-eye");
+this.classList.add("fa-eye-slash");
+}else{
+password.type="password";
+this.classList.remove("fa-eye-slash");
+this.classList.add("fa-eye");
+}
+});
+});
+</script>
+{% if messages %}
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+{% for message in messages %}
+Swal.fire({
+toast:true,
+position:"top-end",
+icon:"{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+title:"{{ message|escapejs }}",
+showConfirmButton:false,
+timer:3000,
+timerProgressBar:true,
+background:"#1d222d",
+color:"#ffffff"
+});
+{% endfor %}
+});
+</script>
+{% endif %}
+<script>
+window.history.forward();
+</script>
+</body>
+</html>

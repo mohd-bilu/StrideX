@@ -1,0 +1,1182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StrideX | User Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f5f5f3;
+            color: #191919;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: #fff;
+            border-right: 1px solid #e5d9d1;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 28px 22px 32px;
+        }
+
+        .brand h1 {
+            font-size: 32px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: #a44a0c;
+        }
+
+        .brand p {
+            margin-top: 3px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .nav {
+            flex: 1;
+            padding-top: 8px;
+        }
+
+        .nav-item {
+            position: relative;
+            height: 52px;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #4d4d4d;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background: #faf5f1;
+        }
+
+        .nav-item.active {
+            background: #f8e8dc;
+            color: #8c3e08;
+            font-weight: 700;
+        }
+
+        .nav-item.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: #a44a0c;
+        }
+
+        .admin-profile {
+            border-top: 1px solid #e5d9d1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #ffd8b5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-info {
+            flex: 1;
+        }
+
+        .admin-info strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .admin-info span {
+            display: block;
+            margin-top: 3px;
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            color: #8a8a8a;
+        }
+
+        .logout-btn {
+            border: none;
+            background: transparent;
+            color: #555;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            padding: 0 22px 35px;
+        }
+
+        .topbar {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            gap: 35px;
+        }
+
+        .page-title {
+            white-space: nowrap;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .search-form {
+            flex: 1;
+            max-width: 540px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            background: #f0f0ee;
+            border-radius: 20px;
+            padding: 0 16px;
+        }
+
+        .search-form i {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .search-form input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 0 12px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .search-form input::placeholder {
+            color: #9b9b9b;
+        }
+        .search-form {
+    flex: 1;
+    max-width: 650px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    background: #f0f0ee;
+    border-radius: 20px;
+    padding: 0 16px;
+}
+
+.search-form > i {
+    color: #555;
+    font-size: 14px;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #333;
+}
+
+.search-btn {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #6b6b6b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.clear-btn {
+    flex-shrink: 0;
+    margin-left: 12px;
+    padding-left: 12px;
+    border-left: 1px solid #d4d4d0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #a44a0c;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    color: #7c3507;
+}
+
+        .search-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #6b6b6b;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .clear-btn {
+            margin-left: 10px;
+            color: #a44a0c;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .notification {
+            margin-left: auto;
+            position: relative;
+            font-size: 17px;
+            color: #70411f;
+        }
+
+        .notification::after {
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #c24f1a;
+            top: -2px;
+            right: -2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            position: relative;
+            min-height: 96px;
+            background: #fff;
+            border-radius: 11px;
+            padding: 20px 22px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-card.selected::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: #a44a0c;
+        }
+
+        .stat-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-number {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .stat-note {
+            font-size: 10px;
+            color: #555;
+        }
+
+        .positive {
+            color: #17a45b;
+            font-weight: 700;
+        }
+
+        .danger-note {
+            padding: 4px 7px;
+            border-radius: 3px;
+            background: #fde8e8;
+            color: #c83838;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .directory {
+            background: #fff;
+            border-radius: 11px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+        }
+
+        .directory-header {
+            min-height: 70px;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .directory-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .directory-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-select {
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #dfcfc4;
+            border-radius: 7px;
+            outline: none;
+            background: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-btn {
+            height: 36px;
+            padding: 0 15px;
+            border: 1px solid #dfcfc4;
+            border-radius: 7px;
+            background: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .sort-btn {
+            height: 36px;
+            padding: 0 15px;
+            border: 1px solid #dfcfc4;
+            border-radius: 7px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f4f4f2;
+        }
+
+        th {
+            padding: 13px 15px;
+            text-align: left;
+            font-size: 8px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        td {
+            height: 68px;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ededeb;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .user-id {
+            font-size: 10px;
+            color: #444;
+            line-height: 1.3;
+        }
+
+        .customer {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .customer-avatar {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #ededeb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .customer-name {
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .email {
+            color: #555;
+        }
+
+        .orders,
+        .spend {
+            font-weight: 700;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.7px;
+        }
+
+        .status-active {
+            background: #e4f8e9;
+            color: #159447;
+        }
+
+        .status-blocked {
+            background: #fde4e4;
+            color: #d23b3b;
+        }
+
+        .action-cell {
+            position: relative;
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #4f4f4f;
+        }
+
+        .action-menu {
+            display: none;
+            position: absolute;
+            right: 25px;
+            top: 45px;
+            min-width: 135px;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 7px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            z-index: 20;
+            overflow: hidden;
+        }
+
+        .action-menu.show {
+            display: block;
+        }
+
+        .action-menu button {
+            width: 100%;
+            padding: 11px 14px;
+            border: none;
+            background: #fff;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .action-menu button:hover {
+            background: #f7f7f5;
+        }
+
+        .block-action {
+            color: #c93a3a;
+        }
+
+        .unblock-action {
+            color: #159447;
+        }
+
+        .empty-row {
+            height: 130px;
+            text-align: center;
+            color: #888;
+        }
+
+        .pagination-area {
+            min-height: 65px;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .showing {
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 7px;
+        }
+
+        .page-link {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ededeb;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            background: #fff;
+        }
+
+        .page-link.active {
+            background: #111;
+            border-color: #111;
+            color: #fff;
+        }
+
+        .page-link.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .launch-banner {
+            min-height: 135px;
+            margin-top: 20px;
+            padding: 30px 60px;
+            border-radius: 11px;
+            background: #050505;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .launch-content h2 {
+            font-size: 23px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .launch-content p {
+            margin-top: 7px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #cfcfcf;
+        }
+
+        .reward-btn {
+            min-width: 170px;
+            height: 42px;
+            padding: 0 22px;
+            border: none;
+            border-radius: 22px;
+            background: #fff;
+            color: #111;
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .directory-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .topbar {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 20px 0;
+            }
+
+            .search-form {
+                order: 3;
+                flex-basis: 100%;
+                max-width: none;
+            }
+
+            .launch-banner {
+                padding: 25px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .directory-actions,
+            .filter-form {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .filter-select,
+            .filter-btn,
+            .sort-btn {
+                width: 100%;
+            }
+
+            .pagination-area {
+                padding: 18px;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>StrideX</h1>
+            <p>Premium Store</p>
+        </div>
+
+        <nav class="nav">
+            <a href="{% url 'admin_dashboard' %}" class="nav-item">
+                <i class="fa-solid fa-border-all"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                <span>Sales</span>
+            </a>
+
+            <a href="{% url 'user_management' %}" class="nav-item active">
+                <i class="fa-regular fa-user"></i>
+                <span>Users</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-suitcase"></i>
+                <span>Products</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-regular fa-image"></i>
+                <span>Collections</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-regular fa-star"></i>
+                <span>Reviews</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-tag"></i>
+                <span>Offers</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-ticket"></i>
+                <span>Coupons</span>
+            </a>
+        </nav>
+
+        <div class="admin-profile">
+            <div class="avatar">
+                {{ request.user.full_name|default:"A"|slice:":1"|upper }}
+            </div>
+
+            <div class="admin-info">
+                <strong>{{ request.user.full_name|default:"Admin" }}</strong>
+                <span>ADMIN ACCOUNT</span>
+            </div>
+
+            <form
+    method="POST"
+    action="{% url 'admin_logout' %}"
+    id="logoutForm"
+>
+    {% csrf_token %}
+
+    <button
+        type="button"
+        class="logout-btn"
+        id="logoutBtn"
+        title="Logout"
+    >
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    </button>
+</form>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <h1 class="page-title">USER MANAGEMENT</h1>
+
+            <form method="GET" action="{% url 'user_management' %}" class="search-form">
+    <i class="fa-solid fa-magnifying-glass"></i>
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search_query }}"
+        placeholder="Search members, emails..."
+    >
+
+    {% if status_filter %}
+    <input type="hidden" name="status" value="{{ status_filter }}">
+    {% endif %}
+
+    <button type="submit" class="search-btn">
+        SEARCH
+    </button>
+
+    {% if search_query %}
+    <a
+        href="{% url 'user_management' %}{% if status_filter %}?status={{ status_filter }}{% endif %}"
+        class="clear-btn"
+    >
+        <i class="fa-solid fa-xmark"></i>
+        CLEAR
+    </a>
+    {% endif %}
+</form>
+
+            <div class="notification">
+                <i class="fa-regular fa-bell"></i>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">TOTAL USERS</span>
+                <div class="stat-row">
+                    <span class="stat-number">{{ total_users }}</span>
+                    <span class="stat-note">Steady</span>
+                </div>
+            </div>
+
+            <div class="stat-card selected">
+                <span class="stat-label">ACTIVE USERS</span>
+                <div class="stat-row">
+                    <span class="stat-number">{{ active_users }}</span>
+                    <span class="stat-note">Active</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">NEW USERS</span>
+                <div class="stat-row">
+                    <span class="stat-number">{{ new_users }}</span>
+                    <span class="stat-note positive">Recent</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-label">BLOCKED USERS</span>
+                <div class="stat-row">
+                    <span class="stat-number">{{ blocked_users }}</span>
+                    <span class="danger-note">Action Required</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="directory">
+            <div class="directory-header">
+                <h2 class="directory-title">Customer Directory</h2>
+
+                <div class="directory-actions">
+                    <form method="GET" action="{% url 'user_management' %}" class="filter-form">
+                        {% if search_query %}
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        {% endif %}
+
+                        <select name="status" class="filter-select">
+                            <option value="">All Users</option>
+                            <option value="active" {% if status_filter == "active" %}selected{% endif %}>
+                                Active
+                            </option>
+                            <option value="blocked" {% if status_filter == "blocked" %}selected{% endif %}>
+                                Blocked
+                            </option>
+                        </select>
+
+                        <button type="submit" class="filter-btn">
+                            <i class="fa-solid fa-filter"></i>
+                            Filter
+                        </button>
+                    </form>
+
+                    <div class="sort-btn">
+                        <i class="fa-solid fa-arrow-down-wide-short"></i>
+                        Sort By: Latest
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>USER ID</th>
+                            <th>CUSTOMER NAME</th>
+                            <th>EMAIL</th>
+                            <th>STATUS</th>
+                            <th>JOINED</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for user in page_obj %}
+                        <tr>
+                            <td>
+                                <span class="user-id">
+                                    #SX-{{ user.id|stringformat:"04d" }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="customer">
+                                    <div class="customer-avatar">
+                                        {{ user.full_name|default:user.email|slice:":2"|upper }}
+                                    </div>
+
+                                    <span class="customer-name">
+                                        {{ user.full_name|default:"User" }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td class="email">
+                                {{ user.email }}
+                            </td>
+
+                            <td>
+                                {% if user.is_blocked or not user.is_active %}
+                                <span class="status status-blocked">
+                                    BLOCKED
+                                </span>
+                                {% else %}
+                                <span class="status status-active">
+                                    ACTIVE
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ user.date_joined|date:"d M Y" }}
+                            </td>
+
+                            <td class="action-cell">
+                                <button
+                                    type="button"
+                                    class="action-btn"
+                                    onclick="toggleMenu(event, 'menu-{{ user.id }}')"
+                                >
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+
+                                <div class="action-menu" id="menu-{{ user.id }}">
+                                    <form
+                                        method="POST"
+                                        action="{% url 'toggle_user_status' user.id %}"
+                                        class="status-form"
+                                        data-name="{{ user.full_name|default:user.email }}"
+                                        data-blocked="{% if user.is_blocked %}true{% else %}false{% endif %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        {% if user.is_blocked %}
+                                        <button type="submit" class="unblock-action">
+                                            <i class="fa-solid fa-unlock"></i>
+                                            Unblock User
+                                        </button>
+                                        {% else %}
+                                        <button type="submit" class="block-action">
+                                            <i class="fa-solid fa-ban"></i>
+                                            Block User
+                                        </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-row">
+                                No users found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-area">
+                <div class="showing">
+                    {% if page_obj.paginator.count %}
+                    SHOWING {{ page_obj.start_index }} TO {{ page_obj.end_index }} OF {{ page_obj.paginator.count }}
+                    {% else %}
+                    SHOWING 0 USERS
+                    {% endif %}
+                </div>
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                    <a
+                        href="?page={{ page_obj.previous_page_number }}&search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}"
+                        class="page-link"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-link disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </span>
+                    {% endif %}
+
+                    {% for number in page_obj.paginator.page_range %}
+                        {% if number >= page_obj.number|add:"-2" and number <= page_obj.number|add:"2" %}
+                            {% if number == page_obj.number %}
+                            <span class="page-link active">
+                                {{ number }}
+                            </span>
+                            {% else %}
+                            <a
+                                href="?page={{ number }}&search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}"
+                                class="page-link"
+                            >
+                                {{ number }}
+                            </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a
+                        href="?page={{ page_obj.next_page_number }}&search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}"
+                        class="page-link"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                    {% else %}
+                    <span class="page-link disabled">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="launch-banner">
+            <div class="launch-content">
+                <h2>NEW COLLECTION LAUNCH</h2>
+                <p>
+                    Automate member rewards for the upcoming Air Jordan drop.<br>
+                    Qualifying users can receive early access.
+                </p>
+            </div>
+
+            <button type="button" class="reward-btn">
+                CONFIGURE REWARDS
+            </button>
+        </section>
+    </main>
+</div>
+
+<script>
+    function toggleMenu(event, menuId) {
+        event.stopPropagation();
+
+        document.querySelectorAll(".action-menu").forEach(function(menu) {
+            if (menu.id !== menuId) {
+                menu.classList.remove("show");
+            }
+        });
+
+        document.getElementById(menuId).classList.toggle("show");
+    }
+
+    document.addEventListener("click", function() {
+        document.querySelectorAll(".action-menu").forEach(function(menu) {
+            menu.classList.remove("show");
+        });
+    });
+
+    document.querySelectorAll(".status-form").forEach(function(form) {
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const currentForm = this;
+            const userName = currentForm.dataset.name;
+            const isBlocked = currentForm.dataset.blocked === "true";
+
+            Swal.fire({
+                title: isBlocked ? "Unblock User?" : "Block User?",
+                text: isBlocked
+                    ? "Allow " + userName + " to access the account again?"
+                    : userName + " will not be able to log in.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: isBlocked ? "Yes, Unblock" : "Yes, Block",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    currentForm.submit();
+                }
+            });
+        });
+    });
+</script>
+
+{% if messages %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        {% for message in messages %}
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+            title: "{{ message|escapejs }}",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+        {% endfor %}
+    });
+</script>
+{% endif %}
+<script>
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutForm = document.getElementById("logoutForm");
+
+    logoutBtn.addEventListener("click", function() {
+        Swal.fire({
+            title: "Logout?",
+            text: "Are you sure you want to logout?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Logout",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+            confirmButtonColor: "#a44a0c"
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                logoutForm.submit();
+            }
+        });
+    });
+</script>
+<script>
+window.history.forward();
+</script>
+</body>
+</html>

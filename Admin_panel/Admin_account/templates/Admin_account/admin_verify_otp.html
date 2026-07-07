@@ -1,0 +1,1534 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>StrideX Admin | Verify OTP</title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+
+        body{
+            background:#f4f4f2;
+            color:#111;
+            min-height:100vh;
+        }
+
+
+        a{
+            text-decoration:none;
+            color:inherit;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+
+        .navbar{
+            width:100%;
+            height:78px;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            padding:0 6%;
+
+            background:#fff;
+
+            border-bottom:1px solid #e5e5e5;
+        }
+
+
+        .nav-left{
+            display:flex;
+            align-items:center;
+        }
+
+
+        .logo{
+            font-size:24px;
+            font-weight:900;
+            letter-spacing:-1px;
+        }
+
+
+        .logo span{
+            color:#ff6a00;
+        }
+
+
+        .admin-badge{
+            margin-left:8px;
+
+            font-size:10px;
+            font-weight:700;
+
+            letter-spacing:1.5px;
+
+            color:#777;
+        }
+
+
+        .nav-links{
+            display:flex;
+            align-items:center;
+            gap:35px;
+        }
+
+
+        .nav-links a{
+            font-size:11px;
+            font-weight:700;
+
+            letter-spacing:1.5px;
+
+            color:#555;
+        }
+
+
+        .nav-links a:hover{
+            color:#ff6a00;
+        }
+
+
+
+        /* =========================
+           MAIN PAGE
+        ========================= */
+
+
+        .page{
+            width:100%;
+
+            min-height:calc(100vh - 138px);
+
+            display:grid;
+
+            grid-template-columns:1fr 1fr;
+        }
+
+
+
+        /* =========================
+           LEFT SECTION
+        ========================= */
+
+
+        .visual-section{
+            position:relative;
+
+            min-height:650px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #121212,
+                    #252525
+                );
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            overflow:hidden;
+        }
+
+
+        .visual-section::before{
+            content:"";
+
+            position:absolute;
+
+            width:520px;
+            height:520px;
+
+            border-radius:50%;
+
+            background:rgba(255,106,0,.10);
+
+            filter:blur(30px);
+
+            top:50%;
+            left:50%;
+
+            transform:translate(-50%,-50%);
+        }
+
+
+        .visual-lines{
+            position:absolute;
+            inset:0;
+
+            background-image:
+
+                linear-gradient(
+                    rgba(255,255,255,.025) 1px,
+                    transparent 1px
+                ),
+
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.025) 1px,
+                    transparent 1px
+                );
+
+            background-size:55px 55px;
+        }
+
+
+        .visual-content{
+            position:relative;
+
+            z-index:2;
+
+            width:70%;
+        }
+
+
+        .visual-content h1{
+            color:#fff;
+
+            font-size:72px;
+            line-height:.95;
+
+            font-weight:900;
+
+            letter-spacing:-4px;
+        }
+
+
+        .visual-content h1 span{
+            color:#ff6a00;
+        }
+
+
+        .visual-content p{
+            margin-top:30px;
+
+            max-width:470px;
+
+            color:#a7a7a7;
+
+            font-size:14px;
+
+            line-height:1.9;
+        }
+
+
+        .large-icon{
+            position:absolute;
+
+            right:-30px;
+            bottom:-50px;
+
+            font-size:310px;
+
+            color:#fff;
+
+            opacity:.025;
+
+            transform:rotate(-10deg);
+        }
+
+
+        .visual-tag{
+            position:absolute;
+
+            left:8%;
+            bottom:45px;
+
+            display:flex;
+            align-items:center;
+            gap:12px;
+
+            color:#777;
+
+            font-size:10px;
+            font-weight:700;
+
+            letter-spacing:2px;
+        }
+
+
+        .visual-tag span{
+            width:35px;
+            height:2px;
+
+            background:#ff6a00;
+        }
+
+
+
+        /* =========================
+           RIGHT SECTION
+        ========================= */
+
+
+        .form-section{
+            background:#f7f7f5;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:60px;
+        }
+
+
+        .form-wrapper{
+            width:100%;
+            max-width:500px;
+        }
+
+
+        .small-label{
+            color:#ff6a00;
+
+            font-size:10px;
+            font-weight:800;
+
+            letter-spacing:2.5px;
+
+            margin-bottom:14px;
+        }
+
+
+        .form-wrapper h2{
+            font-size:42px;
+            line-height:1.1;
+
+            font-weight:900;
+
+            letter-spacing:-2px;
+
+            margin-bottom:18px;
+        }
+
+
+        .description{
+            color:#777;
+
+            font-size:14px;
+            line-height:1.8;
+
+            margin-bottom:12px;
+
+            max-width:450px;
+        }
+
+
+        .email-text{
+            color:#111;
+
+            font-size:13px;
+            font-weight:700;
+
+            margin-bottom:35px;
+        }
+
+
+        .email-text i{
+            color:#ff6a00;
+            margin-right:7px;
+        }
+
+
+
+        /* =========================
+           OTP BOXES
+        ========================= */
+
+
+        .otp-container{
+            display:flex;
+
+            justify-content:space-between;
+
+            gap:10px;
+
+            margin-bottom:30px;
+        }
+
+
+        .otp-input{
+            width:62px;
+            height:66px;
+
+            background:#fff;
+
+            border:2px solid #d6d6d6;
+
+            border-radius:3px;
+
+            outline:none;
+
+            text-align:center;
+
+            font-size:24px;
+            font-weight:800;
+
+            color:#111;
+
+            transition:.25s;
+        }
+
+
+        .otp-input:hover{
+            border-color:#999;
+        }
+
+
+        .otp-input:focus{
+            border-color:#ff6a00;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(255,106,0,.10);
+        }
+
+
+
+        /* =========================
+           VERIFY BUTTON
+        ========================= */
+
+
+        .verify-btn{
+            width:100%;
+            height:60px;
+
+            border:none;
+
+            background:#111;
+
+            color:#fff;
+
+            font-size:11px;
+            font-weight:800;
+
+            letter-spacing:2px;
+
+            cursor:pointer;
+
+            transition:.25s;
+        }
+
+
+        .verify-btn:hover{
+            background:#ff6a00;
+
+            transform:translateY(-1px);
+        }
+
+
+        .verify-btn i{
+            margin-left:10px;
+        }
+
+
+
+        /* =========================
+           TIMER
+        ========================= */
+
+
+        .timer-section{
+            margin-top:25px;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            gap:7px;
+
+            color:#777;
+
+            font-size:12px;
+        }
+
+
+        .timer-section i{
+            color:#ff6a00;
+        }
+
+
+        #countdown{
+            color:#111;
+
+            font-weight:800;
+        }
+
+
+
+        /* =========================
+           RESEND
+        ========================= */
+
+
+        .resend-section{
+            margin-top:20px;
+
+            text-align:center;
+
+            color:#777;
+
+            font-size:12px;
+        }
+
+
+        #resendBtn{
+            margin-left:5px;
+
+            color:#ff6a00;
+
+            font-weight:800;
+
+            cursor:not-allowed;
+
+            opacity:.45;
+
+            pointer-events:none;
+        }
+
+
+        #resendBtn.enabled{
+            cursor:pointer;
+
+            opacity:1;
+
+            pointer-events:auto;
+        }
+
+
+        #resendBtn.enabled:hover{
+            text-decoration:underline;
+        }
+
+
+
+        /* =========================
+           BACK
+        ========================= */
+
+
+        .back-login{
+            display:flex;
+
+            justify-content:center;
+
+            margin-top:28px;
+
+            padding-top:25px;
+
+            border-top:1px solid #ddd;
+        }
+
+
+        .back-login a{
+            display:inline-flex;
+
+            align-items:center;
+
+            gap:9px;
+
+            color:#333;
+
+            font-size:12px;
+            font-weight:700;
+        }
+
+
+        .back-login a:hover{
+            color:#ff6a00;
+        }
+
+
+
+        /* =========================
+           SECURITY NOTE
+        ========================= */
+
+
+        .security-note{
+            display:flex;
+
+            align-items:flex-start;
+
+            gap:13px;
+
+            margin-top:28px;
+
+            padding:17px;
+
+            background:#ededeb;
+        }
+
+
+        .security-note i{
+            color:#ff6a00;
+
+            margin-top:2px;
+        }
+
+
+        .security-note p{
+            color:#777;
+
+            font-size:10px;
+
+            line-height:1.7;
+        }
+
+
+        .security-note strong{
+            color:#444;
+        }
+
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+
+        .footer{
+            height:60px;
+
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            padding:0 6%;
+
+            background:#fff;
+
+            border-top:1px solid #e4e4e4;
+
+            color:#888;
+
+            font-size:9px;
+
+            letter-spacing:1.3px;
+        }
+
+
+        .footer-links{
+            display:flex;
+            gap:25px;
+        }
+
+
+        .footer-links a:hover{
+            color:#ff6a00;
+        }
+
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+
+        @media(max-width:950px){
+
+            .page{
+                grid-template-columns:1fr;
+            }
+
+
+            .visual-section{
+                min-height:400px;
+            }
+
+
+            .visual-content h1{
+                font-size:55px;
+            }
+
+
+            .form-section{
+                padding:70px 30px;
+            }
+
+        }
+
+
+        @media(max-width:650px){
+
+            .navbar{
+                padding:0 22px;
+            }
+
+
+            .nav-links{
+                display:none;
+            }
+
+
+            .visual-section{
+                min-height:330px;
+            }
+
+
+            .visual-content{
+                width:82%;
+            }
+
+
+            .visual-content h1{
+                font-size:45px;
+
+                letter-spacing:-2px;
+            }
+
+
+            .visual-content p{
+                font-size:12px;
+            }
+
+
+            .form-section{
+                padding:55px 20px;
+            }
+
+
+            .form-wrapper h2{
+                font-size:34px;
+            }
+
+
+            .otp-container{
+                gap:6px;
+            }
+
+
+            .otp-input{
+                width:45px;
+                height:55px;
+
+                font-size:20px;
+            }
+
+
+            .footer{
+                height:auto;
+
+                flex-direction:column;
+
+                gap:12px;
+
+                padding:20px;
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+
+<header class="navbar">
+
+
+    <div class="nav-left">
+
+
+        <a
+            href="{% url 'admin_login' %}"
+            class="logo">
+
+            Stride<span>X</span>
+
+        </a>
+
+
+        <span class="admin-badge">
+
+            ADMIN
+
+        </span>
+
+
+    </div>
+
+
+    <nav class="nav-links">
+
+        <a href="#">HELP</a>
+
+        <a href="#">PRIVACY POLICY</a>
+
+        <a href="#">TERMS OF USE</a>
+
+    </nav>
+
+
+</header>
+
+
+
+<!-- =========================
+     MAIN PAGE
+========================= -->
+
+
+<main class="page">
+
+
+
+    <!-- LEFT -->
+
+
+    <section class="visual-section">
+
+
+        <div class="visual-lines"></div>
+
+
+        <div class="visual-content">
+
+
+            <h1>
+
+                VERIFY<br>
+
+                YOUR<br>
+
+                <span>IDENTITY</span>
+
+            </h1>
+
+
+            <p>
+
+                Enter the six-digit security code
+                sent to your administrator email.
+                Verification is required before
+                resetting your password.
+
+            </p>
+
+
+        </div>
+
+
+        <div class="large-icon">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+        </div>
+
+
+        <div class="visual-tag">
+
+            <span></span>
+
+            TWO-STEP VERIFICATION
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- RIGHT -->
+
+
+    <section class="form-section">
+
+
+        <div class="form-wrapper">
+
+
+            <p class="small-label">
+
+                SECURITY VERIFICATION
+
+            </p>
+
+
+            <h2>
+
+                Verify OTP
+
+            </h2>
+
+
+            <p class="description">
+
+                We sent a six-digit verification
+                code to your registered admin email.
+
+            </p>
+
+
+            <p class="email-text">
+
+                <i class="fa-regular fa-envelope"></i>
+
+                {{ email }}
+
+            </p>
+
+
+
+            <!-- OTP FORM -->
+
+
+            <form
+                method="POST"
+                id="otpForm">
+
+
+                {% csrf_token %}
+
+
+
+                <div class="otp-container">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric"
+                        autocomplete="one-time-code">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric">
+
+
+                    <input
+                        type="text"
+                        class="otp-input"
+                        maxlength="1"
+                        inputmode="numeric">
+
+
+                </div>
+
+
+
+                <input
+                    type="hidden"
+                    name="otp"
+                    id="otp">
+
+
+
+                <button
+                    type="submit"
+                    class="verify-btn">
+
+                    VERIFY OTP
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- TIMER -->
+
+
+            <div class="timer-section">
+
+
+                <i class="fa-regular fa-clock"></i>
+
+
+                Code expires in
+
+
+                <span id="countdown">
+
+                    02:00
+
+                </span>
+
+
+            </div>
+
+
+
+            <!-- RESEND -->
+
+
+            <div class="resend-section">
+
+
+                Didn't receive the OTP?
+
+
+                <a
+                    href="{% url 'admin_resend_otp' %}"
+                    id="resendBtn">
+
+                    RESEND OTP
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- BACK -->
+
+
+            <div class="back-login">
+
+
+                <a href="{% url 'admin_login' %}">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Back to Admin Login
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- SECURITY NOTE -->
+
+
+            <div class="security-note">
+
+
+                <i class="fa-solid fa-lock"></i>
+
+
+                <p>
+
+                    <strong>
+                        Keep your OTP private.
+                    </strong>
+
+                    StrideX administrators should never
+                    share verification codes with anyone.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+
+<footer class="footer">
+
+
+    <span>
+
+        © 2026 STRIDEX ADMIN.
+        ALL RIGHTS RESERVED.
+
+    </span>
+
+
+    <div class="footer-links">
+
+        <a href="#">HELP</a>
+
+        <a href="#">PRIVACY POLICY</a>
+
+        <a href="#">TERMS OF USE</a>
+
+    </div>
+
+
+</footer>
+
+
+
+<!-- =========================
+     OTP JAVASCRIPT
+========================= -->
+
+
+<script>
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".otp-input"
+        );
+
+
+    const hiddenInput =
+        document.getElementById(
+            "otp"
+        );
+
+
+    const otpForm =
+        document.getElementById(
+            "otpForm"
+        );
+
+
+
+    /* =========================
+       UPDATE HIDDEN OTP
+    ========================= */
+
+
+    function updateHiddenOTP(){
+
+
+        hiddenInput.value =
+            Array.from(inputs)
+
+            .map(function(input){
+
+                return input.value;
+
+            })
+
+            .join("");
+
+
+    }
+
+
+
+    /* =========================
+       OTP INPUT EVENTS
+    ========================= */
+
+
+    inputs.forEach(
+        function(input,index){
+
+
+            input.addEventListener(
+                "input",
+                function(){
+
+
+                    this.value =
+                        this.value.replace(
+                            /[^0-9]/g,
+                            ""
+                        );
+
+
+                    if(
+                        this.value &&
+                        index < inputs.length - 1
+                    ){
+
+                        inputs[index + 1]
+                            .focus();
+
+                    }
+
+
+                    updateHiddenOTP();
+
+
+                }
+            );
+
+
+
+            /* BACKSPACE */
+
+
+            input.addEventListener(
+                "keydown",
+                function(event){
+
+
+                    if(
+                        event.key === "Backspace" &&
+                        !this.value &&
+                        index > 0
+                    ){
+
+                        inputs[index - 1]
+                            .focus();
+
+                    }
+
+
+                }
+            );
+
+
+        }
+    );
+
+
+
+    /* =========================
+       PASTE FULL OTP
+    ========================= */
+
+
+    inputs[0].addEventListener(
+        "paste",
+        function(event){
+
+
+            event.preventDefault();
+
+
+            const pastedData =
+
+                (
+                    event.clipboardData ||
+                    window.clipboardData
+                )
+
+                .getData("text")
+
+                .replace(/\D/g,"")
+
+                .substring(0,6);
+
+
+
+            pastedData
+                .split("")
+                .forEach(
+                    function(number,index){
+
+
+                        if(inputs[index]){
+
+                            inputs[index].value =
+                                number;
+
+                        }
+
+
+                    }
+                );
+
+
+            updateHiddenOTP();
+
+
+
+            if(pastedData.length === 6){
+
+                inputs[5].focus();
+
+            }
+
+
+        }
+    );
+
+
+
+    /* =========================
+       FORM VALIDATION
+    ========================= */
+
+
+    otpForm.addEventListener(
+        "submit",
+        function(event){
+
+
+            updateHiddenOTP();
+
+
+            if(
+                hiddenInput.value.length !== 6
+            ){
+
+                event.preventDefault();
+
+
+                Swal.fire({
+
+                    toast:true,
+
+                    position:"top-end",
+
+                    icon:"error",
+
+                    title:
+                        "Please enter the complete 6-digit OTP.",
+
+                    showConfirmButton:false,
+
+                    timer:3000,
+
+                    timerProgressBar:true,
+
+                    background:"#111111",
+
+                    color:"#ffffff"
+
+                });
+
+
+            }
+
+
+        }
+    );
+
+
+
+    /* =========================
+       OTP TIMER
+    ========================= */
+
+
+    let seconds = 120;
+
+
+    const timer =
+        document.getElementById(
+            "countdown"
+        );
+
+
+    const resendBtn =
+        document.getElementById(
+            "resendBtn"
+        );
+
+
+
+    function updateTimer(){
+
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+
+        const remainingSeconds =
+            seconds % 60;
+
+
+        timer.textContent =
+
+            String(minutes)
+                .padStart(2,"0")
+
+            +
+
+            ":"
+
+            +
+
+            String(remainingSeconds)
+                .padStart(2,"0");
+
+
+    }
+
+
+
+    updateTimer();
+
+
+
+    const interval =
+        setInterval(
+            function(){
+
+
+                seconds--;
+
+
+                if(seconds >= 0){
+
+                    updateTimer();
+
+                }
+
+
+                if(seconds < 0){
+
+
+                    clearInterval(
+                        interval
+                    );
+
+
+                    timer.textContent =
+                        "EXPIRED";
+
+
+                    resendBtn.classList.add(
+                        "enabled"
+                    );
+
+
+                }
+
+
+            },
+            1000
+        );
+
+
+</script>
+
+
+
+<!-- =========================
+     DJANGO TOAST MESSAGES
+========================= -->
+
+
+{% if messages %}
+
+
+<script>
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function(){
+
+
+            {% for message in messages %}
+
+
+            Swal.fire({
+
+                toast:true,
+
+                position:"top-end",
+
+                icon:
+                "{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %}",
+
+                title:
+                "{{ message|escapejs }}",
+
+                showConfirmButton:false,
+
+                timer:3000,
+
+                timerProgressBar:true,
+
+                background:"#111111",
+
+                color:"#ffffff"
+
+            });
+
+
+            {% endfor %}
+
+
+        }
+    );
+
+
+</script>
+
+
+{% endif %}
+
+
+</body>
+
+</html>

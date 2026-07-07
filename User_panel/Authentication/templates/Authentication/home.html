@@ -1,0 +1,2572 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>StrideX | Step Into Greatness</title>
+
+    <!-- GOOGLE FONT -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+
+    <!-- FONT AWESOME -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <style>
+
+
+        /* ========================================
+           GLOBAL
+        ======================================== */
+
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+
+        body{
+
+            background:#120d0b;
+
+            color:#ffffff;
+
+            overflow-x:hidden;
+        }
+
+
+        a{
+
+            text-decoration:none;
+
+            color:inherit;
+        }
+
+
+        button{
+
+            font-family:'Poppins',sans-serif;
+        }
+
+
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+
+
+        .navbar{
+
+            width:100%;
+
+            height:88px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:space-between;
+
+            padding:0 6%;
+
+            background:#18100d;
+
+            border-bottom:1px solid
+            rgba(255,255,255,.08);
+
+            position:sticky;
+
+            top:0;
+
+            z-index:1000;
+        }
+
+
+        /* LOGO */
+
+
+        .logo{
+
+            font-size:30px;
+
+            font-weight:900;
+
+            letter-spacing:1px;
+        }
+
+
+        .logo span{
+
+            color:#ff7a00;
+        }
+
+
+
+        /* NAV LINKS */
+
+
+        .nav-links{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:38px;
+        }
+
+
+        .nav-links a{
+
+            color:#c8c8c8;
+
+            font-size:13px;
+
+            font-weight:600;
+
+            letter-spacing:.8px;
+
+            transition:.3s;
+        }
+
+
+        .nav-links a:hover,
+
+        .nav-links .active{
+
+            color:#ff7a00;
+        }
+
+
+
+        /* NAV ACTIONS */
+
+
+        .nav-actions{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:14px;
+        }
+
+
+        .search-box{
+
+            width:220px;
+
+            height:43px;
+
+            display:flex;
+
+            align-items:center;
+
+            background:#261a16;
+
+            border:1px solid
+            rgba(255,255,255,.08);
+
+            border-radius:30px;
+
+            padding:0 15px;
+        }
+
+
+        .search-box input{
+
+            width:100%;
+
+            border:none;
+
+            outline:none;
+
+            background:none;
+
+            color:#ffffff;
+
+            font-size:12px;
+        }
+
+
+        .search-box input::placeholder{
+
+            color:#8f8885;
+        }
+
+
+        .search-box i{
+
+            color:#b8b1ae;
+
+            font-size:14px;
+        }
+
+
+        .icon-btn{
+
+            width:43px;
+
+            height:43px;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            border-radius:50%;
+
+            border:1px solid
+            rgba(255,255,255,.1);
+
+            background:#261a16;
+
+            color:#ffffff;
+
+            font-size:16px;
+
+            cursor:pointer;
+
+            transition:.3s;
+
+            position:relative;
+        }
+
+
+        .icon-btn:hover{
+
+            background:#ff7a00;
+
+            border-color:#ff7a00;
+
+            transform:translateY(-2px);
+        }
+
+
+        .cart-count{
+
+            position:absolute;
+
+            top:-5px;
+
+            right:-3px;
+
+            width:17px;
+
+            height:17px;
+
+            background:#ff7a00;
+
+            color:#fff;
+
+            border-radius:50%;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            font-size:9px;
+
+            font-weight:700;
+        }
+
+
+
+        /* ========================================
+           HERO
+        ======================================== */
+
+
+        .hero{
+
+            min-height:650px;
+
+            display:grid;
+
+            grid-template-columns:1.05fr .95fr;
+
+            background:
+            radial-gradient(
+                circle at 80% 50%,
+                rgba(255,122,0,.18),
+                transparent 35%
+            ),
+            linear-gradient(
+                120deg,
+                #17100d,
+                #0e0b0a
+            );
+
+            position:relative;
+
+            overflow:hidden;
+        }
+
+
+        .hero-left{
+
+            padding:90px 5% 80px 10%;
+
+            display:flex;
+
+            flex-direction:column;
+
+            justify-content:center;
+
+            position:relative;
+
+            z-index:2;
+        }
+
+
+        .small-title{
+
+            color:#ff7a00;
+
+            font-size:13px;
+
+            font-weight:700;
+
+            letter-spacing:3px;
+
+            margin-bottom:18px;
+        }
+
+
+        .hero h1{
+
+            font-size:70px;
+
+            font-weight:900;
+
+            line-height:1.03;
+
+            letter-spacing:-2px;
+
+            max-width:650px;
+        }
+
+
+        .hero h1 span{
+
+            color:#ff7a00;
+        }
+
+
+        .hero-description{
+
+            max-width:520px;
+
+            color:#aaa19e;
+
+            font-size:15px;
+
+            line-height:1.9;
+
+            margin-top:25px;
+        }
+
+
+        .hero-buttons{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:15px;
+
+            margin-top:35px;
+        }
+
+
+        .primary-btn{
+
+            height:52px;
+
+            padding:0 28px;
+
+            border:none;
+
+            border-radius:7px;
+
+            background:#ff7a00;
+
+            color:#ffffff;
+
+            font-size:14px;
+
+            font-weight:700;
+
+            cursor:pointer;
+
+            transition:.3s;
+        }
+
+
+        .primary-btn:hover{
+
+            background:#ff8c20;
+
+            transform:translateY(-3px);
+
+            box-shadow:
+            0 15px 35px
+            rgba(255,122,0,.25);
+        }
+
+
+        .secondary-btn{
+
+            height:52px;
+
+            padding:0 28px;
+
+            border-radius:7px;
+
+            border:1px solid
+            rgba(255,255,255,.2);
+
+            background:transparent;
+
+            color:#ffffff;
+
+            font-size:14px;
+
+            font-weight:600;
+
+            cursor:pointer;
+
+            transition:.3s;
+        }
+
+
+        .secondary-btn:hover{
+
+            border-color:#ff7a00;
+
+            color:#ff7a00;
+        }
+
+
+
+        /* HERO RIGHT */
+
+
+        .hero-right{
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            position:relative;
+        }
+
+
+        .orange-circle{
+
+            width:480px;
+
+            height:480px;
+
+            border-radius:50%;
+
+            background:
+            radial-gradient(
+                circle,
+                #ff8a20,
+                #d95200
+            );
+
+            position:absolute;
+
+            opacity:.85;
+
+            filter:blur(1px);
+        }
+
+
+        .shoe-placeholder{
+
+            position:relative;
+
+            z-index:2;
+
+            width:520px;
+
+            height:280px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            transform:rotate(-12deg);
+        }
+
+
+        .shoe-placeholder i{
+
+            font-size:250px;
+
+            color:#181818;
+
+            filter:
+            drop-shadow(
+                0 35px 25px
+                rgba(0,0,0,.5)
+            );
+        }
+
+
+        .floating-card{
+
+            position:absolute;
+
+            z-index:3;
+
+            background:
+            rgba(31,22,18,.88);
+
+            backdrop-filter:blur(10px);
+
+            border:1px solid
+            rgba(255,255,255,.1);
+
+            border-radius:12px;
+
+            padding:14px 18px;
+
+            box-shadow:
+            0 20px 40px
+            rgba(0,0,0,.3);
+        }
+
+
+        .floating-card strong{
+
+            display:block;
+
+            color:#ffffff;
+
+            font-size:14px;
+        }
+
+
+        .floating-card span{
+
+            color:#ff7a00;
+
+            font-size:12px;
+        }
+
+
+        .card-one{
+
+            left:8%;
+
+            bottom:22%;
+        }
+
+
+        .card-two{
+
+            right:8%;
+
+            top:24%;
+        }
+
+
+
+        /* ========================================
+           SECTION COMMON
+        ======================================== */
+
+
+        .section{
+
+            padding:85px 7%;
+        }
+
+
+        .section-header{
+
+            display:flex;
+
+            align-items:flex-end;
+
+            justify-content:space-between;
+
+            margin-bottom:40px;
+        }
+
+
+        .section-label{
+
+            color:#ff7a00;
+
+            font-size:12px;
+
+            font-weight:700;
+
+            letter-spacing:2px;
+
+            margin-bottom:8px;
+        }
+
+
+        .section-title{
+
+            font-size:36px;
+
+            font-weight:800;
+        }
+
+
+        .view-all{
+
+            color:#ff7a00;
+
+            font-size:13px;
+
+            font-weight:600;
+        }
+
+
+
+        /* ========================================
+           CATEGORIES
+        ======================================== */
+
+
+        .categories-section{
+
+            background:#160f0c;
+        }
+
+
+        .category-grid{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(4,1fr);
+
+            gap:20px;
+        }
+
+
+        .category-card{
+
+            height:320px;
+
+            border-radius:15px;
+
+            position:relative;
+
+            overflow:hidden;
+
+            background:
+            linear-gradient(
+                145deg,
+                #35231c,
+                #19100d
+            );
+
+            border:1px solid
+            rgba(255,255,255,.07);
+
+            cursor:pointer;
+
+            transition:.4s;
+        }
+
+
+        .category-card:hover{
+
+            transform:
+            translateY(-8px);
+
+            border-color:
+            rgba(255,122,0,.6);
+        }
+
+
+        .category-icon{
+
+            position:absolute;
+
+            inset:0;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            font-size:100px;
+
+            color:
+            rgba(255,122,0,.3);
+        }
+
+
+        .category-overlay{
+
+            position:absolute;
+
+            inset:0;
+
+            background:
+            linear-gradient(
+                transparent 35%,
+                rgba(0,0,0,.9)
+            );
+        }
+
+
+        .category-info{
+
+            position:absolute;
+
+            bottom:25px;
+
+            left:25px;
+
+            z-index:2;
+        }
+
+
+        .category-info h3{
+
+            font-size:22px;
+
+            margin-bottom:5px;
+        }
+
+
+        .category-info p{
+
+            color:#aaa;
+
+            font-size:12px;
+        }
+
+
+
+        /* ========================================
+           TRENDING PRODUCTS
+        ======================================== */
+
+
+        .products-section{
+
+            background:#100c0a;
+        }
+
+
+        .product-grid{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(4,1fr);
+
+            gap:22px;
+        }
+
+
+        .product-card{
+
+            background:#1b1310;
+
+            border-radius:14px;
+
+            overflow:hidden;
+
+            border:1px solid
+            rgba(255,255,255,.07);
+
+            transition:.4s;
+        }
+
+
+        .product-card:hover{
+
+            transform:
+            translateY(-7px);
+
+            border-color:
+            rgba(255,122,0,.4);
+        }
+
+
+        .product-image{
+
+            height:240px;
+
+            background:
+            linear-gradient(
+                145deg,
+                #33231d,
+                #211612
+            );
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            position:relative;
+        }
+
+
+        .product-image i{
+
+            font-size:110px;
+
+            color:#ff7a00;
+
+            opacity:.55;
+
+            transform:rotate(-15deg);
+        }
+
+
+        .heart{
+
+            position:absolute;
+
+            top:15px;
+
+            right:15px;
+
+            width:35px;
+
+            height:35px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            border-radius:50%;
+
+            background:
+            rgba(0,0,0,.35);
+
+            color:#ffffff;
+        }
+
+
+        .product-details{
+
+            padding:20px;
+        }
+
+
+        .product-category{
+
+            color:#ff7a00;
+
+            font-size:10px;
+
+            font-weight:700;
+
+            letter-spacing:1px;
+        }
+
+
+        .product-details h3{
+
+            font-size:16px;
+
+            margin-top:7px;
+
+            margin-bottom:8px;
+        }
+
+
+        .rating{
+
+            color:#ff9b3d;
+
+            font-size:11px;
+
+            margin-bottom:12px;
+        }
+
+
+        .price-row{
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+        }
+
+
+        .price{
+
+            font-size:18px;
+
+            font-weight:700;
+        }
+
+
+        .add-button{
+
+            width:36px;
+
+            height:36px;
+
+            border:none;
+
+            border-radius:7px;
+
+            background:#ff7a00;
+
+            color:#ffffff;
+
+            cursor:pointer;
+        }
+
+
+
+        /* ========================================
+           PROMO
+        ======================================== */
+
+
+        .promo{
+
+            margin:20px 7% 90px;
+
+            min-height:300px;
+
+            border-radius:20px;
+
+            padding:55px;
+
+            display:flex;
+
+            align-items:center;
+
+            background:
+            radial-gradient(
+                circle at 80% 50%,
+                rgba(255,122,0,.3),
+                transparent 30%
+            ),
+            linear-gradient(
+                120deg,
+                #2b1b15,
+                #120d0b
+            );
+
+            border:1px solid
+            rgba(255,122,0,.2);
+        }
+
+
+        .promo-content{
+
+            max-width:650px;
+        }
+
+
+        .promo-content h2{
+
+            font-size:42px;
+
+            line-height:1.2;
+
+            margin-bottom:15px;
+        }
+
+
+        .promo-content h2 span{
+
+            color:#ff7a00;
+        }
+
+
+        .promo-content p{
+
+            color:#b6aeaa;
+
+            line-height:1.8;
+
+            margin-bottom:25px;
+        }
+
+
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+
+
+        footer{
+
+            background:#0b0908;
+
+            padding:65px 7% 25px;
+
+            border-top:
+            1px solid
+            rgba(255,255,255,.06);
+        }
+
+
+        .footer-grid{
+
+            display:grid;
+
+            grid-template-columns:
+            1.5fr 1fr 1fr 1.5fr;
+
+            gap:50px;
+
+            margin-bottom:50px;
+        }
+
+
+        .footer-logo{
+
+            font-size:28px;
+
+            font-weight:900;
+
+            margin-bottom:18px;
+        }
+
+
+        .footer-logo span{
+
+            color:#ff7a00;
+        }
+
+
+        .footer-description{
+
+            color:#8e8783;
+
+            font-size:13px;
+
+            line-height:1.8;
+
+            max-width:300px;
+        }
+
+
+        .social-icons{
+
+            display:flex;
+
+            gap:10px;
+
+            margin-top:22px;
+        }
+
+
+        .social-icons button{
+
+            width:37px;
+
+            height:37px;
+
+            border-radius:50%;
+
+            border:1px solid
+            rgba(255,255,255,.1);
+
+            background:#1b1310;
+
+            color:#ffffff;
+
+            cursor:pointer;
+
+            transition:.3s;
+        }
+
+
+        .social-icons button:hover{
+
+            background:#ff7a00;
+
+            border-color:#ff7a00;
+        }
+
+
+        .footer-column h4{
+
+            font-size:15px;
+
+            margin-bottom:20px;
+        }
+
+
+        .footer-column a{
+
+            display:block;
+
+            color:#8e8783;
+
+            font-size:13px;
+
+            margin-bottom:12px;
+
+            transition:.3s;
+        }
+
+
+        .footer-column a:hover{
+
+            color:#ff7a00;
+        }
+
+
+        .newsletter p{
+
+            color:#8e8783;
+
+            font-size:13px;
+
+            line-height:1.7;
+
+            margin-bottom:18px;
+        }
+
+
+        .newsletter-form{
+
+            display:flex;
+
+            height:45px;
+        }
+
+
+        .newsletter-form input{
+
+            flex:1;
+
+            background:#1b1310;
+
+            border:
+            1px solid
+            rgba(255,255,255,.1);
+
+            border-right:none;
+
+            border-radius:
+            7px 0 0 7px;
+
+            padding:0 15px;
+
+            color:#ffffff;
+
+            outline:none;
+
+            min-width:0;
+        }
+
+
+        .newsletter-form button{
+
+            width:50px;
+
+            border:none;
+
+            border-radius:
+            0 7px 7px 0;
+
+            background:#ff7a00;
+
+            color:#ffffff;
+
+            cursor:pointer;
+        }
+
+
+        .footer-bottom{
+
+            border-top:
+            1px solid
+            rgba(255,255,255,.07);
+
+            padding-top:25px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            color:#6f6966;
+
+            font-size:12px;
+        }
+
+
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+
+
+        @media(max-width:1100px){
+
+
+            .search-box{
+
+                display:none;
+            }
+
+
+            .hero h1{
+
+                font-size:56px;
+            }
+
+
+            .orange-circle{
+
+                width:380px;
+
+                height:380px;
+            }
+
+
+            .shoe-placeholder{
+
+                width:400px;
+            }
+
+
+            .category-grid,
+
+            .product-grid{
+
+                grid-template-columns:
+                repeat(2,1fr);
+            }
+
+
+            .footer-grid{
+
+                grid-template-columns:
+                repeat(2,1fr);
+            }
+
+        }
+
+
+
+        @media(max-width:800px){
+
+
+            .navbar{
+
+                padding:0 4%;
+            }
+
+
+            .nav-links{
+
+                display:none;
+            }
+
+
+            .hero{
+
+                grid-template-columns:1fr;
+
+                text-align:center;
+            }
+
+
+            .hero-left{
+
+                padding:
+                70px 7% 40px;
+
+                align-items:center;
+            }
+
+
+            .hero h1{
+
+                font-size:48px;
+            }
+
+
+            .hero-right{
+
+                min-height:450px;
+            }
+
+
+            .hero-description{
+
+                max-width:600px;
+            }
+
+
+            .promo{
+
+                padding:40px 30px;
+            }
+
+
+            .promo-content h2{
+
+                font-size:34px;
+            }
+
+        }
+
+
+
+        @media(max-width:600px){
+
+
+            .navbar{
+
+                height:75px;
+            }
+
+
+            .logo{
+
+                font-size:24px;
+            }
+
+
+            .nav-actions{
+
+                gap:7px;
+            }
+
+
+            .icon-btn{
+
+                width:38px;
+
+                height:38px;
+            }
+
+
+            .hero h1{
+
+                font-size:40px;
+            }
+
+
+            .hero-buttons{
+
+                flex-direction:column;
+
+                width:100%;
+            }
+
+
+            .primary-btn,
+
+            .secondary-btn{
+
+                width:100%;
+            }
+
+
+            .orange-circle{
+
+                width:290px;
+
+                height:290px;
+            }
+
+
+            .shoe-placeholder i{
+
+                font-size:170px;
+            }
+
+
+            .category-grid,
+
+            .product-grid{
+
+                grid-template-columns:1fr;
+            }
+
+
+            .section{
+
+                padding:65px 5%;
+            }
+
+
+            .section-title{
+
+                font-size:28px;
+            }
+
+
+            .section-header{
+
+                align-items:flex-start;
+
+                flex-direction:column;
+
+                gap:12px;
+            }
+
+
+            .footer-grid{
+
+                grid-template-columns:1fr;
+            }
+
+
+            .footer-bottom{
+
+                flex-direction:column;
+
+                gap:10px;
+
+                text-align:center;
+            }
+
+
+            .promo{
+
+                margin:
+                10px 5% 70px;
+
+                padding:35px 25px;
+            }
+
+
+            .promo-content h2{
+
+                font-size:30px;
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     NAVBAR
+======================================== -->
+
+
+<header class="navbar">
+
+
+    <div class="logo">
+
+        STRIDE<span>X</span>
+
+    </div>
+
+
+    <nav class="nav-links">
+
+        <a href="#"
+           class="active">
+
+            HOME
+
+        </a>
+
+
+        <a href="#">
+
+            CATEGORIES
+
+        </a>
+
+
+        <a href="#">
+
+            WALLET
+
+        </a>
+
+
+        <a href="#">
+
+            ABOUT
+
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+
+        <!-- STATIC SEARCH -->
+
+
+        <div class="search-box">
+
+            <input type="text"
+                   placeholder="Search sneakers...">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </div>
+
+
+
+        <!-- STATIC WISHLIST -->
+
+
+        <button type="button"
+                class="icon-btn">
+
+            <i class="fa-regular fa-heart"></i>
+
+        </button>
+
+
+
+        <!-- STATIC CART -->
+
+
+        <button type="button"
+                class="icon-btn">
+
+            <i class="fa-solid fa-bag-shopping"></i>
+
+            <span class="cart-count">
+
+                0
+
+            </span>
+
+        </button>
+
+
+
+        <!-- WORKING PROFILE ICON -->
+
+
+        <a href="{% url 'profile' %}"
+           class="icon-btn"
+           title="My Profile">
+
+            <i class="fa-regular fa-user"></i>
+
+        </a>
+
+
+    </div>
+
+
+</header>
+
+
+
+<!-- ========================================
+     HERO
+======================================== -->
+
+
+<section class="hero">
+
+
+    <div class="hero-left">
+
+
+        <p class="small-title">
+
+            NEW COLLECTION 2026
+
+        </p>
+
+
+        <h1>
+
+            STEP INTO
+
+            <span>
+                GREATNESS
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Discover sneakers designed for movement,
+            performance and everyday style. Find your
+            perfect pair and take every step with confidence.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+
+            <button type="button"
+                    class="primary-btn">
+
+                SHOP NOW
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </button>
+
+
+            <button type="button"
+                    class="secondary-btn">
+
+                LEARN MORE
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="hero-right">
+
+
+        <div class="orange-circle"></div>
+
+
+        <!-- PLACEHOLDER UNTIL YOU ADD SHOE IMAGE -->
+
+
+        <div class="shoe-placeholder">
+
+            <i class="fa-solid fa-shoe-prints"></i>
+
+        </div>
+
+
+        <div class="floating-card card-one">
+
+            <strong>
+
+                Premium Comfort
+
+            </strong>
+
+            <span>
+
+                Built for every step
+
+            </span>
+
+        </div>
+
+
+        <div class="floating-card card-two">
+
+            <strong>
+
+                New Drop
+
+            </strong>
+
+            <span>
+
+                Explore Collection
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================================
+     TRENDING CATEGORIES
+======================================== -->
+
+
+<section class="section categories-section">
+
+
+    <div class="section-header">
+
+
+        <div>
+
+            <p class="section-label">
+
+                EXPLORE COLLECTION
+
+            </p>
+
+
+            <h2 class="section-title">
+
+                Trending Categories
+
+            </h2>
+
+        </div>
+
+
+        <a href="#"
+           class="view-all">
+
+            VIEW ALL
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+    </div>
+
+
+
+    <div class="category-grid">
+
+
+        <div class="category-card">
+
+            <div class="category-icon">
+
+                <i class="fa-solid fa-person-running"></i>
+
+            </div>
+
+
+            <div class="category-overlay"></div>
+
+
+            <div class="category-info">
+
+                <h3>
+
+                    Running
+
+                </h3>
+
+                <p>
+
+                    Performance for every mile
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="category-card">
+
+            <div class="category-icon">
+
+                <i class="fa-solid fa-basketball"></i>
+
+            </div>
+
+
+            <div class="category-overlay"></div>
+
+
+            <div class="category-info">
+
+                <h3>
+
+                    Basketball
+
+                </h3>
+
+                <p>
+
+                    Own every move
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="category-card">
+
+            <div class="category-icon">
+
+                <i class="fa-solid fa-shoe-prints"></i>
+
+            </div>
+
+
+            <div class="category-overlay"></div>
+
+
+            <div class="category-info">
+
+                <h3>
+
+                    Lifestyle
+
+                </h3>
+
+                <p>
+
+                    Everyday street style
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="category-card">
+
+            <div class="category-icon">
+
+                <i class="fa-solid fa-dumbbell"></i>
+
+            </div>
+
+
+            <div class="category-overlay"></div>
+
+
+            <div class="category-info">
+
+                <h3>
+
+                    Training
+
+                </h3>
+
+                <p>
+
+                    Push beyond your limits
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================================
+     TRENDING PRODUCTS
+======================================== -->
+
+
+<section class="section products-section">
+
+
+    <div class="section-header">
+
+
+        <div>
+
+            <p class="section-label">
+
+                MOST WANTED
+
+            </p>
+
+
+            <h2 class="section-title">
+
+                Trending Products
+
+            </h2>
+
+        </div>
+
+
+        <a href="#"
+           class="view-all">
+
+            VIEW ALL
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+    </div>
+
+
+
+    <div class="product-grid">
+
+
+        <!-- PRODUCT 1 -->
+
+
+        <div class="product-card">
+
+
+            <div class="product-image">
+
+                <i class="fa-solid fa-shoe-prints"></i>
+
+
+                <span class="heart">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </span>
+
+            </div>
+
+
+            <div class="product-details">
+
+                <span class="product-category">
+
+                    RUNNING
+
+                </span>
+
+
+                <h3>
+
+                    StrideX Air Runner
+
+                </h3>
+
+
+                <div class="rating">
+
+                    ★★★★★
+
+                </div>
+
+
+                <div class="price-row">
+
+                    <span class="price">
+
+                        ₹7,999
+
+                    </span>
+
+
+                    <button type="button"
+                            class="add-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PRODUCT 2 -->
+
+
+        <div class="product-card">
+
+
+            <div class="product-image">
+
+                <i class="fa-solid fa-shoe-prints"></i>
+
+
+                <span class="heart">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </span>
+
+            </div>
+
+
+            <div class="product-details">
+
+                <span class="product-category">
+
+                    LIFESTYLE
+
+                </span>
+
+
+                <h3>
+
+                    Urban Street Low
+
+                </h3>
+
+
+                <div class="rating">
+
+                    ★★★★★
+
+                </div>
+
+
+                <div class="price-row">
+
+                    <span class="price">
+
+                        ₹6,499
+
+                    </span>
+
+
+                    <button type="button"
+                            class="add-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PRODUCT 3 -->
+
+
+        <div class="product-card">
+
+
+            <div class="product-image">
+
+                <i class="fa-solid fa-shoe-prints"></i>
+
+
+                <span class="heart">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </span>
+
+            </div>
+
+
+            <div class="product-details">
+
+                <span class="product-category">
+
+                    BASKETBALL
+
+                </span>
+
+
+                <h3>
+
+                    Court Elevate Pro
+
+                </h3>
+
+
+                <div class="rating">
+
+                    ★★★★★
+
+                </div>
+
+
+                <div class="price-row">
+
+                    <span class="price">
+
+                        ₹9,999
+
+                    </span>
+
+
+                    <button type="button"
+                            class="add-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PRODUCT 4 -->
+
+
+        <div class="product-card">
+
+
+            <div class="product-image">
+
+                <i class="fa-solid fa-shoe-prints"></i>
+
+
+                <span class="heart">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </span>
+
+            </div>
+
+
+            <div class="product-details">
+
+                <span class="product-category">
+
+                    TRAINING
+
+                </span>
+
+
+                <h3>
+
+                    Power Flex Trainer
+
+                </h3>
+
+
+                <div class="rating">
+
+                    ★★★★★
+
+                </div>
+
+
+                <div class="price-row">
+
+                    <span class="price">
+
+                        ₹5,999
+
+                    </span>
+
+
+                    <button type="button"
+                            class="add-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================================
+     PROMO
+======================================== -->
+
+
+<section class="promo">
+
+
+    <div class="promo-content">
+
+
+        <p class="section-label">
+
+            STRIDEX EXCLUSIVE
+
+        </p>
+
+
+        <h2>
+
+            Find Your
+
+            <span>
+
+                Perfect Stride
+
+            </span>
+
+        </h2>
+
+
+        <p>
+
+            From daily runs to street-ready style,
+            discover footwear built for every journey.
+
+        </p>
+
+
+        <button type="button"
+                class="primary-btn">
+
+            EXPLORE COLLECTION
+
+        </button>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================================
+     FOOTER
+======================================== -->
+
+
+<footer>
+
+
+    <div class="footer-grid">
+
+
+        <!-- BRAND -->
+
+
+        <div>
+
+
+            <div class="footer-logo">
+
+                STRIDE<span>X</span>
+
+            </div>
+
+
+            <p class="footer-description">
+
+                Premium sneakers for people who never
+                stop moving. Performance, comfort and
+                style in every step.
+
+            </p>
+
+
+            <div class="social-icons">
+
+
+                <button type="button">
+
+                    <i class="fa-brands fa-instagram"></i>
+
+                </button>
+
+
+                <button type="button">
+
+                    <i class="fa-brands fa-facebook-f"></i>
+
+                </button>
+
+
+                <button type="button">
+
+                    <i class="fa-brands fa-x-twitter"></i>
+
+                </button>
+
+
+                <button type="button">
+
+                    <i class="fa-brands fa-youtube"></i>
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- SHOP -->
+
+
+        <div class="footer-column">
+
+
+            <h4>
+
+                Shop
+
+            </h4>
+
+
+            <a href="#">
+
+                Running
+
+            </a>
+
+
+            <a href="#">
+
+                Basketball
+
+            </a>
+
+
+            <a href="#">
+
+                Lifestyle
+
+            </a>
+
+
+            <a href="#">
+
+                Training
+
+            </a>
+
+
+            <a href="#">
+
+                New Arrivals
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- SUPPORT -->
+
+
+        <div class="footer-column">
+
+
+            <h4>
+
+                Support
+
+            </h4>
+
+
+            <a href="#">
+
+                Contact Us
+
+            </a>
+
+
+            <a href="#">
+
+                Shipping
+
+            </a>
+
+
+            <a href="#">
+
+                Returns
+
+            </a>
+
+
+            <a href="#">
+
+                Size Guide
+
+            </a>
+
+
+            <a href="#">
+
+                FAQ
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- NEWSLETTER -->
+
+
+        <div class="newsletter">
+
+
+            <h4>
+
+                Join the StrideX Community
+
+            </h4>
+
+
+            <p>
+
+                Get updates on new releases,
+                exclusive offers and sneaker stories.
+
+            </p>
+
+
+            <div class="newsletter-form">
+
+
+                <input type="email"
+                       placeholder="Your email address">
+
+
+                <button type="button">
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+
+        <p>
+
+            © 2026 StrideX. All rights reserved.
+
+        </p>
+
+
+        <p>
+
+            Privacy Policy &nbsp; | &nbsp;
+            Terms & Conditions
+
+        </p>
+
+
+    </div>
+
+
+</footer>
+
+{% if messages %}
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        {% for message in messages %}
+
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "{{ message.tags }}",
+            title: "{{ message|escapejs }}",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: "#21130e",
+            color: "#ffffff"
+        });
+
+        {% endfor %}
+    }
+);
+</script>
+
+{% endif %}
+
+</body>
+</html>
+
+</body>
+
+</html>

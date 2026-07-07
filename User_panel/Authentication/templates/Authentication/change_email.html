@@ -1,0 +1,787 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>StrideX | Change Email</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+
+body{
+    background:#0f1117;
+    color:#fff;
+}
+
+
+.container{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+}
+
+
+/* =========================
+   LEFT SIDE
+========================= */
+
+.left{
+
+    width:50%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #1a1d29,
+        #0d0f15
+    );
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+}
+
+
+.overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    rgba(0,0,0,.25);
+}
+
+
+.left-content{
+
+    position:absolute;
+
+    top:70px;
+
+    left:60px;
+
+    z-index:10;
+}
+
+
+.left-content h1{
+
+    font-size:60px;
+
+    font-weight:800;
+
+    line-height:1.1;
+
+    letter-spacing:1px;
+}
+
+
+.left-content p{
+
+    margin-top:20px;
+
+    width:370px;
+
+    line-height:1.8;
+
+    color:#ccc;
+
+    font-size:16px;
+}
+
+
+.email-icon{
+
+    font-size:200px;
+
+    color:#ff8a1d;
+
+    opacity:.13;
+}
+
+
+/* =========================
+   RIGHT SIDE
+========================= */
+
+.right{
+
+    width:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px;
+
+    background:#11151d;
+}
+
+
+.card{
+
+    width:470px;
+
+    background:
+    rgba(255,255,255,.05);
+
+    backdrop-filter:
+    blur(18px);
+
+    border-radius:24px;
+
+    padding:40px;
+
+    border:
+    1px solid
+    rgba(255,255,255,.08);
+
+    box-shadow:
+    0 25px 60px
+    rgba(0,0,0,.35);
+}
+
+
+.card h2{
+
+    font-size:34px;
+
+    margin-bottom:10px;
+}
+
+
+.subtitle{
+
+    margin-bottom:30px;
+
+    color:#bbb;
+
+    line-height:1.7;
+}
+
+
+/* =========================
+   CURRENT EMAIL
+========================= */
+
+.current-email{
+
+    background:#181d27;
+
+    border:
+    1px solid
+    rgba(255,255,255,.08);
+
+    padding:16px;
+
+    border-radius:12px;
+
+    margin-bottom:25px;
+}
+
+
+.current-email span{
+
+    display:block;
+
+    color:#888;
+
+    font-size:13px;
+
+    margin-bottom:5px;
+}
+
+
+.current-email strong{
+    color:#ffffff;
+    font-size:15px;
+    word-break:break-all;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.input-box{
+
+    margin-bottom:25px;
+}
+
+
+.input-box label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:14px;
+}
+
+
+.input-field{
+
+    display:flex;
+
+    align-items:center;
+
+    background:#1d222d;
+
+    height:58px;
+
+    border-radius:12px;
+
+    padding:0 18px;
+
+    border:
+    1px solid
+    transparent;
+
+    transition:.3s;
+}
+
+
+.input-field:focus-within{
+
+    border-color:#ff8a1d;
+
+    box-shadow:
+    0 0 12px
+    rgba(255,138,29,.2);
+}
+
+
+.input-field i{
+
+    margin-right:12px;
+
+    color:#888;
+}
+
+
+.input-field input{
+
+    width:100%;
+
+    background:none;
+
+    border:none;
+
+    outline:none;
+
+    color:white;
+
+    font-size:15px;
+}
+
+
+.input-field input::placeholder{
+
+    color:#777;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.send-btn{
+
+    width:100%;
+
+    height:56px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ff8a1d;
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+
+.send-btn:hover{
+
+    background:#ff7300;
+
+    transform:
+    translateY(-2px);
+
+    box-shadow:
+    0 15px 30px
+    rgba(255,138,29,.3);
+}
+
+
+.send-btn i{
+
+    margin-left:8px;
+}
+
+
+/* =========================
+   INFO
+========================= */
+
+.info-box{
+
+    margin-top:25px;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    background:
+    rgba(255,138,29,.08);
+
+    border:
+    1px solid
+    rgba(255,138,29,.2);
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+    color:#bbb;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+
+.info-box i{
+
+    color:#ff8a1d;
+
+    margin-top:3px;
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+.back{
+
+    margin-top:25px;
+
+    text-align:center;
+}
+
+
+.back a{
+
+    color:#ff8a1d;
+
+    text-decoration:none;
+
+    font-weight:500;
+}
+
+
+.back a:hover{
+
+    text-decoration:underline;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:992px){
+
+    .container{
+        flex-direction:column;
+    }
+
+
+    .left,
+    .right{
+        width:100%;
+    }
+
+
+    .left{
+        height:350px;
+    }
+
+
+    .left-content{
+
+        top:40px;
+
+        left:35px;
+    }
+
+
+    .left-content h1{
+
+        font-size:44px;
+    }
+
+
+    .left-content p{
+
+        width:300px;
+
+        font-size:15px;
+    }
+
+
+    .email-icon{
+
+        font-size:140px;
+    }
+
+
+    .card{
+
+        width:100%;
+
+        max-width:500px;
+    }
+}
+
+
+@media(max-width:576px){
+
+    .right{
+
+        padding:20px;
+    }
+
+
+    .card{
+
+        padding:25px;
+    }
+
+
+    .left-content h1{
+
+        font-size:36px;
+    }
+
+
+    .left-content p{
+
+        width:260px;
+
+        font-size:14px;
+    }
+
+
+    .card h2{
+
+        font-size:28px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- LEFT SIDE -->
+
+    <div class="left">
+
+
+        <div class="overlay"></div>
+
+
+        <div class="left-content">
+
+            <h1>
+
+                CHANGE<br>
+
+                YOUR<br>
+
+                EMAIL
+
+            </h1>
+
+
+            <p>
+
+                Update your email address securely.
+
+                We'll send a 6-digit OTP to your
+                new email address for verification.
+
+            </p>
+
+        </div>
+
+
+        <div class="email-icon">
+
+            <i class="fa-solid fa-envelope-circle-check"></i>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- RIGHT SIDE -->
+
+    <div class="right">
+
+
+        <div class="card">
+
+
+            <h2>Change Email</h2>
+
+
+            <p class="subtitle">
+
+                Enter your new email address.
+                We'll verify it before updating your account.
+
+            </p>
+
+
+
+            <!-- CURRENT EMAIL -->
+
+            <div class="current-email">
+
+                <span>
+                    Current Email
+                </span>
+
+                <strong>
+
+                    {{ user.email }}
+
+                </strong>
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                action="{% url 'change_email' %}">
+
+
+                {% csrf_token %}
+
+
+
+                <div class="input-box">
+
+
+                    <label>
+                        New Email Address
+                    </label>
+
+
+                    <div class="input-field">
+
+
+                        <i class="fa-solid fa-envelope"></i>
+
+
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Enter your new email"
+                            autocomplete="email"
+                            required
+                        >
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="send-btn">
+
+
+                    Send OTP
+
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+
+                </button>
+
+
+            </form>
+
+
+
+            <div class="info-box">
+
+
+                <i class="fa-solid fa-circle-info"></i>
+
+
+                <span>
+
+                    A 6-digit verification code will be
+                    sent to your new email address.
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="back">
+
+
+                <a href="{% url 'profile' %}">
+
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+
+                    Back to Profile
+
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- DJANGO MESSAGES -->
+
+
+{% if messages %}
+
+
+<script>
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+
+        {% for message in messages %}
+
+
+        Swal.fire({
+
+            toast:true,
+
+            position:"top-end",
+
+            icon:"{{ message.tags }}",
+
+            title:"{{ message|escapejs }}",
+
+            showConfirmButton:false,
+
+            timer:3000,
+
+            timerProgressBar:true,
+
+            background:"#1d222d",
+
+            color:"#ffffff"
+
+        });
+
+
+        {% endfor %}
+
+
+    }
+);
+
+
+</script>
+
+
+{% endif %}
+<script>
+    window.history.forward();
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StrideX | My Addresses</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#050403;
+    color:#f5ebe5;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+
+/* NAVBAR */
+
+.navbar{
+    height:78px;
+    padding:0 5%;
+    display:flex;
+    align-items:center;
+    background:#100906;
+    border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-1px;
+    margin-right:60px;
+}
+
+.logo span{
+    color:#ff681d;
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:38px;
+}
+
+.nav-links a{
+    font-size:12px;
+    font-weight:600;
+    color:#e8d9d2;
+    transition:.2s;
+}
+
+.nav-links a:hover{
+    color:#ff681d;
+}
+
+.nav-right{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.search-box{
+    width:250px;
+    height:39px;
+    padding:0 15px;
+    display:flex;
+    align-items:center;
+    background:#251713;
+    border-radius:22px;
+    color:#8c7770;
+}
+
+.search-box input{
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:#fff;
+    font-size:12px;
+}
+
+.search-box i{
+    font-size:14px;
+}
+
+.nav-icon{
+    color:#e9d8cf;
+    font-size:18px;
+}
+
+.profile-nav{
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #765348;
+    border-radius:50%;
+}
+
+
+/* PAGE */
+
+.page{
+    width:100%;
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:35px;
+    padding:35px 55px 70px 20px;
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+    width:100%;
+}
+
+.sidebar-menu{
+    list-style:none;
+}
+
+.sidebar-menu li{
+    margin-bottom:7px;
+}
+
+.sidebar-menu a{
+    height:53px;
+    padding:0 18px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    border-radius:8px;
+    color:#d9c9c1;
+    font-size:13px;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu .active{
+    background:#28150f;
+    color:#fff;
+}
+
+.sidebar-menu i{
+    width:18px;
+    color:#dc8c63;
+    font-size:16px;
+}
+
+.sidebar-line{
+    height:1px;
+    background:#39251e;
+    margin:38px 15px 25px;
+}
+
+.signout{
+    color:#efb09b !important;
+}
+
+
+/* CONTENT */
+
+.content{
+    width:100%;
+    max-width:1100px;
+}
+
+.content-header{
+    min-height:65px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:20px;
+}
+
+.content-header h1{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:.3px;
+}
+
+.add-btn{
+    min-width:210px;
+    height:52px;
+    padding:0 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:#c95c18;
+    color:#fff;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    box-shadow:0 7px 22px rgba(201,92,24,.18);
+    transition:.2s;
+}
+
+.add-btn:hover{
+    background:#e36a1c;
+}
+
+
+/* ADDRESS LIST */
+
+.address-list{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+.address-card{
+    width:100%;
+    min-height:255px;
+    padding:35px 38px;
+
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 320px;
+    gap:35px;
+    align-items:center;
+
+    background:
+        radial-gradient(
+            circle at 85% 50%,
+            rgba(89,38,15,.14),
+            transparent 35%
+        ),
+        #160d09;
+
+    border:1px solid #2d1b14;
+    border-radius:21px;
+    transition:.25s;
+}
+
+.static-map{
+    width:100%;
+    height:165px;
+    position:relative;
+    overflow:hidden;
+    border-radius:10px;
+}
+
+.static-map img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:
+        grayscale(80%)
+        sepia(25%)
+        brightness(55%);
+}
+
+.map-pin{
+    position:absolute;
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%, -50%);
+
+    width:38px;
+    height:38px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#ff681d;
+    color:white;
+
+    border-radius:50%;
+
+    box-shadow:
+        0 0 0 8px rgba(255,104,29,.15),
+        0 5px 15px rgba(0,0,0,.5);
+
+    font-size:17px;
+}
+
+.map-pin{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:2;
+    width:35px;
+    height:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ff681d;
+    color:#fff;
+    border-radius:50%;
+    box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+
+
+/* ACTIONS */
+
+.actions{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    margin-top:auto;
+    padding-top:25px;
+}
+
+.action-btn{
+    background:none;
+    border:none;
+    color:#e9c2b0;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.5px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.action-btn:hover{
+    color:#ff681d;
+}
+
+.delete-btn:hover{
+    color:#ff5252;
+}
+
+.default-btn{
+    color:#d7c4ba;
+}
+
+
+/* INFO BOX */
+
+.info-box{
+    margin-top:45px;
+    min-height:90px;
+    padding:22px 28px;
+    display:flex;
+    align-items:flex-start;
+    gap:17px;
+    background:#21130e;
+    border:1px solid #39231a;
+    border-radius:14px;
+    color:#bda9a0;
+    font-size:12px;
+    line-height:1.8;
+}
+
+.info-box i{
+    color:#ef8c5c;
+    font-size:17px;
+    margin-top:3px;
+}
+
+
+/* EMPTY */
+
+.empty{
+    min-height:450px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:#160d09;
+    border:1px solid #2d1b14;
+    border-radius:20px;
+}
+
+.empty i{
+    font-size:65px;
+    color:#7d4933;
+    margin-bottom:20px;
+}
+
+.empty h2{
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.empty p{
+    color:#9f8a81;
+    font-size:13px;
+    margin-bottom:25px;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .search-box{
+        display:none;
+    }
+
+    .address-card{
+        grid-template-columns:1fr;
+    }
+
+    .map-box{
+        height:180px;
+    }
+}
+
+@media(max-width:800px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .page{
+        grid-template-columns:1fr;
+        padding:25px 20px 50px;
+    }
+
+    .sidebar{
+        display:none;
+    }
+
+    .content{
+        max-width:none;
+    }
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:0 18px;
+    }
+
+    .logo{
+        margin-right:0;
+    }
+
+    .content-header{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .add-btn{
+        width:100%;
+    }
+
+    .address-card{
+        padding:25px 20px;
+    }
+
+    .actions{
+        gap:18px;
+        flex-wrap:wrap;
+    }
+}
+
+
+/* LOGOUT MODAL */
+
+.logout-overlay{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+}
+
+.logout-overlay.show{
+    display:flex;
+}
+
+.logout-modal{
+    width:100%;
+    max-width:470px;
+    padding:35px 40px 30px;
+    text-align:center;
+    background:
+        radial-gradient(circle at 80% 70%, rgba(110,45,15,.22), transparent 40%),
+        #1b0e09;
+    border:1px solid #382016;
+    border-radius:28px;
+    box-shadow:0 25px 80px rgba(0,0,0,.7);
+    animation:logoutModalOpen .25s ease;
+}
+
+@keyframes logoutModalOpen{
+    from{
+        opacity:0;
+        transform:scale(.92) translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+.logout-icon{
+    width:56px;
+    height:56px;
+    margin:0 auto 27px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff;
+    color:#3b1b10;
+    border-radius:50%;
+    font-size:20px;
+}
+
+.logout-modal h2{
+    margin-bottom:15px;
+    font-size:29px;
+    line-height:1.25;
+    font-weight:700;
+    color:#fff;
+}
+
+.logout-modal p{
+    max-width:370px;
+    margin:0 auto 30px;
+    color:#bba49a;
+    font-size:12px;
+    line-height:1.7;
+}
+
+.logout-modal form{
+    width:100%;
+}
+
+.confirm-logout-btn{
+    width:100%;
+    height:51px;
+    border:none;
+    border-radius:28px;
+    background:#ff681d;
+    color:#fff;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    box-shadow:0 8px 25px rgba(255,104,29,.25);
+    transition:.2s;
+}
+
+.confirm-logout-btn:hover{
+    background:#ff792f;
+    transform:translateY(-1px);
+}
+
+.cancel-logout-btn{
+    width:100%;
+    height:49px;
+    margin-top:13px;
+    border:1px solid #765143;
+    border-radius:28px;
+    background:#050302;
+    color:#fff;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.cancel-logout-btn:hover{
+    border-color:#ff681d;
+    color:#ff681d;
+}
+
+body.modal-open{
+    overflow:hidden;
+}
+
+
+/* DELETE ADDRESS MODAL */
+
+.delete-overlay{
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+}
+
+.delete-overlay.show{
+    display:flex;
+}
+
+.delete-modal{
+    width:100%;
+    max-width:470px;
+    padding:35px 40px 30px;
+    text-align:center;
+    background:
+        radial-gradient(circle at 80% 70%, rgba(120,30,20,.20), transparent 40%),
+        #1b0e09;
+    border:1px solid #482219;
+    border-radius:28px;
+    box-shadow:0 25px 80px rgba(0,0,0,.7);
+    animation:deleteModalOpen .25s ease;
+}
+
+@keyframes deleteModalOpen{
+    from{
+        opacity:0;
+        transform:scale(.92) translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+.delete-icon{
+    width:56px;
+    height:56px;
+    margin:0 auto 27px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#fff;
+    color:#9f251c;
+    font-size:20px;
+}
+
+.delete-modal h2{
+    margin-bottom:15px;
+    color:#fff;
+    font-size:29px;
+    line-height:1.25;
+}
+
+.delete-modal p{
+    max-width:370px;
+    margin:0 auto 30px;
+    color:#bba49a;
+    font-size:12px;
+    line-height:1.7;
+}
+
+.delete-modal form{
+    width:100%;
+}
+
+.confirm-delete-btn{
+    width:100%;
+    height:51px;
+    border:none;
+    border-radius:28px;
+    background:#c83b2f;
+    color:#fff;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.confirm-delete-btn:hover{
+    background:#e0473a;
+    transform:translateY(-1px);
+}
+
+.cancel-delete-btn{
+    width:100%;
+    height:49px;
+    margin-top:13px;
+    border:1px solid #765143;
+    border-radius:28px;
+    background:#050302;
+    color:#fff;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.cancel-delete-btn:hover{
+    border-color:#ff681d;
+    color:#ff681d;
+}
+
+</style>
+
+</head>
+<body>
+
+
+<header class="navbar">
+
+    <a href="{% url 'user_home' %}" class="logo">
+        Stride<span>X</span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="{% url 'user_home' %}">HOME</a>
+        <a href="#">CATEGORIES</a>
+        <a href="#">WALLET</a>
+        <a href="#">ABOUT</a>
+    </nav>
+
+    <div class="nav-right">
+
+        <div class="search-box">
+            <input
+                type="text"
+                placeholder="Search outfits...">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <a href="#" class="nav-icon">
+            <i class="fa-regular fa-heart"></i>
+        </a>
+
+        <a href="#" class="nav-icon">
+            <i class="fa-solid fa-bag-shopping"></i>
+        </a>
+
+        <a href="{% url 'profile' %}" class="profile-nav">
+            <i class="fa-regular fa-user"></i>
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="page">
+
+
+<aside class="sidebar">
+
+    <ul class="sidebar-menu">
+
+        <li>
+            <a href="{% url 'profile' %}">
+                <i class="fa-regular fa-user"></i>
+                Profile
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{% url 'address_list' %}"
+                class="active">
+
+                <i class="fa-solid fa-location-dot"></i>
+                My Addresses
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+                <i class="fa-solid fa-cube"></i>
+                My Orders
+            </a>
+        </li>
+
+        <li>
+            <a href="#">
+                <i class="fa-regular fa-wallet"></i>
+                Wallet
+            </a>
+        </li>
+
+    </ul>
+
+
+    <div class="sidebar-line"></div>
+
+
+    <ul class="sidebar-menu">
+
+        <li>
+<a href="#" class="signout open-logout-modal">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    Sign Out
+</a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<section class="content">
+
+
+    <div class="content-header">
+
+        <h1>MY ADDRESSES</h1>
+
+        <a
+            href="{% url 'add_address' %}"
+            class="add-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+            ADD NEW ADDRESS
+        </a>
+
+    </div>
+
+
+    {% if addresses %}
+
+<div class="address-list">
+
+    {% for address in addresses %}
+
+    <article class="address-card">
+
+        <div class="address-details">
+
+            <div class="address-heading">
+
+                {% if address.is_default %}
+
+                <span class="default-badge">
+                    <i class="fa-solid fa-star"></i>
+                    DEFAULT
+                </span>
+
+                {% endif %}
+
+                <span class="address-type">
+                    {{ address.type }} Address
+                </span>
+
+            </div>
+
+
+            <div class="address-name">
+                {{ address.full_name }}
+            </div>
+
+
+            <div class="address-text">
+
+                {{ address.address_line1 }}
+
+                {% if address.address_line2 %}
+                    <br>
+                    {{ address.address_line2 }}
+                {% endif %}
+
+                <br>
+
+                {{ address.city }},
+                {{ address.state }}
+                {{ address.pincode }}
+
+                <br>
+
+                {{ address.country }}
+
+            </div>
+
+
+            <div class="phone">
+
+                <i class="fa-solid fa-phone"></i>
+
+                {{ address.phone_number }}
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    href="{% url 'edit_address' address.id %}"
+                    class="action-btn">
+
+                    EDIT
+
+                </a>
+
+
+                
+                    <button
+    type="button"
+    class="action-btn delete-btn open-delete-modal"
+    data-delete-url="{% url 'delete_address' address.id %}"
+    data-address-name="{{ address.full_name|escape }}">
+
+    DELETE
+
+</button>
+
+               
+
+
+                {% if not address.is_default %}
+
+                <a
+                    href="{% url 'make_default_address' address.id %}"
+                    class="action-btn default-btn">
+
+                    SET AS DEFAULT
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+      <div class="static-map">
+
+    <img
+        src="{% static 'Authentication/images/location-image.png' %}"
+        alt="Location map">
+
+    <div class="map-pin">
+        <i class="fa-solid fa-location-dot"></i>
+    </div>
+
+</div>
+
+    </article>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="info-box">
+
+    <i class="fa-solid fa-circle-info"></i>
+
+    <p>
+        You can save up to 10 shipping addresses.
+        Make sure your default address is up to date
+        to ensure the fastest checkout experience for
+        limited edition releases.
+    </p>
+
+</div>
+
+
+{% else %}
+
+<div class="empty">
+
+    <i class="fa-solid fa-location-dot"></i>
+
+    <h2>No Address Found</h2>
+
+    <p>
+        You haven't added any addresses yet.
+    </p>
+
+    <a
+        href="{% url 'add_address' %}"
+        class="add-btn">
+
+        <i class="fa-solid fa-plus"></i>
+
+        ADD YOUR FIRST ADDRESS
+
+    </a>
+
+</div>
+
+{% endif %}
+
+
+</section>
+
+
+</main>
+
+
+
+<div class="delete-overlay" id="deleteModal">
+
+    <div class="delete-modal">
+
+        <div class="delete-icon">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+
+        <h2>
+            Delete this Address?
+        </h2>
+
+        <p id="deleteAddressText">
+            This address will be permanently removed from your account.
+        </p>
+
+        <form
+            method="POST"
+            id="deleteAddressForm">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="confirm-delete-btn">
+
+                YES, DELETE
+
+            </button>
+
+        </form>
+
+        <button
+            type="button"
+            class="cancel-delete-btn"
+            id="cancelDelete">
+
+            CANCEL
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- LOGOUT CONFIRMATION MODAL -->
+
+<div class="logout-overlay" id="logoutModal">
+    <div class="logout-modal">
+
+        <div class="logout-icon">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+
+        <h2>
+            Are you sure you<br>
+            want to Logout?
+        </h2>
+
+        <p>
+            You will need to sign in again to access your
+            account, orders, and wishlist.
+        </p>
+
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+
+            <button type="submit" class="confirm-logout-btn">
+                YES, LOGOUT
+            </button>
+        </form>
+
+        <button type="button"
+                class="cancel-logout-btn"
+                id="cancelLogout">
+            CANCEL
+        </button>
+
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modal = document.getElementById("logoutModal");
+    const openButtons = document.querySelectorAll(".open-logout-modal");
+    const cancelButton = document.getElementById("cancelLogout");
+
+    openButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            modal.classList.add("show");
+            document.body.classList.add("modal-open");
+        });
+    });
+
+    cancelButton.addEventListener("click", function () {
+        modal.classList.remove("show");
+        document.body.classList.remove("modal-open");
+    });
+
+    modal.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            modal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+        }
+    });
+
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const deleteModal = document.getElementById("deleteModal");
+    const deleteButtons = document.querySelectorAll(".open-delete-modal");
+    const cancelDelete = document.getElementById("cancelDelete");
+    const deleteForm = document.getElementById("deleteAddressForm");
+    const deleteText = document.getElementById("deleteAddressText");
+
+    deleteButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            deleteForm.action = this.dataset.deleteUrl;
+
+            const addressName = this.dataset.addressName;
+
+            deleteText.textContent =
+                "Delete the address for " +
+                addressName +
+                "? This action cannot be undone.";
+
+            deleteModal.classList.add("show");
+            document.body.classList.add("modal-open");
+        });
+    });
+
+    cancelDelete.addEventListener("click", function () {
+        deleteModal.classList.remove("show");
+        document.body.classList.remove("modal-open");
+    });
+
+    deleteModal.addEventListener("click", function (event) {
+        if (event.target === deleteModal) {
+            deleteModal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && deleteModal.classList.contains("show")) {
+            deleteModal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+        }
+    });
+
+});
+</script>
+
+
+{% if messages %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        {% for message in messages %}
+
+        Swal.fire({
+
+            toast:true,
+
+            position:"top-end",
+
+            icon:"{{ message.tags }}",
+
+            title:"{{ message|escapejs }}",
+
+            showConfirmButton:false,
+
+            timer:3000,
+
+            timerProgressBar:true,
+
+            background:"#21130e",
+
+            color:"#fff"
+
+        });
+
+        {% endfor %}
+
+    }
+);
+
+</script>
+
+{% endif %}
+<script>
+    window.history.forward();
+</script>
+
+</body>
+</html>
