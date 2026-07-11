@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
 
     "Admin_panel.Admin_account",
+    "Admin_panel.category",
+
     "User_panel.Authentication.apps.AuthenticationConfig",
 ]
 

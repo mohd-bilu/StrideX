@@ -26,7 +26,12 @@ def validate_signup(fullname, email, password, confirm_password):
 
     if len(password) < 8:
         return "Password should contain minimum 8 characters"
-
+    if not re.search(r'[A-Za-z]',password):
+        return "Password should contain at least one letter"
+    if not re.search(r'\d', password):
+        return "Password should contain at least one number"
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return "Password should contain at least one special character"
     if password != confirm_password:
         return "Passwords do not match"
 

@@ -395,6 +395,9 @@ def edit_profile(request):
 
         phone_number = request.POST.get(
             "phone_number","").strip()
+        if len(phone_number)<10:
+            messages.error(request,'Phone number should be 10 digits')
+            return redirect("edit_profile") 
 
         date_of_birth = request.POST.get(
             "date_of_birth","").strip()

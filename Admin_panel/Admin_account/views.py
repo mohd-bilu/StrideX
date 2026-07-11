@@ -185,7 +185,6 @@ def user_management(request):
         context
     )
 
-
 @login_required(login_url="admin_login")
 @require_POST
 def toggle_user_status(request, user_id):
