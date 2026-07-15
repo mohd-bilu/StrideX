@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}StrideX Admin{% endblock %}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f7f7f7;color:#171717}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:230px;height:100vh;position:fixed;left:0;top:0;background:#fff;border-right:1px solid #e5e5e5;display:flex;flex-direction:column}
+.logo-section{padding:28px 20px;border-bottom:1px solid #eee}
+.logo{font-size:30px;font-weight:800;color:#a94f00}
+.logo-subtitle{font-size:8px;letter-spacing:1px;color:#777}
+.nav-menu{flex:1;padding-top:18px}
+.nav-item{display:flex;align-items:center;gap:14px;height:46px;padding:0 20px;text-decoration:none;color:#5e554e}
+.nav-item:hover{background:#faf2eb;color:#9a4d0c}
+.admin-profile{border-top:1px solid #eee;padding:18px;display:flex;align-items:center;gap:10px}
+.admin-avatar{width:38px;height:38px;border-radius:50%;background:#e7d8c9;display:flex;align-items:center;justify-content:center;font-weight:700}
+.admin-details{flex:1}
+.logout-btn{background:none;border:none;cursor:pointer}
+.main{margin-left:230px;width:calc(100% - 230px);min-height:100vh}
+.topbar{height:72px;background:#fff;border-bottom:1px solid #eee}
+.content{padding:35px}
+</style>
+
+{% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<div class="logo-section">
+<div class="logo">StrideX</div>
+<div class="logo-subtitle">PREMIUM MANAGEMENT</div>
+</div>
+
+<nav class="nav-menu">
+<a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-table-cells-large"></i>&nbsp;Dashboard</a>
+<a href="{% url 'user_management' %}" class="nav-item"><i class="fa-solid fa-users"></i>&nbsp;Users</a>
+<a href="{% url 'category_list' %}" class="nav-item"><i class="fa-solid fa-layer-group"></i>&nbsp;Categories</a>
+<a href="#" class="nav-item"><i class="fa-solid fa-box"></i>&nbsp;Products</a>
+<a href="#" class="nav-item"><i class="fa-solid fa-tag"></i>&nbsp;Offers</a>
+<a href="#" class="nav-item"><i class="fa-solid fa-ticket"></i>&nbsp;Coupons</a>
+</nav>
+
+<div class="admin-profile">
+<div class="admin-avatar">{{ request.user.full_name|default:"A"|slice:":1"|upper }}</div>
+<div class="admin-details">
+<div>{{ request.user.full_name|default:"Admin" }}</div>
+<small>Admin Account</small>
+</div>
+<form method="POST" action="{% url 'admin_logout' %}">
+{% csrf_token %}
+<button type="submit" class="logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+</form>
+</div>
+
+</aside>
+
+<main class="main">
+<header class="topbar"></header>
+
+<div class="content">
+{% block content %}
+{% endblock %}
+</div>
+
+</main>
+
+</div>
+
+{% if messages %}
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+{% for message in messages %}
+Swal.fire({toast:true,position:"top-end",icon:"{{ message.tags }}",title:"{{ message }}",showConfirmButton:false,timer:2500});
+{% endfor %}
+});
+</script>
+{% endif %}
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

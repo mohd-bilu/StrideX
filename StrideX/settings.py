@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
     "Admin_panel.Admin_account",
     "Admin_panel.category",
+    "Admin_panel.product",
 
     "User_panel.Authentication.apps.AuthenticationConfig",
 ]

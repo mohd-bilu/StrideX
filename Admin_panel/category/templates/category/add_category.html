@@ -1,0 +1,742 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% load static %}
+
+{% block title %}
+
+Add Category
+
+{% endblock %}
+
+{% block content %}
+<style>
+    *{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Inter",sans-serif;
+background:#f7f9fc;
+color:#1e293b;
+}
+
+.category-page{
+padding:35px 40px;
+}
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+}
+
+.header-left{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.back-btn{
+width:42px;
+height:42px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:12px;
+text-decoration:none;
+color:#64748b;
+transition:.3s;
+}
+
+.back-btn:hover{
+background:#edf2f7;
+}
+
+.page-label{
+font-size:11px;
+font-weight:700;
+letter-spacing:1.5px;
+text-transform:uppercase;
+color:#94a3b8;
+display:block;
+margin-bottom:6px;
+}
+
+.page-header h1{
+font-size:34px;
+font-weight:800;
+color:#0f172a;
+letter-spacing:-.5px;
+}
+
+.header-actions{
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.discard-btn{
+padding:14px 34px;
+background:#eef2f7;
+border-radius:14px;
+text-decoration:none;
+font-size:13px;
+font-weight:700;
+color:#64748b;
+transition:.3s;
+}
+
+.discard-btn:hover{
+background:#dde6ef;
+}
+
+.save-btn{
+padding:14px 34px;
+border:none;
+border-radius:14px;
+background:#000;
+color:#fff;
+font-size:13px;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+}
+
+.save-btn:hover{
+background:#222;
+}
+
+.content-grid{
+display:grid;
+grid-template-columns:2fr 360px;
+gap:35px;
+align-items:start;
+}
+
+.card{
+background:#fff;
+border-radius:28px;
+padding:42px;
+border:1px solid #edf2f7;
+box-shadow:0 10px 30px rgba(15,23,42,.05);
+}
+
+.card h2{
+font-size:22px;
+font-weight:700;
+margin-bottom:6px;
+color:#0f172a;
+}
+
+.card p{
+font-size:15px;
+color:#94a3b8;
+margin-bottom:40px;
+}
+
+.form-group{
+margin-bottom:32px;
+}
+
+.form-group label{
+display:block;
+margin-bottom:10px;
+font-size:12px;
+font-weight:700;
+letter-spacing:1px;
+text-transform:uppercase;
+color:#94a3b8;
+}
+
+.form-group input[type=text],
+.form-group textarea{
+width:100%;
+padding:16px 18px;
+border:1px solid #dbe4ef;
+border-radius:16px;
+font-size:15px;
+background:#fff;
+outline:none;
+transition:.3s;
+}
+
+.form-group textarea{
+height:170px;
+resize:none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+border-color:#111827;
+box-shadow:0 0 0 4px rgba(17,24,39,.05);
+}
+
+.error{
+display:block;
+margin-top:8px;
+font-size:13px;
+font-weight:500;
+color:#ef4444;
+}
+.right-card .card{
+position:sticky;
+top:30px;
+}
+
+.image-box{
+width:100%;
+height:260px;
+border:2px dashed #dbe4ef;
+border-radius:22px;
+background:#f8fafc;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:20px;
+position:relative;
+}
+
+.image-box img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+
+.image-placeholder{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#94a3b8;
+}
+
+.image-placeholder i{
+font-size:42px;
+margin-bottom:18px;
+color:#cbd5e1;
+}
+
+.image-placeholder h4{
+font-size:15px;
+font-weight:700;
+margin-bottom:6px;
+text-transform:uppercase;
+color:#475569;
+}
+
+.image-placeholder span{
+font-size:12px;
+font-weight:500;
+color:#94a3b8;
+}
+
+.upload-button{
+width:100%;
+height:52px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+border-radius:14px;
+background:#111827;
+color:#fff;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+margin-bottom:28px;
+}
+
+.upload-button:hover{
+background:#1f2937;
+}
+
+.setting-card{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px;
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:18px;
+}
+
+.setting-card h4{
+font-size:15px;
+font-weight:700;
+margin-bottom:4px;
+color:#111827;
+}
+
+.setting-card span{
+font-size:13px;
+color:#94a3b8;
+}
+
+.switch{
+position:relative;
+display:inline-block;
+width:54px;
+height:30px;
+}
+
+.switch input{
+display:none;
+}
+
+.slider{
+position:absolute;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:#d1d5db;
+border-radius:999px;
+cursor:pointer;
+transition:.3s;
+}
+
+.slider::before{
+content:"";
+position:absolute;
+width:24px;
+height:24px;
+left:3px;
+top:3px;
+background:#fff;
+border-radius:50%;
+transition:.3s;
+box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+.switch input:checked + .slider{
+background:#111827;
+}
+
+.switch input:checked + .slider::before{
+transform:translateX(24px);
+}
+
+@media(max-width:1100px){
+
+.content-grid{
+grid-template-columns:1fr;
+}
+
+.right-card .card{
+position:static;
+}
+
+}
+
+@media(max-width:768px){
+
+.category-page{
+padding:20px;
+}
+
+.page-header{
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+}
+
+.header-actions{
+width:100%;
+display:flex;
+}
+
+.discard-btn,
+.save-btn{
+flex:1;
+text-align:center;
+}
+
+.card{
+padding:28px;
+}
+
+.page-header h1{
+font-size:26px;
+}
+
+.image-box{
+height:220px;
+}
+
+}
+</style>
+
+<form
+method="POST"
+enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<div class="category-page">
+
+    <div class="page-header">
+
+        <div class="header-left">
+
+            <a
+            href="{% url 'category_list' %}"
+            class="back-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+            </a>
+
+            <div>
+
+                <span class="page-label">
+
+                    MANAGEMENT
+
+                </span>
+
+                <h1>
+
+                    ADD NEW CATEGORY
+
+                </h1>
+
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a
+            href="{% url 'category_list' %}"
+            class="discard-btn">
+
+                DISCARD
+
+            </a>
+
+            <button
+            type="submit"
+            class="save-btn">
+
+                SAVE CATEGORY
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="content-grid">
+
+
+
+        <div class="left-card">
+
+            <div class="card">
+
+                <h2>
+
+                    Category Information
+
+                </h2>
+
+                <p>
+
+                    Define the category name and description.
+
+                </p>
+
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        CATEGORY NAME
+
+                    </label>
+
+                    <input
+                    type="text"
+                    name="category_name"
+                    id="categoryName"
+                    placeholder="e.g. Sneakers"
+                    value="{{ form.category_name.value|default:'' }}">
+
+                    {% if form.category_name.errors %}
+
+                    <small class="error">
+
+                        {{ form.category_name.errors.0 }}
+
+                    </small>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+
+                        DESCRIPTION
+
+                    </label>
+
+                    <textarea
+                    rows="7"
+                    name="description"
+                    placeholder="Describe the category...">{{ form.description.value|default:'' }}</textarea>
+
+                    {% if form.description.errors %}
+
+                    <small class="error">
+
+                        {{ form.description.errors.0 }}
+
+                    </small>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+                <div class="right-card">
+
+            <div class="card">
+
+                <h2>
+
+                    Configuration
+
+                </h2>
+
+                <div class="form-group">
+
+                    <label>
+
+                        CATEGORY IMAGE
+
+                    </label>
+
+                    <div class="image-box">
+
+                        {% if form.image.value %}
+
+                        <img
+                        id="previewImage"
+                        src="{{ form.image.value.url }}"
+                        alt="Category Image">
+
+                        {% else %}
+
+                        <img
+                        id="previewImage"
+                        src=""
+                        alt="Category Image"
+                        style="display:none;">
+
+                        <div
+                        id="imagePlaceholder"
+                        class="image-placeholder">
+
+                            <i class="fa-regular fa-image"></i>
+
+                            <h4>
+
+                                Upload Image
+
+                            </h4>
+
+                            <span>
+
+                                PNG, JPG, WEBP
+
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <input
+                type="file"
+                id="imageInput"
+                name="image"
+                accept=".jpg,.jpeg,.png,.webp"
+                hidden>
+
+
+
+                <label
+                for="imageInput"
+                class="upload-button">
+
+                    <i class="fa-solid fa-upload"></i>
+
+                    Upload Image
+
+                </label>
+
+
+
+                {% if form.image.errors %}
+
+                <small class="error">
+
+                    {{ form.image.errors.0 }}
+
+                </small>
+
+                {% endif %}
+
+
+
+                <div class="setting-card">
+
+                    <div>
+
+                        <h4>
+
+                            Active On Site
+
+                        </h4>
+
+                        <span>
+
+                            Visible to customers
+
+                        </span>
+
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                        type="checkbox"
+                        name="is_active"
+
+                        {% if form.is_active.value %}
+
+                        checked
+
+                        {% endif %}>
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</form>
+<script>
+
+document.addEventListener("DOMContentLoaded",function(){
+
+const categoryName=document.getElementById("categoryName");
+
+const imageInput=document.getElementById("imageInput");
+
+const previewImage=document.getElementById("previewImage");
+
+const placeholder=document.getElementById("imagePlaceholder");
+
+if(categoryName){
+
+categoryName.focus();
+
+}
+
+if(!imageInput){
+
+return;
+
+}
+
+imageInput.addEventListener("change",function(){
+
+const file=this.files[0];
+
+if(!file){
+
+return;
+
+}
+
+const allowedTypes=[
+"image/jpeg",
+"image/png",
+"image/webp"
+];
+
+if(!allowedTypes.includes(file.type)){
+
+alert("Only JPG, PNG and WEBP images are allowed.");
+
+this.value="";
+
+return;
+
+}
+
+if(file.size>5*1024*1024){
+
+alert("Image size must be less than 5 MB.");
+
+this.value="";
+
+return;
+
+}
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+previewImage.src=e.target.result;
+
+previewImage.style.display="block";
+
+if(placeholder){
+
+placeholder.style.display="none";
+
+}
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+});
+
+</script>
+
+{% endblock %}

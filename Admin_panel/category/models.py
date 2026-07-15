@@ -2,45 +2,48 @@ from django.db import models
 
 
 class Category(models.Model):
+
     category_name = models.CharField(
         max_length=100,
-        unique=True
+        unique=True,
     )
 
     slug = models.SlugField(
         max_length=120,
-        unique=True
+        unique=True,
     )
 
     description = models.TextField(
-        blank=True
+        blank=True,
     )
 
     image = models.ImageField(
         upload_to="category_images/",
         blank=True,
-        null=True
+        null=True,
     )
 
     is_active = models.BooleanField(
-        default=True
+        default=True,
     )
 
     is_deleted = models.BooleanField(
-        default=False
+        default=False,
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
     class Meta:
         db_table = "categories"
         ordering = ["-created_at"]
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.category_name

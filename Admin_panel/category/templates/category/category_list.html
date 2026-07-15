@@ -1,0 +1,1165 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% block title %}
+Category Management
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+.container{
+
+    max-width:1400px;
+
+    margin:auto;
+
+}
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:35px;
+
+}
+
+.header h1{
+
+    font-size:38px;
+
+    font-weight:800;
+
+    letter-spacing:1px;
+
+    margin-bottom:10px;
+
+}
+
+.header p{
+
+    color:#666;
+
+    font-size:17px;
+
+}
+
+.add-btn{
+
+    background:#111;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:16px 28px;
+
+    border-radius:12px;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.add-btn:hover{
+
+    background:#000;
+
+}
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+    margin-bottom:30px;
+
+}
+
+.card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    padding:28px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.card-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.card-icon{
+
+    width:55px;
+
+    height:55px;
+
+    background:#f2f2f2;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+}
+
+.badge{
+
+    padding:7px 14px;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+}
+
+.green{
+
+    background:#dff7e6;
+
+    color:#198754;
+
+}
+
+.gray{
+
+    background:#eeeeee;
+
+    color:#666;
+
+}
+
+.card small{
+
+    color:#777;
+
+    font-weight:600;
+
+    letter-spacing:1px;
+
+}
+
+.card h2{
+
+    font-size:48px;
+
+    margin-top:15px;
+
+}
+
+.card h3{
+
+    font-size:32px;
+
+    margin-top:15px;
+
+}
+
+.search-box{
+
+    width:55%;
+
+    position:relative;
+
+}
+
+.search-box i{
+
+    position:absolute;
+
+    left:18px;
+
+    top:17px;
+
+    color:#888;
+
+}
+
+.search-box input{
+
+    width:100%;
+
+    padding:15px 20px 15px 50px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    outline:none;
+
+    font-size:16px;
+
+}
+.toolbar{
+
+    background:#fff;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px;
+
+    border-radius:16px 16px 0 0;
+
+    border-bottom:1px solid #ececec;
+
+}
+
+.toolbar-actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.toolbar-btn{
+
+    background:#f5f5f5;
+
+    border:none;
+
+    padding:14px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.toolbar-btn:hover{
+
+    background:#111;
+
+    color:#fff;
+
+}
+
+.table-wrapper{
+
+    background:#fff;
+
+    border-radius:0 0 16px 16px;
+
+    overflow:hidden;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:#fafafa;
+
+}
+
+th{
+
+    padding:20px;
+
+    text-align:left;
+
+    font-size:14px;
+
+    color:#777;
+
+}
+
+td{
+
+    padding:20px;
+
+    border-top:1px solid #eee;
+
+}
+
+.category-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.category-image{
+
+    width:60px;
+
+    height:60px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+}
+
+.no-image{
+
+    width:60px;
+
+    height:60px;
+
+    background:#f1f1f1;
+
+    border-radius:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#999;
+
+}
+
+.category-box h4{
+
+    margin-bottom:6px;
+
+}
+
+.category-box small{
+
+    color:#777;
+
+}
+
+.status{
+
+    padding:8px 15px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.active-status{
+
+    background:#dff7e6;
+
+    color:#198754;
+
+}
+
+.inactive-status{
+
+    background:#ececec;
+
+    color:#666;
+
+}
+
+.action-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:18px;
+
+}
+
+.edit-btn,
+.delete-btn{
+
+background:none;
+
+border:none;
+
+color:#444;
+
+font-size:18px;
+
+cursor:pointer;
+
+text-decoration:none;
+
+padding:0;
+
+}
+
+.edit-btn:hover{
+
+    color:#0d6efd;
+
+}
+
+.delete-btn:hover{
+
+    color:#dc3545;
+
+}
+.table-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 28px;
+
+    background:#fff;
+
+    border-top:1px solid #ececec;
+
+    border-radius:0 0 16px 16px;
+
+}
+
+.footer-left{
+
+    color:#666;
+
+    font-size:15px;
+
+}
+
+.pagination{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.pagination a{
+
+    width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-decoration:none;
+
+    color:#444;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    transition:.3s;
+
+}
+
+.pagination a:hover{
+
+    background:#111;
+
+    color:#fff;
+
+    border-color:#111;
+
+}
+
+.current-page{
+
+    width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#111;
+
+    color:#fff;
+
+    border-radius:10px;
+
+    font-weight:bold;
+
+}
+
+@media (max-width:1100px){
+
+    .cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .toolbar{
+
+        flex-direction:column;
+
+        gap:20px;
+
+    }
+
+    .search-box{
+
+        width:100%;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .header{
+
+        flex-direction:column;
+
+        gap:20px;
+
+    }
+
+    .table-wrapper{
+
+        overflow-x:auto;
+
+    }
+
+    .table-footer{
+
+        flex-direction:column;
+
+        gap:18px;
+
+        align-items:flex-start;
+
+    }
+
+}
+.search-form{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+width:100%;
+
+}
+
+.search-form>div{
+
+flex:1;
+
+position:relative;
+
+}
+
+.search-form input{
+
+width:100%;
+
+}
+
+.clear-btn{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-decoration:none;
+
+background:#ef4444;
+
+color:#fff;
+
+}
+
+.clear-btn:hover{
+
+background:#dc2626;
+
+color:#fff;
+
+}
+.search-form{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+width:100%;
+
+}
+
+.search-input{
+
+position:relative;
+
+flex:1;
+
+}
+
+.search-input i{
+
+position:absolute;
+
+left:18px;
+
+top:17px;
+
+color:#888;
+
+}
+
+.search-input input{
+
+width:100%;
+
+padding:15px 20px 15px 50px;
+
+border:1px solid #ddd;
+
+border-radius:10px;
+
+outline:none;
+
+font-size:16px;
+
+}
+
+.clear-btn{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-decoration:none;
+
+background:#ef4444;
+
+color:#fff;
+
+}
+
+.clear-btn:hover{
+
+background:#dc2626;
+
+color:#fff;
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<div class="header">
+
+<div>
+
+<h1>
+
+CATEGORY MANAGEMENT
+
+</h1>
+
+<p>
+
+Organize and manage your product hierarchy across the global store.
+
+</p>
+
+</div>
+
+<a
+href="{% url 'add_category' %}"
+class="add-btn"
+>
+
+<i class="fa-solid fa-plus"></i>
+
+ADD NEW CATEGORY
+
+</a>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<div class="card-top">
+
+<div class="card-icon">
+
+<i class="fa-solid fa-layer-group"></i>
+
+</div>
+
+<span class="badge green">
+
+{{ total_categories }}
+
+</span>
+
+</div>
+
+<small>
+
+TOTAL CATEGORIES
+
+</small>
+
+<h2>
+
+{{ total_categories }}
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<div class="card-top">
+
+<div class="card-icon">
+
+<i class="fa-regular fa-circle-check"></i>
+
+</div>
+
+<span class="badge green">
+
+{{ active_categories }}
+
+</span>
+
+</div>
+
+<small>
+
+ACTIVE CATEGORIES
+
+</small>
+
+<h2>
+
+{{ active_categories }}
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<div class="card-top">
+
+<div class="card-icon">
+
+<i class="fa-solid fa-circle-xmark"></i>
+
+</div>
+
+<span class="badge gray">
+
+{{ inactive_categories }}
+
+</span>
+
+</div>
+
+<small>
+
+INACTIVE CATEGORIES
+
+</small>
+
+<h2>
+
+{{ inactive_categories }}
+
+</h2>
+
+</div>
+
+</div>
+<div class="toolbar">
+
+    <div class="search-box">
+
+    <form
+    method="GET"
+    class="search-form">
+
+        <div class="search-input">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+            type="text"
+            name="search"
+            placeholder="Search category..."
+            value="{{ search_query }}">
+
+        </div>
+
+        <button
+        type="submit"
+        class="toolbar-btn">
+
+            Search
+
+        </button>
+
+        {% if search_query %}
+
+        <a
+        href="{% url 'category_list' %}"
+        class="toolbar-btn clear-btn">
+
+            Clear
+
+        </a>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+    <div class="toolbar-actions">
+
+        <button
+            type="button"
+            class="toolbar-btn"
+        >
+
+            <i class="fa-solid fa-filter"></i>
+
+            Filter
+
+        </button>
+
+        <button
+            type="button"
+            class="toolbar-btn"
+        >
+
+            <i class="fa-solid fa-download"></i>
+
+            Export
+
+        </button>
+
+    </div>
+
+</div>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Category</th>
+
+<th>Slug</th>
+
+<th>Products</th>
+
+<th>Status</th>
+
+<th style="text-align:center;">
+Actions
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for category in page_obj %}
+
+<tr>
+
+<td>
+
+<div class="category-box">
+
+{% if category.image %}
+
+<img
+src="{{ category.image.url }}"
+class="category-image"
+alt="{{ category.category_name }}"
+>
+
+{% else %}
+
+<div class="no-image">
+
+<i class="fa-solid fa-image"></i>
+
+</div>
+
+{% endif %}
+
+<div>
+
+<h4>
+
+{{ category.category_name }}
+
+</h4>
+
+<small>
+
+{{ category.description|truncatechars:45 }}
+
+</small>
+
+</div>
+
+</div>
+
+</td>
+
+<td>
+
+{{ category.slug }}
+
+</td>
+
+<td>
+
+0
+
+</td>
+
+<td>
+
+{% if category.is_active %}
+
+<span class="status active-status">
+
+Active
+
+</span>
+
+{% else %}
+
+<span class="status inactive-status">
+
+Inactive
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<div class="action-buttons">
+
+<a
+href="{% url 'edit_category' category.id %}"
+class="edit-btn"
+title="Edit"
+>
+
+<i class="fa-solid fa-pen"></i>
+
+</a>
+
+<form
+method="POST"
+action="{% url 'delete_category' category.id %}"
+style="display:inline;">
+
+{% csrf_token %}
+
+<button
+type="submit"
+class="delete-btn"
+title="Delete"
+onclick="return confirm('Are you sure you want to delete this category?');">
+
+<i class="fa-regular fa-trash-can"></i>
+
+</button>
+
+</form>
+
+</div>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td
+colspan="5"
+style="text-align:center;padding:40px;"
+>
+
+No Categories Found
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+<div class="table-footer">
+
+    <div class="footer-left">
+
+        Showing
+
+        <strong>
+
+            {{ page_obj.start_index }}
+
+        </strong>
+
+        to
+
+        <strong>
+
+            {{ page_obj.end_index }}
+
+        </strong>
+
+        of
+
+        <strong>
+
+            {{ page_obj.paginator.count }}
+
+        </strong>
+
+        Categories
+
+    </div>
+
+    <div class="pagination">
+
+        {% if page_obj.has_previous %}
+
+        <a
+            href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}"
+        >
+
+            <i class="fa-solid fa-chevron-left"></i>
+
+        </a>
+
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+
+            {% if page == page_obj.number %}
+
+                <span class="current-page">
+
+                    {{ page }}
+
+                </span>
+
+            {% else %}
+
+                <a
+                    href="?page={{ page }}&search={{ search_query }}"
+                >
+
+                    {{ page }}
+
+                </a>
+
+            {% endif %}
+
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+
+        <a
+            href="?page={{ page_obj.next_page_number }}&search={{ search_query }}"
+        >
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}
