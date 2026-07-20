@@ -8,6 +8,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("", include("User_panel.Authentication.urls")),
+    path("products/", include(("User_panel.Product.urls", "product"), namespace="product")),
 
     path("accounts/", include("allauth.urls")),
 

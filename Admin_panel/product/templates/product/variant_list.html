@@ -1,0 +1,1678 @@
+{% extends "Admin_account/base_admin.html" %}
+{% load static %}
+
+{% block title %}
+Variant Management
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    *{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+.variant-page{
+
+    max-width:1300px;
+
+    margin:auto;
+
+}
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.header-left span{
+
+    font-size:12px;
+
+    color:#8b95a7;
+
+    letter-spacing:1px;
+
+    font-weight:700;
+
+}
+
+.header-left h2{
+
+    margin-top:6px;
+
+    font-size:34px;
+
+    font-weight:800;
+
+    color:#111827;
+
+}
+
+.back-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    padding:14px 24px;
+
+    border-radius:12px;
+
+    background:#fff;
+
+    color:#111827;
+
+    font-weight:600;
+
+    border:1px solid #e5e7eb;
+
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:#111827;
+
+    color:#fff;
+
+}
+
+.product-card{
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:30px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+
+}
+
+.product-image{
+
+    width:150px;
+
+    height:150px;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    background:#f4f4f4;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+}
+
+.product-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.no-image{
+
+    font-size:45px;
+
+    color:#c8ccd4;
+
+}
+
+.product-info{
+
+    flex:1;
+
+}
+
+.product-top{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:12px;
+
+}
+
+.product-top span:first-child{
+
+    font-size:12px;
+
+    letter-spacing:1px;
+
+    color:#8b95a7;
+
+    font-weight:700;
+
+}
+
+.badge{
+
+    background:#16a34a;
+
+    color:#fff;
+
+    padding:5px 14px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+.product-info h1{
+
+    font-size:34px;
+
+    margin-bottom:25px;
+
+    color:#111827;
+
+}
+
+.product-details{
+
+    display:flex;
+
+    gap:60px;
+
+    flex-wrap:wrap;
+
+}
+
+.product-details div{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
+}
+
+.product-details small{
+
+    color:#9aa4b2;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+}
+
+.product-details strong{
+
+    font-size:18px;
+
+    color:#111827;
+
+}
+
+.toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+    gap:20px;
+
+}
+
+.search-form{
+
+    flex:1;
+
+    position:relative;
+
+}
+
+.search-form i{
+
+    position:absolute;
+
+    left:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#9ca3af;
+
+}
+
+.search-form input{
+
+    width:100%;
+
+    height:54px;
+
+    border-radius:14px;
+
+    border:1px solid #e5e7eb;
+
+    padding-left:48px;
+
+    padding-right:45px;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.3s;
+
+}
+
+.search-form input:focus{
+
+    border-color:#111827;
+
+}
+
+.clear-search{
+
+    position:absolute;
+
+    right:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#9ca3af;
+
+    text-decoration:none;
+
+}
+
+.add-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    background:#111827;
+
+    color:#fff;
+
+    padding:15px 28px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.add-btn:hover{
+
+    background:#000;
+
+}
+.table-card{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.06);
+
+}
+
+.table-card table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.table-card thead{
+
+    background:#f8fafc;
+
+}
+
+.table-card thead th{
+
+    padding:22px;
+
+    text-align:left;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#6b7280;
+
+    letter-spacing:.8px;
+
+    text-transform:uppercase;
+
+    border-bottom:1px solid #edf0f5;
+
+}
+
+.table-card tbody td{
+
+    padding:22px;
+
+    border-bottom:1px solid #f1f3f6;
+
+    vertical-align:middle;
+
+    color:#374151;
+
+    font-size:15px;
+
+}
+
+.table-card tbody tr{
+
+    transition:.3s;
+
+}
+
+.table-card tbody tr:hover{
+
+    background:#fafafa;
+
+}
+
+.color-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:600;
+
+}
+
+.color-dot{
+
+    width:14px;
+
+    height:14px;
+
+    border-radius:50%;
+
+    background:#111827;
+
+    border:2px solid #e5e7eb;
+
+}
+
+.status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:7px 16px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.status.active{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+.status.inactive{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+.action-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.variant-btn,
+
+.edit-btn,
+
+.delete-btn{
+
+    width:38px;
+
+    height:38px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:10px;
+
+    border:1px solid #e5e7eb;
+
+    background:#fff;
+
+    color:#6b7280;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.variant-btn:hover{
+
+    background:#111827;
+
+    border-color:#111827;
+
+    color:#fff;
+
+}
+
+.edit-btn:hover{
+
+    background:#111827;
+
+    border-color:#111827;
+
+    color:#fff;
+
+}
+
+.delete-btn:hover{
+
+    background:#dc2626;
+
+    border-color:#dc2626;
+
+    color:#fff;
+
+}
+
+.delete-btn{
+
+    font-size:15px;
+
+}
+
+.empty-row{
+
+    text-align:center;
+
+    padding:70px !important;
+
+    color:#9ca3af;
+
+    font-size:16px;
+
+}
+
+.table-footer{
+
+    margin-top:25px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+
+}
+
+.footer-left{
+
+    color:#6b7280;
+
+    font-size:14px;
+
+}
+
+.footer-left strong{
+
+    color:#111827;
+
+}
+
+.pagination{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.pagination a,
+
+.pagination span{
+
+    width:40px;
+
+    height:40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    border:1px solid #e5e7eb;
+
+    color:#374151;
+
+    transition:.3s;
+
+}
+
+.pagination a:hover{
+
+    background:#111827;
+
+    color:#fff;
+
+    border-color:#111827;
+
+}
+
+.current-page{
+
+    background:#111827;
+
+    color:#fff !important;
+
+    border-color:#111827 !important;
+
+}
+
+@media(max-width:992px){
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .toolbar{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .product-card{
+
+        flex-direction:column;
+
+        text-align:center;
+
+    }
+
+    .product-details{
+
+        justify-content:center;
+
+    }
+
+}
+.variant-thumbnail{
+
+    margin-top:8px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+}
+
+.variant-thumbnail img{
+
+    width:28px;
+
+    height:28px;
+
+    object-fit:cover;
+
+    border-radius:6px;
+
+    border:1px solid #e5e7eb;
+
+}
+
+.thumbnail-placeholder{
+
+    width:28px;
+
+    height:28px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:6px;
+
+    background:#f3f4f6;
+
+    border:1px solid #e5e7eb;
+
+    color:#9ca3af;
+
+    font-size:11px;
+
+}
+
+.more-images{
+
+    width:28px;
+
+    height:28px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:6px;
+
+    background:#f3f4f6;
+
+    color:#374151;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+.variant-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    backdrop-filter:blur(6px);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+.variant-modal.show{
+
+    display:flex;
+
+}
+
+.variant-modal-content{
+
+    width:1250px;
+
+    max-width:95%;
+
+    max-height:95vh;
+
+    overflow-y:auto;
+
+    animation:modalFade .25s ease;
+
+}
+
+@keyframes modalFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .table-card{
+
+        overflow-x:auto;
+
+    }
+
+    .table-card table{
+
+        min-width:900px;
+
+    }
+
+    .table-footer{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="variant-page">
+
+    <!-- ========================= -->
+    <!-- Header -->
+    <!-- ========================= -->
+
+    <div class="page-header">
+
+        <div class="header-left">
+
+            <span>
+
+                MANAGEMENT
+
+            </span>
+
+            <h2>
+
+                Variant Management
+
+            </h2>
+
+        </div>
+
+        <a
+        href="{% url 'product_list' %}"
+        class="back-btn"
+        >
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back To Products
+
+        </a>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Product Card -->
+    <!-- ========================= -->
+
+    <div class="product-card">
+
+        <div class="product-image">
+
+            {% with product.images.first as image %}
+
+                {% if image %}
+
+                    <img
+                    src="{{ image.image.url }}"
+                    alt="{{ product.product_name }}"
+                    >
+
+                {% else %}
+
+                    <div class="no-image">
+
+                        <i class="fa-solid fa-image"></i>
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+        </div>
+
+        <div class="product-info">
+
+            <div class="product-top">
+
+                <span>
+
+                    FEATURED PRODUCT
+
+                </span>
+
+                {% if product.is_active %}
+
+                    <span class="badge">
+
+                        ACTIVE
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <h1>
+
+                {{ product.product_name }}
+
+            </h1>
+
+            <div class="product-details">
+
+                <div>
+
+                    <small>
+
+                        CATEGORY
+
+                    </small>
+
+                    <strong>
+
+                        {{ product.category.category_name }}
+
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    <small>
+
+                        VARIANTS
+
+                    </small>
+
+                    <strong>
+
+                        {{ page_obj.paginator.count }}
+
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    <small>
+
+                        PRODUCT ID
+
+                    </small>
+
+                    <strong>
+
+                        #{{ product.id }}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Toolbar -->
+    <!-- ========================= -->
+
+    <div class="toolbar">
+
+        <form
+        method="GET"
+        class="search-form"
+        >
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+            type="text"
+            name="search"
+            value="{{ search_query }}"
+            placeholder="Search size or color..."
+            >
+
+            {% if search_query %}
+
+                <a
+                href="{% url 'variant_list' product.id %}"
+                class="clear-search"
+                >
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </a>
+
+            {% endif %}
+
+        </form>
+
+        <a
+        href="{% url 'add_variant' product.id %}"
+        class="add-btn"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Variant
+
+        </a>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Variant Table -->
+    <!-- ========================= -->
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+
+<th>
+
+    Size
+
+</th>
+
+<th>
+
+    Color
+
+</th>
+
+<th>
+
+    SKU
+
+</th>
+
+<th>
+
+    Stock
+
+</th>
+
+<th>
+
+    Price
+
+</th>
+
+<th>
+
+    Status
+
+</th>
+
+<th>
+
+    Actions
+
+</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for variant in page_obj %}
+
+                <tr>
+
+    
+
+    <td>
+
+        {{ variant.size }}
+
+    </td>
+
+    <td>
+
+    <div class="color-box">
+
+        <span class="color-dot"></span>
+
+        <span>
+
+            {{ variant.color }}
+
+        </span>
+
+    </div>
+
+    <div class="variant-thumbnail">
+
+    {% for image in variant.images.all|slice:":3" %}
+
+        <img
+        src="{{ image.image.url }}"
+        alt="{{ variant.sku }}"
+        >
+
+    {% empty %}
+
+        <div class="thumbnail-placeholder">
+
+            <i class="fa-solid fa-image"></i>
+
+        </div>
+
+    {% endfor %}
+
+    {% if variant.images.count > 3 %}
+
+        <span class="more-images">
+
+            +{{ variant.images.count|add:"-3" }}
+
+        </span>
+
+    {% endif %}
+
+</div>
+
+</td>
+
+
+    <td>
+
+        {{ variant.sku }}
+
+    </td>
+
+    <td>
+
+        {{ variant.stock }}
+
+    </td>
+
+    <td>
+
+        ₹{{ variant.price }}
+
+    </td>
+
+    <td>
+
+        {% if variant.is_active %}
+
+            <span class="status active">
+
+                Active
+
+            </span>
+
+        {% else %}
+
+            <span class="status inactive">
+
+                Inactive
+
+            </span>
+
+        {% endif %}
+
+    </td>
+
+    <td>
+
+        <div class="action-buttons">
+
+            <button
+
+type="button"
+
+class="edit-btn open-edit-modal"
+
+data-url="{% url 'edit_variant' variant.id %}"
+
+>
+
+<i class="fa-solid fa-pen"></i>
+
+</button>
+
+            <form
+            method="POST"
+            action="{% url 'delete_variant' variant.id %}"
+            style="display:inline;"
+            >
+
+                {% csrf_token %}
+
+                <button
+                type="submit"
+                class="delete-btn"
+                title="Delete Variant"
+                onclick="return confirm('Delete this variant?');"
+                >
+
+                    <i class="fa-regular fa-trash-can"></i>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </td>
+
+</tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                    colspan="7"
+                    class="empty-row"
+                    >
+
+                        No Variants Available
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Pagination -->
+    <!-- ========================= -->
+
+    <div class="table-footer">
+
+        <div>
+
+            Showing
+
+            <strong>
+
+                {{ page_obj.start_index }}
+
+            </strong>
+
+            to
+
+            <strong>
+
+                {{ page_obj.end_index }}
+
+            </strong>
+
+            of
+
+            <strong>
+
+                {{ page_obj.paginator.count }}
+
+            </strong>
+
+            Variants
+
+        </div>
+
+        <div class="pagination">
+
+            {% if page_obj.has_previous %}
+
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}">
+
+                    <i class="fa-solid fa-chevron-left"></i>
+
+                </a>
+
+            {% endif %}
+
+            {% for page in page_obj.paginator.page_range %}
+
+                {% if page == page_obj.number %}
+
+                    <span class="current-page">
+
+                        {{ page }}
+
+                    </span>
+
+                {% else %}
+
+                    <a href="?page={{ page }}&search={{ search_query }}">
+
+                        {{ page }}
+
+                    </a>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+
+                <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}">
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+<div id="editVariantModal" class="variant-modal">
+
+    <div class="variant-modal-content">
+
+    </div>
+
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modal = document.getElementById("editVariantModal");
+    const modalContent = document.querySelector(".variant-modal-content");
+
+    function initializeEditVariant() {
+
+        const closeButtons = [
+            document.getElementById("closeEditModal"),
+            document.getElementById("closeEditModalFooter")
+        ];
+
+        closeButtons.forEach(btn => {
+
+            if (!btn) return;
+
+            btn.onclick = function () {
+
+                modal.classList.remove("show");
+                modalContent.innerHTML = "";
+                document.body.style.overflow = "";
+
+            };
+
+        });
+
+        const form = document.getElementById("editVariantForm");
+        const fileInput = document.getElementById("variant-images");
+
+        if (!form || !fileInput) return;
+
+        const cropModal = document.getElementById("cropModal");
+        const cropImage = document.getElementById("cropImage");
+
+        const closeCrop = document.getElementById("closeCropModal");
+        const cancelCrop = document.getElementById("cancelCrop");
+        const saveCrop = document.getElementById("saveCrop");
+
+        const zoomIn = document.getElementById("zoomIn");
+        const zoomOut = document.getElementById("zoomOut");
+        const resetCrop = document.getElementById("resetCrop");
+
+        const ratioButtons = document.querySelectorAll(".ratio-btn");
+
+        let cropper = null;
+        let selectedFile = null;
+        let pendingImages = [];
+
+        function renderPendingImages() {
+
+            const grid = document.getElementById("currentImagesGrid");
+
+            grid.querySelectorAll(".pending-image").forEach(card => {
+                card.remove();
+            });
+
+            pendingImages.forEach((file, index) => {
+
+                const url = URL.createObjectURL(file);
+
+                const card = document.createElement("div");
+
+                card.className = "image-card pending-image";
+
+                card.innerHTML = `
+                    <img src="${url}">
+
+                    <span class="primary-tag">
+                        NEW
+                    </span>
+
+                    <div class="image-overlay">
+
+                        <button
+                            type="button"
+                            class="delete-btn pending-delete"
+                            data-index="${index}">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </button>
+
+                    </div>
+                `;
+
+                grid.appendChild(card);
+
+            });
+
+            document.querySelectorAll(".pending-delete").forEach(btn => {
+
+                btn.onclick = function () {
+
+                    const index = Number(this.dataset.index);
+
+                    pendingImages.splice(index, 1);
+
+                    renderPendingImages();
+
+                    const dt = new DataTransfer();
+
+                    pendingImages.forEach(file => {
+                        dt.items.add(file);
+                    });
+
+                    fileInput.files = dt.files;
+
+                };
+
+            });
+
+        }
+
+        fileInput.onchange = function () {
+
+            selectedFile = this.files[0];
+
+            if (!selectedFile) return;
+
+            const allowed = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+            if (!allowed.includes(selectedFile.type)) {
+
+                alert("Only JPG, PNG and WEBP allowed");
+                this.value = "";
+                return;
+
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                cropImage.src = e.target.result;
+                cropModal.classList.add("show");
+
+            };
+
+            reader.readAsDataURL(selectedFile);
+
+        };
+
+        cropImage.onload = function () {
+
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(cropImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 1,
+                responsive: true
+            });
+
+        };
+
+        function closeCropModal() {
+
+            cropModal.classList.remove("show");
+
+            if (cropper) {
+
+                cropper.destroy();
+                cropper = null;
+
+            }
+
+        }
+
+        if (closeCrop) {
+            closeCrop.onclick = closeCropModal;
+        }
+
+        if (cancelCrop) {
+            cancelCrop.onclick = closeCropModal;
+        }
+
+        if (zoomIn) {
+            zoomIn.onclick = () => cropper && cropper.zoom(0.1);
+        }
+
+        if (zoomOut) {
+            zoomOut.onclick = () => cropper && cropper.zoom(-0.1);
+        }
+
+        if (resetCrop) {
+            resetCrop.onclick = () => cropper && cropper.reset();
+        }
+
+        ratioButtons.forEach(btn => {
+
+            btn.onclick = function () {
+
+                if (!cropper) return;
+
+                const ratio = this.dataset.ratio;
+
+                cropper.setAspectRatio(
+                    ratio === "free"
+                        ? NaN
+                        : parseFloat(ratio)
+                );
+
+            };
+
+        });
+
+        if (saveCrop) {
+
+            saveCrop.onclick = function () {
+
+                if (!cropper) return;
+
+                const canvas = cropper.getCroppedCanvas({
+                    width: 800,
+                    height: 800
+                });
+
+                canvas.toBlob(function (blob) {
+
+                    const file = new File(
+                        [blob],
+                        selectedFile.name,
+                        {
+                            type: "image/png"
+                        }
+                    );
+
+                    pendingImages.push(file);
+
+                    const dt = new DataTransfer();
+
+                    pendingImages.forEach(image => {
+                        dt.items.add(image);
+                    });
+
+                    fileInput.files = dt.files;
+
+                    renderPendingImages();
+
+                    console.log("After Crop:", fileInput.files);
+
+                    closeCropModal();
+
+                }, "image/png");
+
+            };
+
+        }
+
+    }
+
+    document.querySelectorAll(".open-edit-modal").forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            fetch(this.dataset.url)
+                .then(response => response.text())
+                .then(html => {
+
+                    modalContent.innerHTML = html;
+
+                    modal.classList.add("show");
+
+                    document.body.style.overflow = "hidden";
+
+                    initializeEditVariant();
+
+                })
+                .catch(error => {
+                    console.error("Modal Error:", error);
+                });
+
+        });
+
+    });
+
+});
+</script>
+{% endblock %}

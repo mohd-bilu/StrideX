@@ -1,0 +1,1285 @@
+{% extends "Admin_account/base_admin.html" %}
+{% load static %}
+
+{% block title %}
+Add Variant
+{% endblock %}
+
+{% block extra_css %}
+
+
+{% endblock %}
+
+{% block content %}
+<style>
+    *{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+.variant-page{
+
+    max-width:1250px;
+
+    margin:auto;
+
+}
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.back-btn{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-decoration:none;
+
+    color:#111;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:#111;
+
+    color:#fff;
+
+}
+
+.header-left span{
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    color:#8a99b5;
+
+}
+
+.header-left h2{
+
+    margin-top:5px;
+
+    font-size:34px;
+
+    font-weight:800;
+
+}
+
+.header-left p{
+
+    margin-top:6px;
+
+    color:#8c97aa;
+
+    font-size:15px;
+
+}
+
+.variant-card{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    padding:40px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.card-header{
+
+    margin-bottom:35px;
+
+}
+
+.title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.title i{
+
+    font-size:22px;
+
+}
+
+.title h3{
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+.form-group{
+
+    margin-bottom:28px;
+
+}
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:12px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#8a99b5;
+
+    letter-spacing:1px;
+
+}
+
+.form-group input,
+
+.form-group select{
+
+    width:100%;
+
+    padding:17px 20px;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:14px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.form-group input:focus,
+
+.form-group select:focus{
+
+    border-color:#111;
+
+}
+
+.two-column{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+.upload-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.upload-header label{
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#8a99b5;
+
+    letter-spacing:1px;
+
+}
+
+.image-count{
+
+    background:#eef3fb;
+
+    color:#5875a4;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+}
+.upload-box{
+
+    border:2px dashed #d9e2ef;
+
+    border-radius:20px;
+
+    min-height:280px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    background:#fafcff;
+
+}
+
+.upload-box:hover{
+
+    border-color:#111;
+
+    background:#f5f8fc;
+
+}
+
+.upload-content{
+
+    padding:25px;
+
+}
+
+.upload-content i{
+
+    font-size:42px;
+
+    color:#b4bfd1;
+
+    margin-bottom:18px;
+
+}
+
+.upload-content h4{
+
+    font-size:17px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+    color:#222;
+
+}
+
+.upload-content p{
+
+    color:#dc3545;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-bottom:22px;
+
+}
+
+.upload-btn{
+
+    padding:12px 26px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#111;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.upload-btn:hover{
+
+    background:#000;
+
+}
+.preview-container{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:12px;
+
+    margin-top:20px;
+
+}
+
+.preview-card{
+
+    position:relative;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    border:1px solid #e5e7eb;
+
+    background:#fff;
+
+}
+
+.preview-card img{
+
+    width:100%;
+
+    height:110px;
+
+    object-fit:cover;
+
+    display:block;
+
+}
+
+.remove-image{
+
+    position:absolute;
+
+    top:8px;
+
+    right:8px;
+
+    width:28px;
+
+    height:28px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#dc3545;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.primary-badge{
+
+    position:absolute;
+
+    left:8px;
+
+    bottom:8px;
+
+    background:#198754;
+
+    color:#fff;
+
+    font-size:11px;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+
+    font-weight:700;
+
+}
+.switch-group{
+
+    margin-top:30px;
+
+}
+
+.switch-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px;
+
+    border:1px solid #ececec;
+
+    border-radius:14px;
+
+    background:#fafafa;
+
+}
+
+.switch-item label{
+
+    font-size:14px;
+
+    font-weight:700;
+
+}
+
+.switch-item input[type="checkbox"]{
+
+    appearance:none;
+
+    width:54px;
+
+    height:30px;
+
+    background:#d1d5db;
+
+    border-radius:30px;
+
+    position:relative;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.switch-item input[type="checkbox"]::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:24px;
+
+    height:24px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    left:3px;
+
+    top:3px;
+
+    transition:.3s;
+
+}
+
+.switch-item input[type="checkbox"]:checked{
+
+    background:#111;
+
+}
+
+.switch-item input[type="checkbox"]:checked::before{
+
+    left:27px;
+
+}
+.variant-footer{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:18px;
+
+    margin-top:40px;
+
+}
+
+.cancel-btn{
+
+    padding:16px 34px;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:30px;
+
+    background:#fff;
+
+    color:#111;
+
+    text-decoration:none;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.cancel-btn:hover{
+
+    background:#f4f4f4;
+
+}
+
+.save-btn{
+
+    padding:16px 42px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#111;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.save-btn:hover{
+
+    background:#000;
+
+}
+@media (max-width:992px){
+
+    .variant-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .variant-card{
+
+        padding:25px;
+
+    }
+
+    .two-column{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .preview-container{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .variant-footer{
+
+        flex-direction:column;
+
+    }
+
+    .cancel-btn,
+
+    .save-btn{
+
+        width:100%;
+
+        text-align:center;
+
+    }
+
+}
+.crop-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.65);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+.crop-box{
+
+    width:900px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+}
+
+.crop-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.crop-body{
+
+    height:500px;
+
+}
+
+.crop-body img{
+
+    max-width:100%;
+
+}
+
+.crop-footer{
+
+    margin-top:20px;
+
+    text-align:right;
+
+}
+
+#crop-save{
+
+    padding:14px 30px;
+
+    border:none;
+
+    background:#111;
+
+    color:#fff;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+}
+
+@media (max-width:576px){
+
+    .preview-container{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .header-left h2{
+
+        font-size:26px;
+
+    }
+
+}
+</style>
+
+<div class="variant-page">
+
+<div class="page-header">
+
+<div class="header-left">
+
+<a
+href="{% url 'variant_list' product.id %}"
+class="back-btn"
+>
+
+<i class="fa-solid fa-arrow-left"></i>
+
+</a>
+
+<div>
+
+<span>
+
+MANAGEMENT
+
+</span>
+
+<h2>
+
+Add First Variant
+
+</h2>
+
+<p>
+
+Required before saving product inventory.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<form
+method="POST"
+enctype="multipart/form-data"
+class="variant-form"
+>
+
+{% csrf_token %}
+
+<div class="variant-card">
+
+<div class="card-header">
+
+<div class="title">
+
+<i class="fa-solid fa-layer-group"></i>
+
+<h3>
+
+VARIANT INFORMATION
+
+</h3>
+
+</div>
+
+</div>
+<div class="variant-grid">
+
+<div class="left-column">
+
+<div class="form-group">
+
+<label>
+
+COLOR NAME
+
+</label>
+
+{{ form.color }}
+
+{{ form.color.errors }}
+
+</div>
+
+<div class="two-column">
+
+<div class="form-group">
+
+<label>
+
+SIZE
+
+</label>
+
+{{ form.size }}
+
+{{ form.size.errors }}
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+SKU
+
+</label>
+
+{{ form.sku }}
+
+{{ form.sku.errors }}
+
+</div>
+
+</div>
+
+<div class="two-column">
+
+<div class="form-group">
+
+<label>
+
+PRICE ₹
+
+</label>
+
+{{ form.price }}
+
+{{ form.price.errors }}
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+INITIAL STOCK
+
+</label>
+
+{{ form.stock }}
+
+{{ form.stock.errors }}
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<label>
+
+INVENTORY STATUS
+
+</label>
+
+{{ form.is_active }}
+
+</div>
+</div>
+
+<div class="right-column">
+
+<div class="upload-header">
+
+<label>
+
+VARIANT IMAGES
+
+</label>
+
+<span
+class="image-count"
+id="image-count"
+>
+
+0 Selected
+
+</span>
+
+</div>
+
+<div
+class="upload-box"
+id="upload-box"
+>
+
+<input
+
+type="file"
+
+name="images"
+
+id="image-input"
+
+accept="image/*"
+
+multiple
+
+hidden
+
+>
+
+<div class="upload-content">
+
+<i class="fa-solid fa-cloud-arrow-up"></i>
+
+<h4>
+
+Drag or Click to Upload
+
+</h4>
+
+<p>
+
+Minimum 3 Images Required
+
+</p>
+
+<button
+type="button"
+class="upload-btn"
+id="browse-btn"
+>
+
+Choose Images
+
+</button>
+
+</div>
+
+</div>
+
+<div
+class="preview-container"
+id="preview-container"
+>
+
+</div>
+
+<div class="switch-group">
+
+<div class="switch-item">
+
+<label>
+
+DEFAULT VARIANT
+
+</label>
+
+{{ form.is_default }}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="variant-footer">
+
+<a
+
+href="{% url 'variant_list' product.id %}"
+
+class="cancel-btn"
+
+>
+
+Cancel
+
+</a>
+
+<button
+
+type="submit"
+
+class="save-btn"
+
+>
+
+Complete Variant
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+<div
+id="crop-modal"
+class="crop-modal"
+>
+
+<div class="crop-box">
+
+<div class="crop-header">
+
+<h3>
+
+Crop Image
+
+</h3>
+
+<button
+type="button"
+id="close-crop"
+>
+
+×
+
+</button>
+
+</div>
+
+<div class="crop-body">
+
+<img
+id="crop-image"
+>
+
+</div>
+
+<div class="crop-footer">
+
+<button
+type="button"
+id="crop-save"
+>
+
+Crop & Save
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+const uploadBox=document.querySelector("#upload-box");
+const imageInput=document.querySelector("#image-input");
+const browseButton=document.querySelector("#browse-btn");
+const previewContainer=document.querySelector("#preview-container");
+const imageCount=document.querySelector("#image-count");
+const form=document.querySelector(".variant-form");
+
+const dataTransfer=new DataTransfer();
+const cropModal=document.querySelector("#crop-modal");
+const cropImage=document.querySelector("#crop-image");
+const cropSave=document.querySelector("#crop-save");
+const closeCrop=document.querySelector("#close-crop");
+
+let cropper;
+let currentFileIndex=null;
+let selectedFiles=[];
+
+if(browseButton){
+    browseButton.addEventListener("click",function(e){
+        e.stopPropagation();
+        imageInput.click();
+    });
+}
+
+if(uploadBox){
+    uploadBox.addEventListener("click",function(){
+        imageInput.click();
+    });
+
+    uploadBox.addEventListener("dragover",function(e){
+        e.preventDefault();
+        uploadBox.style.borderColor="#111";
+        uploadBox.style.background="#f5f8fc";
+    });
+
+    uploadBox.addEventListener("dragleave",function(){
+        uploadBox.style.borderColor="#d9e2ef";
+        uploadBox.style.background="#fafcff";
+    });
+
+    uploadBox.addEventListener("drop",function(e){
+        e.preventDefault();
+        uploadBox.style.borderColor="#d9e2ef";
+        uploadBox.style.background="#fafcff";
+        addFiles(Array.from(e.dataTransfer.files));
+    });
+}
+
+if(imageInput){
+    imageInput.addEventListener("change",function(){
+        addFiles(Array.from(this.files));
+        imageInput.value="";
+    });
+}
+
+function addFiles(files){
+    files.forEach(function(file){
+        if(!file.type.startsWith("image/")){
+            return;
+        }
+
+        const exists=selectedFiles.some(function(existingFile){
+            return(
+                existingFile.name===file.name &&
+                existingFile.size===file.size &&
+                existingFile.lastModified===file.lastModified
+            );
+        });
+
+        if(exists){
+            return;
+        }
+
+        openCropper(file);
+    });
+
+    syncFileInput();
+    renderImages();
+}
+
+function syncFileInput(){
+    const newTransfer=new DataTransfer();
+
+    selectedFiles.forEach(function(file){
+        newTransfer.items.add(file);
+    });
+
+    imageInput.files=newTransfer.files;
+}
+
+function renderImages(){
+    previewContainer.innerHTML="";
+    imageCount.textContent=selectedFiles.length+" Selected";
+
+    selectedFiles.forEach(function(file,index){
+        const reader=new FileReader();
+
+        reader.onload=function(e){
+            const card=document.createElement("div");
+            card.className="preview-card";
+
+            card.innerHTML=`
+                <img src="${e.target.result}" alt="Preview">
+
+                <button
+                    type="button"
+                    class="remove-image"
+                    data-index="${index}">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                ${index===0?'<span class="primary-badge">Primary</span>':""}
+            `;
+
+            previewContainer.appendChild(card);
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
+
+if(previewContainer){
+    previewContainer.addEventListener("click",function(e){
+        const button=e.target.closest(".remove-image");
+
+        if(!button){
+            return;
+        }
+
+        const index=Number(button.dataset.index);
+
+        selectedFiles.splice(index,1);
+
+        syncFileInput();
+        renderImages();
+    });
+}
+
+if(form){
+    form.addEventListener("submit",function(e){
+        if(selectedFiles.length<3){
+            e.preventDefault();
+            alert("Please upload at least 3 images.");
+            return;
+        }
+    });
+}
+function openCropper(file){
+    const reader=new FileReader();
+
+    reader.onload=function(e){
+        cropModal.style.display="flex";
+        cropImage.src=e.target.result;
+
+        if(cropper){
+            cropper.destroy();
+        }
+
+        cropper=new Cropper(cropImage,{
+            aspectRatio:1,
+            viewMode:1,
+            autoCropArea:1,
+        });
+    };
+
+    reader.readAsDataURL(file);
+}
+
+cropSave.addEventListener("click",function(){
+    const canvas=cropper.getCroppedCanvas({
+        width:1000,
+        height:1000,
+    });
+
+    canvas.toBlob(function(blob){
+        const croppedFile=new File(
+            [blob],
+            "cropped.jpg",
+            {
+                type:"image/jpeg",
+            }
+        );
+
+        selectedFiles.push(croppedFile);
+
+        syncFileInput();
+        renderImages();
+
+        cropper.destroy();
+        cropModal.style.display="none";
+    });
+});
+
+closeCrop.addEventListener("click",function(){
+    cropModal.style.display="none";
+
+    if(cropper){
+        cropper.destroy();
+    }
+});
+</script>
+{% endblock %}
