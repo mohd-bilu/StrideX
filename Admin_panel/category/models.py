@@ -5,7 +5,6 @@ class Category(models.Model):
 
     category_name = models.CharField(
         max_length=100,
-        unique=True,
     )
 
     slug = models.SlugField(

@@ -903,10 +903,10 @@ SAVE CHANGES
 </div>
 
 {% endblock %}
-
 {% block extra_js %}
 
 <script>
+
 const form=document.querySelector(".product-form");
 const productName=document.querySelector("#id_product_name");
 const description=document.querySelector("#id_description");
@@ -915,54 +915,107 @@ const variantButton=document.querySelector(".variant-btn");
 
 let formChanged=false;
 
-if(form){
-    form.addEventListener("input",function(){
-        formChanged=true;
-    });
+function beforeUnloadHandler(e){
 
-    form.addEventListener("submit",function(){
-        saveButton.disabled=true;
-        saveButton.innerHTML="Saving...";
-    });
-}
-
-window.addEventListener("beforeunload",function(e){
     if(!formChanged){
         return;
     }
+
     e.preventDefault();
+
     e.returnValue="";
-});
+
+}
+
+if(form){
+
+    form.addEventListener("input",function(){
+
+        formChanged=true;
+
+    });
+
+    form.addEventListener("submit",function(){
+
+        formChanged=false;
+
+        window.removeEventListener(
+            "beforeunload",
+            beforeUnloadHandler,
+        );
+
+        if(saveButton){
+
+            saveButton.disabled=true;
+
+            saveButton.innerHTML="Saving...";
+
+        }
+
+    });
+
+}
+
+window.addEventListener(
+    "beforeunload",
+    beforeUnloadHandler,
+);
 
 if(description){
+
     const counter=document.createElement("small");
+
     counter.style.display="block";
     counter.style.marginTop="8px";
     counter.style.color="#777";
+
     description.after(counter);
 
     function updateCounter(){
+
         counter.innerHTML=description.value.length+" characters";
+
     }
 
     updateCounter();
-    description.addEventListener("input",updateCounter);
+
+    description.addEventListener(
+        "input",
+        updateCounter,
+    );
+
 }
 
 if(productName){
+
     productName.addEventListener("blur",function(){
+
         if(this.value.trim()===""){
             return;
         }
-        this.value=this.value.charAt(0).toUpperCase()+this.value.slice(1);
+
+        this.value=
+            this.value.charAt(0).toUpperCase()+
+            this.value.slice(1);
+
     });
+
 }
 
 if(variantButton){
+
     variantButton.addEventListener("click",function(e){
+
         e.preventDefault();
-        alert("Variant Management module will be available next.");
+
+        alert(
+            "Variant Management module will be available next."
+        );
+
     });
+
 }
+
 </script>
+
 {% endblock %}

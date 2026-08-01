@@ -39,7 +39,7 @@ href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
 </head>
 
 
-<script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>
+
 <body>
 
 <div class="layout">
@@ -55,7 +55,7 @@ href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
 <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-table-cells-large"></i>&nbsp;Dashboard</a>
 <a href="{% url 'user_management' %}" class="nav-item"><i class="fa-solid fa-users"></i>&nbsp;Users</a>
 <a href="{% url 'category_list' %}" class="nav-item"><i class="fa-solid fa-layer-group"></i>&nbsp;Categories</a>
-<a href="#" class="nav-item"><i class="fa-solid fa-box"></i>&nbsp;Products</a>
+<a href="{% url 'product_list' %}" class="nav-item"><i class="fa-solid fa-box"></i>&nbsp;Products</a>
 <a href="#" class="nav-item"><i class="fa-solid fa-tag"></i>&nbsp;Offers</a>
 <a href="#" class="nav-item"><i class="fa-solid fa-ticket"></i>&nbsp;Coupons</a>
 </nav>
@@ -90,13 +90,21 @@ href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
 <script>
 document.addEventListener("DOMContentLoaded",function(){
 {% for message in messages %}
-Swal.fire({toast:true,position:"top-end",icon:"{{ message.tags }}",title:"{{ message }}",showConfirmButton:false,timer:2500});
+Swal.fire({
+    toast:true,
+    position:"top-end",
+    icon:"{{ message.tags }}",
+    title:"{{ message }}",
+    showConfirmButton:false,
+    timer:2500
+});
 {% endfor %}
 });
 </script>
 {% endif %}
-
-{% block extra_js %}{% endblock %}
+<script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>
+{% block extra_js %}
+{% endblock %}
 
 </body>
 </html>

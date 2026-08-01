@@ -1,193 +1,30 @@
+{% extends "user_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>StrideX | Edit Profile</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% block extra_css %}
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-min-height:100vh;
-background:#050403;
-color:#f5ebe5;
-}
-
-a{
-text-decoration:none;
-color:inherit;
-}
-
-.navbar{
-height:78px;
-padding:0 7%;
-display:flex;
-align-items:center;
-background:#170d09;
-border-bottom:1px solid rgba(255,255,255,.05);
-}
-
-.logo{
-font-size:25px;
-font-weight:800;
-letter-spacing:-1px;
-margin-right:55px;
-}
-
-.logo span{
-color:#ff681d;
-}
-
-.nav-links{
-display:flex;
-align-items:center;
-gap:35px;
-}
-
-.nav-links a{
-font-size:12px;
-font-weight:600;
-color:#e8d9d2;
-transition:.2s;
-}
-
-.nav-links a:hover{
-color:#ff681d;
-}
-
-.nav-right{
-margin-left:auto;
-display:flex;
-align-items:center;
-gap:19px;
-}
-
-.search-box{
-width:245px;
-height:38px;
-display:flex;
-align-items:center;
-padding:0 15px;
-border-radius:22px;
-background:#251713;
-color:#8c7770;
-}
-
-.search-box input{
-width:100%;
-background:transparent;
-border:none;
-outline:none;
-color:#fff;
-font-size:12px;
-}
-
-.search-box i{
-font-size:13px;
-}
-
-.nav-icon{
-color:#e9d8cf;
-font-size:18px;
-}
-
-.profile-nav{
-width:34px;
-height:34px;
-border:1px solid #765348;
-border-radius:50%;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
 .page{
-width:100%;
-display:grid;
-grid-template-columns:260px minmax(0,1fr);
-gap:35px;
-padding:55px 40px 70px 20px;
-}
 
-.sidebar{
-width:100%;
-padding-left:0;
-}
+    width:100%;
+    max-width:1700px;
+    margin:40px auto 80px;
+    padding:0 40px;
 
-.sidebar-title{
-font-size:11px;
-letter-spacing:1.6px;
-color:#9c8580;
-margin:0 0 20px;
-}
+    background:transparent;
 
-.sidebar-menu{
-list-style:none;
-}
-
-.sidebar-menu li{
-margin-bottom:7px;
-}
-
-.sidebar-menu a{
-height:52px;
-padding:0 17px;
-display:flex;
-align-items:center;
-gap:15px;
-border-radius:8px;
-color:#d9c9c1;
-font-size:13px;
-}
-
-.sidebar-menu a:hover,
-.sidebar-menu .active{
-background:#251612;
-color:#fff;
-}
-
-.sidebar-menu i{
-width:18px;
-color:#d4a18a;
-}
-
-.sidebar-line{
-height:1px;
-background:#49352e;
-margin:45px 15px 25px;
-}
-
-.signout{
-color:#f0b4a0!important;
 }
 
 .edit-card{
-min-height:720px;
-padding:42px 50px;
-background:radial-gradient(circle at 90% 55%,rgba(109,45,13,.18),transparent 35%),#140b08;
-border:1px solid #2d1912;
-border-radius:24px;
-box-shadow:0 0 40px rgba(255,89,0,.06);
-}
 
+    width:100%;
+    min-height:720px;
+    padding:55px 70px;
+
+    background:#181818;
+    border-radius:24px;
+
+}
 .card-header{
 display:flex;
 align-items:flex-start;
@@ -200,6 +37,7 @@ font-size:31px;
 line-height:1;
 letter-spacing:-1px;
 margin-bottom:13px;
+color:#ffffff;
 }
 
 .card-header p{
@@ -412,146 +250,9 @@ font-size:11px;
 margin-right:7px;
 }
 
-.change-password{
-color:#f4dfd5;
-font-size:11px;
-padding-bottom:5px;
-border-bottom:2px solid #ff681d;
-}
-
-.footer{
-min-height:55px;
-padding:0 7%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-top:1px solid #15100e;
-color:#736762;
-font-size:9px;
-letter-spacing:1.5px;
-}
-
-.footer-links{
-display:flex;
-gap:25px;
-}
-
-.logout-overlay{
-position:fixed;
-inset:0;
-z-index:9999;
-display:none;
-align-items:center;
-justify-content:center;
-padding:20px;
-background:rgba(0,0,0,.78);
-backdrop-filter:blur(3px);
--webkit-backdrop-filter:blur(3px);
-}
-
-.logout-overlay.show{
-display:flex;
-}
-
-.logout-modal{
-width:100%;
-max-width:470px;
-padding:35px 40px 30px;
-text-align:center;
-background:radial-gradient(circle at 80% 70%,rgba(110,45,15,.22),transparent 40%),#1b0e09;
-border:1px solid #382016;
-border-radius:28px;
-box-shadow:0 25px 80px rgba(0,0,0,.7);
-animation:logoutModalOpen .25s ease;
-}
-
-@keyframes logoutModalOpen{
-from{
-opacity:0;
-transform:scale(.92) translateY(15px);
-}
-
 to{
 opacity:1;
 transform:scale(1) translateY(0);
-}
-}
-
-.logout-icon{
-width:56px;
-height:56px;
-margin:0 auto 27px;
-display:flex;
-align-items:center;
-justify-content:center;
-background:#fff;
-color:#3b1b10;
-border-radius:50%;
-font-size:20px;
-}
-
-.logout-modal h2{
-margin-bottom:15px;
-font-size:29px;
-line-height:1.25;
-font-weight:700;
-color:#fff;
-}
-
-.logout-modal p{
-max-width:370px;
-margin:0 auto 30px;
-color:#bba49a;
-font-size:12px;
-line-height:1.7;
-}
-
-.logout-modal form{
-width:100%;
-}
-
-.confirm-logout-btn{
-width:100%;
-height:51px;
-border:none;
-border-radius:28px;
-background:#ff681d;
-color:#fff;
-font-size:11px;
-font-weight:600;
-letter-spacing:1.4px;
-cursor:pointer;
-box-shadow:0 8px 25px rgba(255,104,29,.25);
-transition:.2s;
-}
-
-.confirm-logout-btn:hover{
-background:#ff792f;
-transform:translateY(-1px);
-}
-
-.cancel-logout-btn{
-width:100%;
-height:49px;
-margin-top:13px;
-border:1px solid #765143;
-border-radius:28px;
-background:#050302;
-color:#fff;
-font-size:11px;
-font-weight:500;
-letter-spacing:1.4px;
-cursor:pointer;
-transition:.2s;
-}
-
-.cancel-logout-btn:hover{
-border-color:#ff681d;
-color:#ff681d;
-}
-
-body.modal-open{
-overflow:hidden;
 }
 
 @media(max-width:900px){
@@ -564,9 +265,6 @@ display:none;
 grid-template-columns:1fr;
 }
 
-.sidebar{
-display:none;
-}
 
 .edit-card{
 padding:30px 25px;
@@ -607,398 +305,202 @@ align-items:flex-start;
 gap:25px;
 }
 
-.footer{
-flex-direction:column;
-padding:20px;
-gap:12px;
-}
 }
 </style>
-</head>
+{% endblock %}
+{% block content %}
 
-<body>
+    <div class="page">
 
-<header class="navbar">
+        <section class="edit-card">
 
-<a href="{% url 'user_home' %}" class="logo">
-Stride<span>X</span>
-</a>
+            <form method="POST" enctype="multipart/form-data">
 
-<nav class="nav-links">
-<a href="{% url 'user_home' %}">HOME</a>
-<a href="#">CATEGORIES</a>
-<a href="#">WALLET</a>
-<a href="#">ABOUT</a>
-</nav>
+                {% csrf_token %}
 
-<div class="nav-right">
+                <div class="card-header">
 
-<div class="search-box">
-<input type="text" placeholder="Search outfits...">
-<i class="fa-solid fa-magnifying-glass"></i>
-</div>
+                    <div>
+                        <h1>EDIT PROFILE</h1>
+                        <p>Update your personal information and preferences.</p>
+                    </div>
 
-<a href="#" class="nav-icon">
-<i class="fa-regular fa-heart"></i>
-</a>
+                    <div class="header-actions">
 
-<a href="#" class="nav-icon">
-<i class="fa-solid fa-bag-shopping"></i>
-</a>
+                        <button
+                            type="button"
+                            class="cancel-btn"
+                            onclick="window.location.href='{% url 'profile' %}'"
+                        >
+                            CANCEL
+                        </button>
 
-<a href="{% url 'profile' %}" class="profile-nav">
-<i class="fa-regular fa-user"></i>
-</a>
+                        <button
+                            type="submit"
+                            class="save-btn"
+                        >
+                            SAVE CHANGES
+                        </button>
 
-</div>
+                    </div>
 
-</header>
+                </div>
 
+                <div class="photo-section">
 
-<main class="page">
+                    <div class="photo-wrap">
 
-<aside class="sidebar">
+                        {% if user.profile_photo %}
 
-<p class="sidebar-title">
-ACCOUNT SETTINGS
-</p>
+                            <img
+                                id="profilePreview"
+                                class="profile-photo"
+                                src="{{ user.profile_photo.url }}"
+                                alt="Profile Photo"
+                            >
 
-<ul class="sidebar-menu">
+                            <div
+                                id="defaultPhoto"
+                                class="default-photo"
+                                style="display:none;"
+                            >
+                                <i class="fa-solid fa-user"></i>
+                            </div>
 
-<li>
-<a href="{% url 'profile' %}" class="active">
-<i class="fa-solid fa-user"></i>
-Profile
-</a>
-</li>
+                        {% else %}
 
-<li>
-<a href="{% url 'address_list' %}">
-<i class="fa-solid fa-location-dot"></i>
-Address
-</a>
-</li>
+                            <div
+                                id="defaultPhoto"
+                                class="default-photo"
+                            >
+                                <i class="fa-solid fa-user"></i>
+                            </div>
 
-<li>
-<a href="#">
-<i class="fa-solid fa-box"></i>
-My Orders
-</a>
-</li>
+                            <img
+                                id="profilePreview"
+                                class="profile-photo"
+                                src=""
+                                alt="Profile Preview"
+                                style="display:none;"
+                            >
 
-<li>
-<a href="#">
-<i class="fa-regular fa-wallet"></i>
-Wallet
-</a>
-</li>
+                        {% endif %}
 
-</ul>
+                        <label class="camera-label">
 
-<div class="sidebar-line"></div>
+                            <i class="fa-solid fa-camera"></i>
 
-<ul class="sidebar-menu">
+                            <input
+                                id="profilePhotoInput"
+                                type="file"
+                                name="profile_photo"
+                                accept="image/jpeg,image/png,image/gif"
+                            >
 
-<li>
-<a href="#" class="signout open-logout-modal">
-<i class="fa-solid fa-arrow-right-from-bracket"></i>
-Sign Out
-</a>
-</li>
+                        </label>
 
-</ul>
+                    </div>
 
-</aside>
+                    <p class="photo-note">
+                        JPG, GIF OR PNG. MAX SIZE 1MB
+                    </p>
 
+                    {% if user.profile_photo %}
 
-<section class="edit-card">
+                        <label class="remove-photo-label">
 
-<form method="POST" enctype="multipart/form-data">
+                            <input
+                                type="checkbox"
+                                name="remove_photo"
+                                id="removePhoto"
+                            >
 
-{% csrf_token %}
+                            <span>
+                                <i class="fa-solid fa-trash"></i>
+                                REMOVE PROFILE PHOTO
+                            </span>
 
-<div class="card-header">
+                        </label>
 
-<div>
-<h1>EDIT PROFILE</h1>
-<p>Update your personal information and preferences.</p>
-</div>
+                    {% endif %}
 
-<div class="header-actions">
+                </div>
 
-<button
-type="button"
-class="cancel-btn"
-onclick="window.location.href='{% url 'profile' %}'"
->
-CANCEL
-</button>
+                <div class="form-grid">
 
-<button
-type="submit"
-class="save-btn"
->
-SAVE CHANGES
-</button>
+                    <div class="form-group">
 
-</div>
+                        <label>FULL NAME</label>
 
-</div>
+                        <div class="input-wrap">
+                            <i class="fa-regular fa-user"></i>
 
+                            <input
+                                type="text"
+                                name="full_name"
+                                value="{{ user.full_name }}"
+                                required
+                            >
+                        </div>
 
-<div class="photo-section">
+                    </div>
 
-<div class="photo-wrap">
+                    <div class="form-group">
 
-{% if user.profile_photo %}
+                        <label>EMAIL ADDRESS</label>
 
-<img
-id="profilePreview"
-class="profile-photo"
-src="{{ user.profile_photo.url }}"
-alt="Profile Photo"
->
+                        <div class="input-wrap">
+                            <i class="fa-regular fa-envelope"></i>
 
-<div
-id="defaultPhoto"
-class="default-photo"
-style="display:none;"
->
-<i class="fa-solid fa-user"></i>
-</div>
+                            <input
+                                type="email"
+                                value="{{ user.email }}"
+                                disabled
+                            >
+                        </div>
 
-{% else %}
+                    </div>
 
-<div
-id="defaultPhoto"
-class="default-photo"
->
-<i class="fa-solid fa-user"></i>
-</div>
+                    <div class="form-group">
 
-<img
-id="profilePreview"
-class="profile-photo"
-src=""
-alt="Profile Preview"
-style="display:none;"
->
+                        <label>PHONE NUMBER</label>
 
-{% endif %}
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-phone"></i>
 
+                            <input
+                                type="text"
+                                name="phone_number"
+                                value="{{ user.phone_number|default:'' }}"
+                                placeholder="Enter phone number"
+                            >
+                        </div>
 
-<label class="camera-label">
+                    </div>
 
-<i class="fa-solid fa-camera"></i>
 
-<input
-id="profilePhotoInput"
-type="file"
-name="profile_photo"
-accept="image/jpeg,image/png,image/gif"
->
+                </div>
 
-</label>
+                <div class="security-row">
 
-</div>
+                    <span class="verified">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Email Verified
+                    </span>
 
+                </div>
 
-<p class="photo-note">
-JPG, GIF OR PNG. MAX SIZE 1MB
-</p>
+            </form>
 
+        </section>
 
-{% if user.profile_photo %}
+    </div>
 
-<label class="remove-photo-label">
 
-<input
-type="checkbox"
-name="remove_photo"
-id="removePhoto"
->
 
-<span>
-<i class="fa-solid fa-trash"></i>
-REMOVE PROFILE PHOTO
-</span>
-
-</label>
-
-{% endif %}
-
-</div>
-
-
-<div class="form-grid">
-
-<div class="form-group">
-
-<label>FULL NAME</label>
-
-<div class="input-wrap">
-
-<i class="fa-regular fa-user"></i>
-
-<input
-type="text"
-name="full_name"
-value="{{ user.full_name }}"
-required
->
-
-</div>
-
-</div>
-
-
-<div class="form-group">
-
-<label>EMAIL ADDRESS</label>
-
-<div class="input-wrap">
-
-<i class="fa-regular fa-envelope"></i>
-
-<input
-type="email"
-value="{{ user.email }}"
-disabled
->
-
-</div>
-
-</div>
-
-
-<div class="form-group">
-
-<label>PHONE NUMBER</label>
-
-<div class="input-wrap">
-
-<i class="fa-solid fa-phone"></i>
-
-<input
-type="text"
-name="phone_number"
-value="{{ user.phone_number|default:'' }}"
-placeholder="Enter phone number"
->
-
-</div>
-
-</div>
-
-
-<div class="form-group">
-
-<label>DATE OF BIRTH</label>
-
-<div class="input-wrap">
-
-<i class="fa-regular fa-calendar"></i>
-
-<input
-type="date"
-name="date_of_birth"
-value="{{ user.date_of_birth|date:'Y-m-d' }}"
->
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="security-row">
-
-<span class="verified">
-<i class="fa-solid fa-circle-check"></i>
-Email Verified
-</span>
-
-<a
-href="{% url 'change_password' %}"
-class="change-password"
->
-Change Password
-<i class="fa-solid fa-chevron-right"></i>
-</a>
-
-</div>
-
-</form>
-
-</section>
-
-</main>
-
-
-<footer class="footer">
-
-<span>
-© 2026 STRIDEX LABORATORY. ALL RIGHTS RESERVED.
-</span>
-
-<div class="footer-links">
-<a href="#">PRIVACY POLICY</a>
-<a href="#">TERMS</a>
-</div>
-
-</footer>
-
-
-<div
-class="logout-overlay"
-id="logoutModal"
->
-
-<div class="logout-modal">
-
-<div class="logout-icon">
-<i class="fa-solid fa-arrow-right-from-bracket"></i>
-</div>
-
-<h2>
-Are you sure you<br>
-want to Logout?
-</h2>
-
-<p>
-You will need to sign in again to access your account,
-orders, and wishlist.
-</p>
-
-<form
-method="POST"
-action="{% url 'logout' %}"
->
-
-{% csrf_token %}
-
-<button
-type="submit"
-class="confirm-logout-btn"
->
-YES, LOGOUT
-</button>
-
-</form>
-
-<button
-type="button"
-class="cancel-logout-btn"
-id="cancelLogout"
->
-CANCEL
-</button>
-
-</div>
-
-</div>
-
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 const photoInput = document.getElementById("profilePhotoInput");
@@ -1006,189 +508,133 @@ const preview = document.getElementById("profilePreview");
 const defaultPhoto = document.getElementById("defaultPhoto");
 const removePhoto = document.getElementById("removePhoto");
 
-photoInput.addEventListener("change", function(){
+photoInput.addEventListener("change", function () {
 
-const file = this.files[0];
+    const file = this.files[0];
 
-if(!file){
-return;
-}
+    if (!file) {
+        return;
+    }
 
-if(file.size > 1024 * 1024){
+    if (file.size > 1024 * 1024) {
 
-Swal.fire({
-toast:true,
-position:"top-end",
-icon:"error",
-title:"Maximum image size is 1MB.",
-showConfirmButton:false,
-timer:3000,
-timerProgressBar:true,
-background:"#21130e",
-color:"#fff"
-});
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Maximum image size is 1MB.",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: "#21130e",
+            color: "#fff"
+        });
 
-this.value = "";
+        this.value = "";
+        return;
+    }
 
-return;
-}
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif"
+    ];
 
-const allowedTypes = [
-"image/jpeg",
-"image/png",
-"image/gif"
-];
+    if (!allowedTypes.includes(file.type)) {
 
-if(!allowedTypes.includes(file.type)){
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: "Only JPG, PNG or GIF images are allowed.",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            background: "#21130e",
+            color: "#fff"
+        });
 
-Swal.fire({
-toast:true,
-position:"top-end",
-icon:"error",
-title:"Only JPG, PNG or GIF images are allowed.",
-showConfirmButton:false,
-timer:3000,
-timerProgressBar:true,
-background:"#21130e",
-color:"#fff"
-});
+        this.value = "";
+        return;
+    }
 
-this.value = "";
+    if (removePhoto) {
+        removePhoto.checked = false;
+    }
 
-return;
-}
+    const reader = new FileReader();
 
-if(removePhoto){
-removePhoto.checked = false;
-}
+    reader.onload = function (event) {
 
-const reader = new FileReader();
+        preview.src = event.target.result;
+        preview.style.display = "block";
 
-reader.onload = function(event){
+        if (defaultPhoto) {
+            defaultPhoto.style.display = "none";
+        }
 
-preview.src = event.target.result;
-preview.style.display = "block";
+    };
 
-if(defaultPhoto){
-defaultPhoto.style.display = "none";
-}
-
-};
-
-reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 
 });
 
+if (removePhoto) {
 
-if(removePhoto){
+    removePhoto.addEventListener("change", function () {
 
-removePhoto.addEventListener("change", function(){
+        if (this.checked) {
 
-if(this.checked){
+            photoInput.value = "";
+            preview.style.display = "none";
 
-photoInput.value = "";
+            if (defaultPhoto) {
+                defaultPhoto.style.display = "flex";
+            }
 
-preview.style.display = "none";
+        } else {
 
-if(defaultPhoto){
-defaultPhoto.style.display = "flex";
-}
+            preview.style.display = "block";
 
-}else{
+            if (defaultPhoto) {
+                defaultPhoto.style.display = "none";
+            }
 
-preview.style.display = "block";
+        }
 
-if(defaultPhoto){
-defaultPhoto.style.display = "none";
-}
-
-}
-
-});
+    });
 
 }
 </script>
-
-
-<script>
-const logoutModal = document.getElementById("logoutModal");
-
-const openLogoutButtons =
-document.querySelectorAll(".open-logout-modal");
-
-const cancelLogout =
-document.getElementById("cancelLogout");
-
-
-openLogoutButtons.forEach(function(button){
-
-button.addEventListener("click", function(event){
-
-event.preventDefault();
-
-logoutModal.classList.add("show");
-
-document.body.classList.add("modal-open");
-
-});
-
-});
-
-
-cancelLogout.addEventListener("click", function(){
-
-logoutModal.classList.remove("show");
-
-document.body.classList.remove("modal-open");
-
-});
-
-
-logoutModal.addEventListener("click", function(event){
-
-if(event.target === logoutModal){
-
-logoutModal.classList.remove("show");
-
-document.body.classList.remove("modal-open");
-
-}
-
-});
-</script>
-
 
 {% if messages %}
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
 
-{% for message in messages %}
+    {% for message in messages %}
 
-Swal.fire({
-toast:true,
-position:"top-end",
-icon:"{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
-title:"{{ message|escapejs }}",
-showConfirmButton:false,
-timer:3000,
-timerProgressBar:true,
-background:"#21130e",
-color:"#fff"
-});
+    Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+        title: "{{ message|escapejs }}",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: "#21130e",
+        color: "#fff"
+    });
 
-{% endfor %}
+    {% endfor %}
 
 });
 </script>
 
 {% endif %}
 
-
 <script>
 window.history.forward();
 </script>
 
-</body>
-
-</html>
+{% endblock %}

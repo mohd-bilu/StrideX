@@ -1,39 +1,9 @@
+{% extends "user_base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block extra_css %}
 
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>StrideX | Step Into Greatness</title>
-
-    <!-- GOOGLE FONT -->
-
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
-
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet">
-
-
-    <!-- FONT AWESOME -->
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-
-    <style>
-
-
+<style>
         /* ========================================
            GLOBAL
         ======================================== */
@@ -478,137 +448,139 @@
 
 
 
-        /* HERO RIGHT */
+  /* ========================================
+   HERO RIGHT
+======================================== */
 
+.hero-right{
 
-        .hero-right{
+    display:flex;
 
-            display:flex;
+    justify-content:center;
 
-            justify-content:center;
+    align-items:center;
 
-            align-items:center;
+    position:relative;
 
-            position:relative;
-        }
-
-
-        .orange-circle{
-
-            width:480px;
-
-            height:480px;
-
-            border-radius:50%;
-
-            background:
-            radial-gradient(
-                circle,
-                #ff8a20,
-                #d95200
-            );
-
-            position:absolute;
-
-            opacity:.85;
-
-            filter:blur(1px);
-        }
-
-
-        .shoe-placeholder{
-
-            position:relative;
-
-            z-index:2;
-
-            width:520px;
-
-            height:280px;
-
-            display:flex;
-
-            align-items:center;
-
-            justify-content:center;
-
-            transform:rotate(-12deg);
-        }
-
-
-        .shoe-placeholder i{
-
-            font-size:250px;
-
-            color:#181818;
-
-            filter:
-            drop-shadow(
-                0 35px 25px
-                rgba(0,0,0,.5)
-            );
-        }
-
-
-        .floating-card{
-
-            position:absolute;
-
-            z-index:3;
-
-            background:
-            rgba(31,22,18,.88);
-
-            backdrop-filter:blur(10px);
-
-            border:1px solid
-            rgba(255,255,255,.1);
-
-            border-radius:12px;
-
-            padding:14px 18px;
-
-            box-shadow:
-            0 20px 40px
-            rgba(0,0,0,.3);
-        }
-
-
-        .floating-card strong{
-
-            display:block;
-
-            color:#ffffff;
-
-            font-size:14px;
-        }
-
-
-        .floating-card span{
-
-            color:#ff7a00;
-
-            font-size:12px;
-        }
-
-
-        .card-one{
-
-            left:8%;
-
-            bottom:22%;
-        }
-
-
-        .card-two{
-
-            right:8%;
-
-            top:24%;
-        }
+    overflow:hidden;
+}  
 
 
 
+
+/* Shoe Container */
+
+.shoe-placeholder{
+
+    position:relative;
+
+    z-index:2;
+
+    width:850px;
+
+    height:550px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transform:rotate(-12deg);
+}
+
+/* Shoe Image */
+.shoe-image{
+
+    width:850px;
+
+    height:auto;
+
+    object-fit:contain;
+
+    display:block;
+
+    filter:drop-shadow(
+        0 40px 35px rgba(0,0,0,.45)
+    );
+}
+.orange-circle{
+
+    width:700px;
+
+    height:700px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #ff8a20,
+        #d95200
+    );
+
+    position:absolute;
+
+    opacity:.85;
+
+    filter:blur(1px);
+}
+
+
+/* Floating Cards */
+
+.floating-card{
+
+    position:absolute;
+
+    z-index:3;
+
+    background:
+    rgba(31,22,18,.88);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid
+    rgba(255,255,255,.1);
+
+    border-radius:12px;
+
+    padding:14px 18px;
+
+    box-shadow:
+    0 20px 40px
+    rgba(0,0,0,.3);
+}
+
+.floating-card strong{
+
+    display:block;
+
+    color:#ffffff;
+
+    font-size:14px;
+}
+
+.floating-card span{
+
+    color:#ff7a00;
+
+    font-size:12px;
+}
+
+.card-one{
+
+    left:5%;
+
+    bottom:18%;
+}
+
+.card-two{
+
+    right:5%;
+
+    top:18%;
+}
         /* ========================================
            SECTION COMMON
         ======================================== */
@@ -721,6 +693,18 @@
             border-color:
             rgba(255,122,0,.6);
         }
+
+        .category-image{
+
+        width:100%;
+
+        height:100%;
+
+        object-fit:cover;
+
+        display:block;
+
+    }
 
 
         .category-icon{
@@ -863,7 +847,17 @@
 
             transform:rotate(-15deg);
         }
+        .product-photo{
 
+        width:100%;
+
+        height:100%;
+
+        object-fit:cover;
+
+        display:block;
+
+    }
 
         .heart{
 
@@ -889,6 +883,7 @@
             rgba(0,0,0,.35);
 
             color:#ffffff;
+            transition:.3s;
         }
 
 
@@ -948,23 +943,36 @@
         }
 
 
-        .add-button{
+    .add-button{
 
-            width:36px;
+        width:36px;
 
-            height:36px;
+        height:36px;
 
-            border:none;
+        display:flex;
 
-            border-radius:7px;
+        justify-content:center;
 
-            background:#ff7a00;
+        align-items:center;
 
-            color:#ffffff;
+        border:none;
 
-            cursor:pointer;
-        }
+        border-radius:7px;
 
+        background:#ff7a00;
+
+        color:#ffffff;
+
+        cursor:pointer;
+
+        transition:.3s;
+
+    }
+    .add-button:hover{
+
+        background:#ff8b18;
+
+    }
 
 
         /* ========================================
@@ -1491,127 +1499,9 @@
 
 
     </style>
+    {% endblock %}
 
-</head>
-
-
-<body>
-
-
-<!-- ========================================
-     NAVBAR
-======================================== -->
-
-
-<header class="navbar">
-
-
-    <div class="logo">
-
-        STRIDE<span>X</span>
-
-    </div>
-
-
-    <nav class="nav-links">
-
-        <a href="#"
-           class="active">
-
-            HOME
-
-        </a>
-
-
-        <a href="#">
-
-            CATEGORIES
-
-        </a>
-
-
-        <a href="#">
-
-            WALLET
-
-        </a>
-
-
-        <a href="#">
-
-            ABOUT
-
-        </a>
-
-    </nav>
-
-
-    <div class="nav-actions">
-
-
-        <!-- STATIC SEARCH -->
-
-
-        <div class="search-box">
-
-            <input type="text"
-                   placeholder="Search sneakers...">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-        </div>
-
-
-
-        <!-- STATIC WISHLIST -->
-
-
-        <button type="button"
-                class="icon-btn">
-
-            <i class="fa-regular fa-heart"></i>
-
-        </button>
-
-
-
-        <!-- STATIC CART -->
-
-
-        <button type="button"
-                class="icon-btn">
-
-            <i class="fa-solid fa-bag-shopping"></i>
-
-            <span class="cart-count">
-
-                0
-
-            </span>
-
-        </button>
-
-
-
-        <!-- WORKING PROFILE ICON -->
-
-
-        <a href="{% url 'profile' %}"
-           class="icon-btn"
-           title="My Profile">
-
-            <i class="fa-regular fa-user"></i>
-
-        </a>
-
-
-    </div>
-
-
-</header>
-
-
-
+    {% block content %}
 <!-- ========================================
      HERO
 ======================================== -->
@@ -1688,10 +1578,8 @@
 
 
         <div class="shoe-placeholder">
-
-            <i class="fa-solid fa-shoe-prints"></i>
-
-        </div>
+    <img src="{% static 'Authentication/images/home_page' %}" alt="StrideX Shoe">
+</div>
 
 
         <div class="floating-card card-one">
@@ -1780,135 +1668,55 @@
 
     <div class="category-grid">
 
+    {% for category in categories %}
 
-        <div class="category-card">
+        <a href="{% url 'product:product_list' %}?category={{ category.id }}"
+           class="category-card">
 
-            <div class="category-icon">
+            {% if category.image %}
 
-                <i class="fa-solid fa-person-running"></i>
+                <img
+                    src="{{ category.image.url }}"
+                    alt="{{ category.category_name }}"
+                    class="category-image">
 
-            </div>
+            {% else %}
 
+                <div class="category-icon">
+
+                    <i class="fa-solid fa-shoe-prints"></i>
+
+                </div>
+
+            {% endif %}
 
             <div class="category-overlay"></div>
-
 
             <div class="category-info">
 
                 <h3>
 
-                    Running
+                    {{ category.category_name }}
 
                 </h3>
 
                 <p>
 
-                    Performance for every mile
+                    Explore Collection
 
                 </p>
 
             </div>
 
-        </div>
+        </a>
 
+    {% empty %}
 
+        <p>No categories found.</p>
 
-        <div class="category-card">
+    {% endfor %}
 
-            <div class="category-icon">
-
-                <i class="fa-solid fa-basketball"></i>
-
-            </div>
-
-
-            <div class="category-overlay"></div>
-
-
-            <div class="category-info">
-
-                <h3>
-
-                    Basketball
-
-                </h3>
-
-                <p>
-
-                    Own every move
-
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="category-card">
-
-            <div class="category-icon">
-
-                <i class="fa-solid fa-shoe-prints"></i>
-
-            </div>
-
-
-            <div class="category-overlay"></div>
-
-
-            <div class="category-info">
-
-                <h3>
-
-                    Lifestyle
-
-                </h3>
-
-                <p>
-
-                    Everyday street style
-
-                </p>
-
-            </div>
-
-        </div>
-
-
-
-        <div class="category-card">
-
-            <div class="category-icon">
-
-                <i class="fa-solid fa-dumbbell"></i>
-
-            </div>
-
-
-            <div class="category-overlay"></div>
-
-
-            <div class="category-info">
-
-                <h3>
-
-                    Training
-
-                </h3>
-
-                <p>
-
-                    Push beyond your limits
-
-                </p>
-
-            </div>
-
-        </div>
-
-
-    </div>
+</div>
 
 
 </section>
@@ -1930,28 +1738,28 @@
 
             <p class="section-label">
 
-                MOST WANTED
+                NEW ARRIVALS
 
             </p>
 
 
             <h2 class="section-title">
 
-                Trending Products
+                New Arrivals
 
             </h2>
 
         </div>
 
 
-        <a href="#"
-           class="view-all">
+        <a href="{% url 'product:product_list' %}"
+   class="view-all">
 
-            VIEW ALL
+    VIEW ALL
 
-            <i class="fa-solid fa-arrow-right"></i>
+    <i class="fa-solid fa-arrow-right"></i>
 
-        </a>
+</a>
 
 
     </div>
@@ -1960,279 +1768,110 @@
 
     <div class="product-grid">
 
+    {% for product in products %}
 
-        <!-- PRODUCT 1 -->
-
+        {% with product.variants.first as variant %}
 
         <div class="product-card">
 
+            <a href="{% url 'product:product_detail' product.id %}">
 
-            <div class="product-image">
+                <div class="product-image">
 
-                <i class="fa-solid fa-shoe-prints"></i>
+                    {% if variant and variant.images.first %}
 
+                        <img
+                            src="{{ variant.images.first.image.url }}"
+                            alt="{{ product.product_name }}"
+                            class="product-photo">
 
-                <span class="heart">
+                    {% else %}
 
-                    <i class="fa-regular fa-heart"></i>
+                        <i class="fa-solid fa-shoe-prints"></i>
 
-                </span>
+                    {% endif %}
 
-            </div>
+                    {% if variant %}
 
+                    <a
+                        href="{% url 'add_to_wishlist' variant.id %}"
+                        class="heart wishlist-btn">
+
+                        <i class="fa-regular fa-heart"></i>
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </a>
 
             <div class="product-details">
 
                 <span class="product-category">
 
-                    RUNNING
+                    {{ product.category.category_name|upper }}
 
                 </span>
 
-
                 <h3>
 
-                    StrideX Air Runner
+                    <a href="{% url 'product:product_detail' product.id %}">
+
+                        {{ product.product_name }}
+
+                    </a>
 
                 </h3>
 
-
                 <div class="rating">
 
-                    ★★★★★
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
 
-                </div>
+                <span>(Coming Soon)</span>
 
+             </div>
 
                 <div class="price-row">
 
                     <span class="price">
 
-                        ₹7,999
+                        ₹{{ variant.price }}
 
                     </span>
 
+                    {% if variant %}
 
-                    <button type="button"
-                            class="add-button">
+<a
+    href="{% url 'add_to_cart' variant.id %}"
+    class="add-button">
 
-                        <i class="fa-solid fa-plus"></i>
+    <i class="fa-solid fa-plus"></i>
 
-                    </button>
+</a>
+
+{% endif %}
 
                 </div>
 
             </div>
-
 
         </div>
 
+        {% endwith %}
 
+    {% empty %}
 
-        <!-- PRODUCT 2 -->
+        <p>No products available.</p>
 
+    {% endfor %}
 
-        <div class="product-card">
-
-
-            <div class="product-image">
-
-                <i class="fa-solid fa-shoe-prints"></i>
-
-
-                <span class="heart">
-
-                    <i class="fa-regular fa-heart"></i>
-
-                </span>
-
-            </div>
-
-
-            <div class="product-details">
-
-                <span class="product-category">
-
-                    LIFESTYLE
-
-                </span>
-
-
-                <h3>
-
-                    Urban Street Low
-
-                </h3>
-
-
-                <div class="rating">
-
-                    ★★★★★
-
-                </div>
-
-
-                <div class="price-row">
-
-                    <span class="price">
-
-                        ₹6,499
-
-                    </span>
-
-
-                    <button type="button"
-                            class="add-button">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- PRODUCT 3 -->
-
-
-        <div class="product-card">
-
-
-            <div class="product-image">
-
-                <i class="fa-solid fa-shoe-prints"></i>
-
-
-                <span class="heart">
-
-                    <i class="fa-regular fa-heart"></i>
-
-                </span>
-
-            </div>
-
-
-            <div class="product-details">
-
-                <span class="product-category">
-
-                    BASKETBALL
-
-                </span>
-
-
-                <h3>
-
-                    Court Elevate Pro
-
-                </h3>
-
-
-                <div class="rating">
-
-                    ★★★★★
-
-                </div>
-
-
-                <div class="price-row">
-
-                    <span class="price">
-
-                        ₹9,999
-
-                    </span>
-
-
-                    <button type="button"
-                            class="add-button">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- PRODUCT 4 -->
-
-
-        <div class="product-card">
-
-
-            <div class="product-image">
-
-                <i class="fa-solid fa-shoe-prints"></i>
-
-
-                <span class="heart">
-
-                    <i class="fa-regular fa-heart"></i>
-
-                </span>
-
-            </div>
-
-
-            <div class="product-details">
-
-                <span class="product-category">
-
-                    TRAINING
-
-                </span>
-
-
-                <h3>
-
-                    Power Flex Trainer
-
-                </h3>
-
-
-                <div class="rating">
-
-                    ★★★★★
-
-                </div>
-
-
-                <div class="price-row">
-
-                    <span class="price">
-
-                        ₹5,999
-
-                    </span>
-
-
-                    <button type="button"
-                            class="add-button">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-    </div>
+</div>
 
 
 </section>
@@ -2291,251 +1930,9 @@
 
 </section>
 
+{% endblock %}
 
-
-<!-- ========================================
-     FOOTER
-======================================== -->
-
-
-<footer>
-
-
-    <div class="footer-grid">
-
-
-        <!-- BRAND -->
-
-
-        <div>
-
-
-            <div class="footer-logo">
-
-                STRIDE<span>X</span>
-
-            </div>
-
-
-            <p class="footer-description">
-
-                Premium sneakers for people who never
-                stop moving. Performance, comfort and
-                style in every step.
-
-            </p>
-
-
-            <div class="social-icons">
-
-
-                <button type="button">
-
-                    <i class="fa-brands fa-instagram"></i>
-
-                </button>
-
-
-                <button type="button">
-
-                    <i class="fa-brands fa-facebook-f"></i>
-
-                </button>
-
-
-                <button type="button">
-
-                    <i class="fa-brands fa-x-twitter"></i>
-
-                </button>
-
-
-                <button type="button">
-
-                    <i class="fa-brands fa-youtube"></i>
-
-                </button>
-
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- SHOP -->
-
-
-        <div class="footer-column">
-
-
-            <h4>
-
-                Shop
-
-            </h4>
-
-
-            <a href="#">
-
-                Running
-
-            </a>
-
-
-            <a href="#">
-
-                Basketball
-
-            </a>
-
-
-            <a href="#">
-
-                Lifestyle
-
-            </a>
-
-
-            <a href="#">
-
-                Training
-
-            </a>
-
-
-            <a href="#">
-
-                New Arrivals
-
-            </a>
-
-
-        </div>
-
-
-
-        <!-- SUPPORT -->
-
-
-        <div class="footer-column">
-
-
-            <h4>
-
-                Support
-
-            </h4>
-
-
-            <a href="#">
-
-                Contact Us
-
-            </a>
-
-
-            <a href="#">
-
-                Shipping
-
-            </a>
-
-
-            <a href="#">
-
-                Returns
-
-            </a>
-
-
-            <a href="#">
-
-                Size Guide
-
-            </a>
-
-
-            <a href="#">
-
-                FAQ
-
-            </a>
-
-
-        </div>
-
-
-
-        <!-- NEWSLETTER -->
-
-
-        <div class="newsletter">
-
-
-            <h4>
-
-                Join the StrideX Community
-
-            </h4>
-
-
-            <p>
-
-                Get updates on new releases,
-                exclusive offers and sneaker stories.
-
-            </p>
-
-
-            <div class="newsletter-form">
-
-
-                <input type="email"
-                       placeholder="Your email address">
-
-
-                <button type="button">
-
-                    <i class="fa-solid fa-arrow-right"></i>
-
-                </button>
-
-
-            </div>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="footer-bottom">
-
-
-        <p>
-
-            © 2026 StrideX. All rights reserved.
-
-        </p>
-
-
-        <p>
-
-            Privacy Policy &nbsp; | &nbsp;
-            Terms & Conditions
-
-        </p>
-
-
-    </div>
-
-
-</footer>
-
+{% block extra_js %}
 {% if messages %}
 
 <script>
@@ -2563,10 +1960,4 @@ document.addEventListener(
 </script>
 
 {% endif %}
-
-</body>
-</html>
-
-</body>
-
-</html>
+{% endblock %}

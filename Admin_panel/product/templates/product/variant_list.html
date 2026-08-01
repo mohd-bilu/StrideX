@@ -914,27 +914,39 @@ Variant Management
 
         <div class="product-image">
 
-            {% with product.images.first as image %}
+            {% with variant=product.variants.first %}
 
-                {% if image %}
+    {% if variant %}
 
-                    <img
-                    src="{{ image.image.url }}"
-                    alt="{{ product.product_name }}"
-                    >
+        {% with image=variant.images.first %}
 
-                {% else %}
+            {% if image %}
 
-                    <div class="no-image">
+                <img
+                src="{{ image.image.url }}"
+                class="product-image"
+                alt="{{ product.product_name }}"
+                >
 
-                        <i class="fa-solid fa-image"></i>
+            {% else %}
 
-                    </div>
+                <div class="no-image">
+                    <i class="fa-solid fa-image"></i>
+                </div>
 
-                {% endif %}
+            {% endif %}
 
-            {% endwith %}
+        {% endwith %}
 
+    {% else %}
+
+        <div class="no-image">
+            <i class="fa-solid fa-image"></i>
+        </div>
+
+    {% endif %}
+
+{% endwith %}
         </div>
 
         <div class="product-info">
@@ -1248,26 +1260,22 @@ data-url="{% url 'edit_variant' variant.id %}"
 
 </button>
 
-            <form
-            method="POST"
-            action="{% url 'delete_variant' variant.id %}"
-            style="display:inline;"
-            >
+           <form
+method="POST"
+action="{% url 'delete_variant' variant.id %}"
+class="delete-form">
 
-                {% csrf_token %}
+    {% csrf_token %}
 
-                <button
-                type="submit"
-                class="delete-btn"
-                title="Delete Variant"
-                onclick="return confirm('Delete this variant?');"
-                >
+    <button
+    type="button"
+    class="delete-btn">
 
-                    <i class="fa-regular fa-trash-can"></i>
+        <i class="fa-solid fa-trash"></i>
 
-                </button>
+    </button>
 
-            </form>
+</form>
 
         </div>
 
@@ -1390,113 +1398,107 @@ data-url="{% url 'edit_variant' variant.id %}"
     </div>
 
 </div>
+{% endblock %}
+{% block extra_js %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded",function(){
 
-    const modal = document.getElementById("editVariantModal");
-    const modalContent = document.querySelector(".variant-modal-content");
+    const modal=document.getElementById("editVariantModal");
+    const modalContent=document.querySelector(".variant-modal-content");
 
-    function initializeEditVariant() {
+    function initializeEditVariant(){
 
-        const closeButtons = [
+        const closeButtons=[
             document.getElementById("closeEditModal"),
             document.getElementById("closeEditModalFooter")
         ];
 
-        closeButtons.forEach(btn => {
+        closeButtons.forEach(btn=>{
+            if(!btn)return;
 
-            if (!btn) return;
-
-            btn.onclick = function () {
-
+            btn.onclick=function(){
                 modal.classList.remove("show");
-                modalContent.innerHTML = "";
-                document.body.style.overflow = "";
-
+                modalContent.innerHTML="";
+                document.body.style.overflow="";
             };
-
         });
 
-        const form = document.getElementById("editVariantForm");
-        const fileInput = document.getElementById("variant-images");
+        const form=document.getElementById("editVariantForm");
+        const fileInput=document.getElementById("variant-images");
 
-        if (!form || !fileInput) return;
+        if(!form||!fileInput)return;
 
-        const cropModal = document.getElementById("cropModal");
-        const cropImage = document.getElementById("cropImage");
+        const cropModal=document.getElementById("cropModal");
+        const cropImage=document.getElementById("cropImage");
 
-        const closeCrop = document.getElementById("closeCropModal");
-        const cancelCrop = document.getElementById("cancelCrop");
-        const saveCrop = document.getElementById("saveCrop");
+        const closeCrop=document.getElementById("closeCropModal");
+        const cancelCrop=document.getElementById("cancelCrop");
+        const saveCrop=document.getElementById("saveCrop");
 
-        const zoomIn = document.getElementById("zoomIn");
-        const zoomOut = document.getElementById("zoomOut");
-        const resetCrop = document.getElementById("resetCrop");
+        const zoomIn=document.getElementById("zoomIn");
+        const zoomOut=document.getElementById("zoomOut");
+        const resetCrop=document.getElementById("resetCrop");
 
-        const ratioButtons = document.querySelectorAll(".ratio-btn");
+        const ratioButtons=document.querySelectorAll(".ratio-btn");
 
-        let cropper = null;
-        let selectedFile = null;
-        let pendingImages = [];
+        let cropper=null;
+        let selectedFile=null;
+        let pendingImages=[];
 
-        function renderPendingImages() {
+        function renderPendingImages(){
 
-            const grid = document.getElementById("currentImagesGrid");
+            const grid=document.getElementById("currentImagesGrid");
 
-            grid.querySelectorAll(".pending-image").forEach(card => {
+            if(!grid)return;
+
+            grid.querySelectorAll(".pending-image").forEach(card=>{
                 card.remove();
             });
 
-            pendingImages.forEach((file, index) => {
+            pendingImages.forEach((file,index)=>{
 
-                const url = URL.createObjectURL(file);
+                const url=URL.createObjectURL(file);
 
-                const card = document.createElement("div");
+                const card=document.createElement("div");
 
-                card.className = "image-card pending-image";
+                card.className="image-card pending-image";
 
-                card.innerHTML = `
-                    <img src="${url}">
-
-                    <span class="primary-tag">
-                        NEW
-                    </span>
-
-                    <div class="image-overlay">
-
-                        <button
-                            type="button"
-                            class="delete-btn pending-delete"
-                            data-index="${index}">
-
-                            <i class="fa-solid fa-trash"></i>
-
-                        </button>
-
-                    </div>
-                `;
+                card.innerHTML=`
+<img src="${url}">
+<span class="primary-tag">NEW</span>
+<div class="image-overlay">
+    <button
+        type="button"
+        class="delete-btn pending-delete"
+        data-index="${index}">
+        <i class="fa-solid fa-trash"></i>
+    </button>
+</div>
+`;
 
                 grid.appendChild(card);
 
             });
 
-            document.querySelectorAll(".pending-delete").forEach(btn => {
+            document.querySelectorAll(".pending-delete").forEach(btn=>{
 
-                btn.onclick = function () {
+                btn.onclick=function(){
 
-                    const index = Number(this.dataset.index);
+                    const index=Number(this.dataset.index);
 
-                    pendingImages.splice(index, 1);
+                    URL.revokeObjectURL(pendingImages[index]);
+
+                    pendingImages.splice(index,1);
 
                     renderPendingImages();
 
-                    const dt = new DataTransfer();
+                    const dt=new DataTransfer();
 
-                    pendingImages.forEach(file => {
+                    pendingImages.forEach(file=>{
                         dt.items.add(file);
                     });
 
-                    fileInput.files = dt.files;
+                    fileInput.files=dt.files;
 
                 };
 
@@ -1504,143 +1506,144 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-        fileInput.onchange = function () {
+                fileInput.onchange=function(){
 
-            selectedFile = this.files[0];
+            selectedFile=this.files[0];
 
-            if (!selectedFile) return;
+            if(!selectedFile)return;
 
-            const allowed = [
+            const allowed=[
                 "image/jpeg",
                 "image/png",
                 "image/webp"
             ];
 
-            if (!allowed.includes(selectedFile.type)) {
-
+            if(!allowed.includes(selectedFile.type)){
                 alert("Only JPG, PNG and WEBP allowed");
-                this.value = "";
+                this.value="";
                 return;
-
             }
 
-            const reader = new FileReader();
+            const reader=new FileReader();
 
-            reader.onload = function (e) {
-
-                cropImage.src = e.target.result;
+            reader.onload=function(e){
+                cropImage.src=e.target.result;
                 cropModal.classList.add("show");
-
             };
 
             reader.readAsDataURL(selectedFile);
 
         };
 
-        cropImage.onload = function () {
+        cropImage.onload=function(){
 
-            if (cropper) {
+            if(cropper){
                 cropper.destroy();
             }
 
-            cropper = new Cropper(cropImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 1,
-                responsive: true
+            cropper=new Cropper(cropImage,{
+                aspectRatio:1,
+                viewMode:1,
+                autoCropArea:1,
+                responsive:true
             });
 
         };
 
-        function closeCropModal() {
+        function closeCropModal(){
 
             cropModal.classList.remove("show");
 
-            if (cropper) {
-
+            if(cropper){
                 cropper.destroy();
-                cropper = null;
-
+                cropper=null;
             }
 
+            cropImage.src="";
+            selectedFile=null;
+
         }
 
-        if (closeCrop) {
-            closeCrop.onclick = closeCropModal;
+        if(closeCrop)closeCrop.onclick=closeCropModal;
+        if(cancelCrop)cancelCrop.onclick=closeCropModal;
+
+        if(zoomIn){
+            zoomIn.onclick=function(){
+                if(cropper)cropper.zoom(0.1);
+            };
         }
 
-        if (cancelCrop) {
-            cancelCrop.onclick = closeCropModal;
+        if(zoomOut){
+            zoomOut.onclick=function(){
+                if(cropper)cropper.zoom(-0.1);
+            };
         }
 
-        if (zoomIn) {
-            zoomIn.onclick = () => cropper && cropper.zoom(0.1);
+        if(resetCrop){
+            resetCrop.onclick=function(){
+                if(cropper)cropper.reset();
+            };
         }
 
-        if (zoomOut) {
-            zoomOut.onclick = () => cropper && cropper.zoom(-0.1);
-        }
+        ratioButtons.forEach(btn=>{
 
-        if (resetCrop) {
-            resetCrop.onclick = () => cropper && cropper.reset();
-        }
+            btn.onclick=function(){
 
-        ratioButtons.forEach(btn => {
+                if(!cropper)return;
 
-            btn.onclick = function () {
-
-                if (!cropper) return;
-
-                const ratio = this.dataset.ratio;
+                const ratio=this.dataset.ratio;
 
                 cropper.setAspectRatio(
-                    ratio === "free"
-                        ? NaN
-                        : parseFloat(ratio)
+                    ratio==="free"
+                    ?NaN
+                    :parseFloat(ratio)
                 );
 
             };
 
         });
 
-        if (saveCrop) {
+        if(saveCrop){
 
-            saveCrop.onclick = function () {
+            saveCrop.onclick=function(){
 
-                if (!cropper) return;
+                if(!cropper)return;
 
-                const canvas = cropper.getCroppedCanvas({
-                    width: 800,
-                    height: 800
+                const canvas=cropper.getCroppedCanvas({
+                    width:800,
+                    height:800,
+                    imageSmoothingEnabled:true,
+                    imageSmoothingQuality:"high"
                 });
 
-                canvas.toBlob(function (blob) {
+                canvas.toBlob(function(blob){
 
-                    const file = new File(
+                    const file=new File(
                         [blob],
                         selectedFile.name,
                         {
-                            type: "image/png"
+                            type:"image/png",
+                            lastModified:Date.now()
                         }
                     );
 
                     pendingImages.push(file);
 
-                    const dt = new DataTransfer();
+                    const dt=new DataTransfer();
 
-                    pendingImages.forEach(image => {
+                    pendingImages.forEach(image=>{
                         dt.items.add(image);
                     });
 
-                    fileInput.files = dt.files;
+                    fileInput.files=dt.files;
 
                     renderPendingImages();
 
-                    console.log("After Crop:", fileInput.files);
+                    console.log("After Crop:",fileInput.files);
 
                     closeCropModal();
 
-                }, "image/png");
+                },"image/png");
 
             };
 
@@ -1648,31 +1651,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    document.querySelectorAll(".open-edit-modal").forEach(button => {
+    document.querySelectorAll(".open-edit-modal").forEach(button=>{
 
-        button.addEventListener("click", function () {
+        button.addEventListener("click",function(){
 
             fetch(this.dataset.url)
-                .then(response => response.text())
-                .then(html => {
+                .then(response=>response.text())
+                .then(html=>{
 
-                    modalContent.innerHTML = html;
+                    modalContent.innerHTML=html;
 
                     modal.classList.add("show");
 
-                    document.body.style.overflow = "hidden";
+                    document.body.style.overflow="hidden";
 
                     initializeEditVariant();
 
                 })
-                .catch(error => {
-                    console.error("Modal Error:", error);
+                .catch(error=>{
+                    console.error("Modal Error:",error);
                 });
+
+        });
+
+    });
+    document.querySelectorAll(".delete-btn").forEach(button=>{
+
+    button.addEventListener("click",function(){
+
+        const form=this.closest(".delete-form");
+
+        Swal.fire({
+
+            title:"Delete Variant?",
+
+            text:"This variant will be deleted.",
+
+            icon:"warning",
+
+            showCancelButton:true,
+
+            confirmButtonColor:"#dc2626",
+
+            cancelButtonColor:"#6b7280",
+
+            confirmButtonText:"Yes, Delete",
+
+            cancelButtonText:"Cancel",
+
+            reverseButtons:true
+
+        }).then(result=>{
+
+            if(result.isConfirmed){
+
+                form.submit();
+
+            }
 
         });
 
     });
 
 });
+    
+
+});
 </script>
+
 {% endblock %}

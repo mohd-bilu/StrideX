@@ -128,9 +128,10 @@ border:1px solid #edf2f7;
 
 .card h2{
 font-size:30px;
-margin-bottom:8px;
 font-weight:700;
 color:#0f172a;
+margin-bottom:24px;
+line-height:1.2;
 }
 
 .card-description{
@@ -143,7 +144,7 @@ margin-bottom:35px;
 margin-bottom:28px;
 }
 
-.form-group label{
+.form-group > label:not(.upload-btn){
 display:block;
 font-size:12px;
 font-weight:700;
@@ -185,19 +186,22 @@ font-weight:500;
 }
 .right-section .card{
 position:sticky;
-top:30px;
+top:35px;
+display:flex;
+flex-direction:column;
 }
 
 .image-preview{
 width:100%;
-height:240px;
+height:260px;
+min-height:260px;
 border:2px dashed #dbe4ef;
 border-radius:18px;
-overflow:hidden;
+background:#f8fafc;
 display:flex;
 align-items:center;
 justify-content:center;
-background:#f8fafc;
+overflow:hidden;
 margin-bottom:20px;
 }
 
@@ -205,11 +209,33 @@ margin-bottom:20px;
 width:100%;
 height:100%;
 object-fit:cover;
+display:block;
+}
+
+.image-placeholder{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:60px;
+color:#cbd5e1;
+}
+
+.image-placeholder{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:60px;
+color:#cbd5e1;
 }
 
 .upload-btn{
 width:100%;
-height:52px;
+min-height:52px;
+padding:14px 20px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -253,7 +279,7 @@ cursor:pointer;
 }
 
 .status-card{
-margin-top:30px;
+margin-top:25px;
 padding:18px;
 border:1px solid #e5e7eb;
 border-radius:16px;
@@ -320,7 +346,7 @@ transform:translateX(24px);
 }
 
 .current-status{
-margin-top:25px;
+margin-top:20px;
 padding:18px;
 border-radius:16px;
 background:#f8fafc;
@@ -543,21 +569,28 @@ class="edit-category-form">
 
                     <div class="image-preview">
 
-                        {% if category.image %}
+                        <div class="image-preview">
 
-                        <img
-                        id="imagePreview"
-                        src="{{ category.image.url }}"
-                        alt="Category Image">
+    <img
+        id="imagePreview"
+        src="{% if category.image %}{{ category.image.url }}{% endif %}"
+        alt="Category Image"
+        {% if not category.image %}
+        style="display:none;"
+        {% endif %}
+    >
 
-                        {% else %}
+    <div
+        id="imagePlaceholder"
+        class="image-placeholder"
+        {% if category.image %}
+        style="display:none;"
+        {% endif %}
+    >
+        <i class="fa-solid fa-image"></i>
+    </div>
 
-                        <img
-                        id="imagePreview"
-                        src="{% static 'images/no-image.png' %}"
-                        alt="Category Image">
-
-                        {% endif %}
+</div>
 
                     </div>
 
@@ -693,133 +726,145 @@ class="edit-category-form">
 </div>
 
 </form>
+{% endblock %}
+{% block extra_js %}
+
 <script>
 
-const categoryName=document.getElementById("categoryName");
+const categoryName = document.getElementById("categoryName");
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
+const imagePlaceholder = document.getElementById("imagePlaceholder");
+const statusToggle = document.querySelector('input[name="is_active"]');
+const statusBadge = document.querySelector(".active-status,.inactive-status");
+const removeImage = document.querySelector('input[name="remove_image"]');
 
-const imageInput=document.getElementById("imageInput");
+if (categoryName) {
+    categoryName.focus();
+}
 
-const imagePreview=document.getElementById("imagePreview");
+if (imageInput) {
 
-const statusToggle=document.querySelector(
-'input[name="is_active"]'
-);
+    imageInput.addEventListener("change", function () {
 
-const statusBadge=document.querySelector(
-".active-status,.inactive-status"
-);
+        const file = this.files[0];
 
-const removeImage=document.querySelector(
-'input[name="remove_image"]'
-);
+        if (!file) return;
 
+        const allowed = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        ];
 
+        if (!allowed.includes(file.type)) {
 
-if(categoryName){
+            Swal.fire({
+                icon: "error",
+                title: "Invalid Image",
+                text: "Only JPG, PNG and WEBP images are allowed.",
+                confirmButtonColor: "#111827",
+            });
 
-categoryName.focus();
+            this.value = "";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Image Too Large",
+                text: "Image size must be less than 5MB.",
+                confirmButtonColor: "#111827",
+            });
+
+            this.value = "";
+            return;
+        }
+
+        if (removeImage) {
+            removeImage.checked = false;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = "block";
+
+            if (imagePlaceholder) {
+                imagePlaceholder.style.display = "none";
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 }
 
+if (removeImage) {
 
+    removeImage.addEventListener("change", function () {
 
-if(imageInput){
+        if (!this.checked) {
+            return;
+        }
 
-imageInput.addEventListener("change",function(){
+        Swal.fire({
+            title: "Remove Image?",
+            text: "The current image will be removed after updating the category.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Remove",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#6b7280",
+        }).then((result) => {
 
-const file=this.files[0];
+            if (!result.isConfirmed) {
 
-if(!file){
+                removeImage.checked = false;
 
-return;
+                return;
 
-}
+            }
 
-const allowed=[
+            imageInput.value = "";
 
-"image/jpeg",
-"image/png",
-"image/webp"
+            imagePreview.src = "";
+            imagePreview.style.display = "none";
 
-];
+            if (imagePlaceholder) {
+                imagePlaceholder.style.display = "flex";
+            }
 
-if(!allowed.includes(file.type)){
+        });
 
-alert(
-"Only JPG, PNG and WEBP images are allowed."
-);
-
-this.value="";
-
-return;
-
-}
-
-if(file.size>5*1024*1024){
-
-alert(
-"Image size must be less than 5MB."
-);
-
-this.value="";
-
-return;
+    });
 
 }
 
-const reader=new FileReader();
+if (statusToggle && statusBadge) {
 
-reader.onload=function(e){
+    statusToggle.addEventListener("change", function () {
 
-imagePreview.src=e.target.result;
+        if (this.checked) {
 
-};
+            statusBadge.className = "active-status";
+            statusBadge.textContent = "Active";
 
-reader.readAsDataURL(file);
+        } else {
 
-});
+            statusBadge.className = "inactive-status";
+            statusBadge.textContent = "Inactive";
 
-}
+        }
 
-
-
-if(removeImage){
-
-removeImage.addEventListener("change",function(){
-
-if(this.checked){
-
-imagePreview.src="";
-
-imageInput.value="";
-
-}
-
-});
-
-}
-
-
-
-if(statusToggle && statusBadge){
-
-statusToggle.addEventListener("change",function(){
-
-if(this.checked){
-
-statusBadge.className="active-status";
-
-statusBadge.innerHTML="Active";
-
-}else{
-
-statusBadge.className="inactive-status";
-
-statusBadge.innerHTML="Inactive";
-
-}
-
-});
+    });
 
 }
 

@@ -6,10 +6,6 @@ Product Management
 
 {% block extra_css %}
 
-
-{% endblock %}
-
-{% block content %}
 <style>
     *{
 
@@ -97,9 +93,9 @@ Product Management
 
     grid-template-columns:repeat(4,1fr);
 
-    gap:25px;
+    gap:24px;
 
-    margin-bottom:30px;
+    margin:35px 0;
 
 }
 
@@ -107,11 +103,25 @@ Product Management
 
     background:#fff;
 
-    border-radius:16px;
+    border:1px solid #edf2f7;
 
-    padding:28px;
+    border-radius:24px;
 
-    box-shadow:0 5px 18px rgba(0,0,0,.08);
+    padding:34px;
+
+    box-shadow:0 6px 20px rgba(15,23,42,.05);
+
+    transition:.3s;
+
+    min-height:180px;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 14px 30px rgba(15,23,42,.08);
 
 }
 
@@ -121,21 +131,21 @@ Product Management
 
     justify-content:space-between;
 
-    align-items:center;
+    align-items:flex-start;
 
-    margin-bottom:25px;
+    margin-bottom:28px;
 
 }
 
 .card-icon{
 
-    width:55px;
+    width:52px;
 
-    height:55px;
+    height:52px;
 
-    border-radius:12px;
+    border-radius:16px;
 
-    background:#f5f5f5;
+    background:#f8fafc;
 
     display:flex;
 
@@ -143,17 +153,41 @@ Product Management
 
     align-items:center;
 
-    font-size:22px;
+    font-size:24px;
+
+}
+
+.card:nth-child(1) .card-icon{
+
+    color:#8b5e3c;
+
+}
+
+.card:nth-child(2) .card-icon{
+
+    color:#22c55e;
+
+}
+
+.card:nth-child(3) .card-icon{
+
+    color:#ef4444;
+
+}
+
+.card:nth-child(4) .card-icon{
+
+    color:#3b82f6;
 
 }
 
 .badge{
 
-    padding:7px 14px;
+    padding:6px 14px;
 
-    border-radius:8px;
+    border-radius:20px;
 
-    font-size:13px;
+    font-size:12px;
 
     font-weight:700;
 
@@ -161,38 +195,49 @@ Product Management
 
 .green{
 
-    background:#dff7e6;
+    background:#dcfce7;
 
-    color:#198754;
+    color:#16a34a;
 
 }
 
 .gray{
 
-    background:#eeeeee;
+    background:#f1f5f9;
 
-    color:#666;
+    color:#94a3b8;
 
 }
 
 .card small{
 
-    color:#777;
+    display:block;
 
-    font-weight:600;
+    color:#94a3b8;
 
-    letter-spacing:1px;
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:1.4px;
+
+    text-transform:uppercase;
 
 }
 
 .card h2{
 
-    font-size:42px;
+    margin-top:18px;
 
-    margin-top:15px;
+    font-size:56px;
+
+    font-weight:800;
+
+    line-height:1;
+
+    color:#1e293b;
 
 }
-
 .toolbar{
 
     background:#fff;
@@ -581,6 +626,103 @@ td{
     transition:.3s;
 
 }
+.toolbar-filters{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.filter-select{
+min-width:180px;
+height:42px;
+padding:0 14px;
+border:1px solid #d1d5db;
+border-radius:10px;
+background:#fff;
+color:#374151;
+font-size:14px;
+font-weight:500;
+outline:none;
+cursor:pointer;
+transition:all .2s ease;
+}
+
+.filter-select:hover{
+border-color:#a94f00;
+}
+
+.filter-select:focus{
+border-color:#a94f00;
+box-shadow:0 0 0 3px rgba(169,79,0,.12);
+}
+
+.filter-select option{
+background:#fff;
+color:#374151;
+}
+
+@media(max-width:768px){
+
+.toolbar-filters{
+width:100%;
+flex-direction:column;
+align-items:stretch;
+}
+
+.filter-select{
+width:100%;
+}
+
+}
+.status-btn{
+
+padding:8px 18px;
+
+border:none;
+
+border-radius:20px;
+
+font-size:12px;
+
+font-weight:700;
+
+letter-spacing:.5px;
+
+cursor:pointer;
+
+transition:.25s;
+
+min-width:90px;
+
+}
+
+.status-btn.active{
+
+background:#dff7e6;
+
+color:#198754;
+
+}
+
+.status-btn.active:hover{
+
+background:#c9f2d4;
+
+}
+
+.status-btn.inactive{
+
+background:#ffe5e5;
+
+color:#dc3545;
+
+}
+
+.status-btn.inactive:hover{
+
+background:#ffd4d4;
+
+}
 
 .pagination a:hover{
 
@@ -590,6 +732,57 @@ td{
 
     border-color:#111;
 
+}
+.switch{
+    position:relative;
+    display:inline-block;
+    width:42px;
+    height:24px;
+    margin:0 4px;
+}
+
+.switch input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    background:#d1d5db;
+    border-radius:20px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.slider::before{
+    content:"";
+    position:absolute;
+    width:18px;
+    height:18px;
+    left:3px;
+    top:3px;
+    background:#fff;
+    border-radius:50%;
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:#111;
+}
+
+.switch input:checked + .slider::before{
+    transform:translateX(18px);
+}
+.action-buttons{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-form{
+    display:flex;
+    align-items:center;
+    margin:0;
 }
 
 .current-page{
@@ -626,11 +819,33 @@ tbody tr:hover{
 
 }
 
-@media (max-width:1200px){
+@media(max-width:1200px){
 
     .cards{
 
         grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .card{
+
+        min-height:auto;
+
+    }
+
+    .card h2{
+
+        font-size:42px;
 
     }
 
@@ -714,6 +929,9 @@ tbody tr:hover{
 
 }
 </style>
+{% endblock %}
+
+{% block content %}
 
 <div class="container">
 
@@ -747,6 +965,93 @@ ADD PRODUCT
 </a>
 
 </div>
+<div class="cards">
+
+    <div class="card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+               <i class="fa-solid fa-box"></i>
+
+            </div>
+        
+        </div>
+
+        <small>
+            TOTAL PRODUCTS
+        </small>
+
+        <h2>
+            {{ total_products }}
+        </h2>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+                <i class="fa-regular fa-circle-check"></i>
+
+            </div>
+
+            
+
+        </div>
+
+        <small>
+            LOW STOCK
+        </small>
+
+        <h2>
+            {{ low_stock_products }}
+        </h2>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+
+            </div>
+
+        </div>
+
+        <small>
+            OUT OF STOCK
+        </small>
+
+        <h2>
+            {{ out_of_stock_products }}
+        </h2>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-top">
+
+            <div class="card-icon">
+               <i class="fa-regular fa-square-plus"></i>
+            </div>
+        </div>
+
+        <small>
+            NEW ARRIVALS
+        </small>
+
+        <h2>
+            {{ new_arrivals }}
+        </h2>
+
+    </div>
+
+</div>
 <div class="toolbar">
 
 <form
@@ -778,31 +1083,83 @@ class="clear-search"
 
 </form>
 
-<div class="toolbar-actions">
+<form
+method="GET"
+class="toolbar-actions">
 
-<button
-type="button"
-class="toolbar-btn"
+<input
+type="hidden"
+name="search"
+value="{{ search_query }}">
+
+<select
+name="category"
+onchange="this.form.submit()">
+
+<option value="">
+All Categories
+</option>
+
+{% for category in categories %}
+
+<option
+value="{{ category.id }}"
+{% if selected_category == category.id|stringformat:"s" %}
+selected
+{% endif %}
 >
 
-<i class="fa-solid fa-filter"></i>
+{{ category.category_name }}
 
-Filter
+</option>
 
-</button>
+{% endfor %}
 
-<button
-type="button"
-class="toolbar-btn"
+</select>
+
+<select
+name="sort"
+onchange="this.form.submit()">
+
+<option
+value="latest"
+{% if selected_sort == "latest" %}
+selected
+{% endif %}
 >
+Latest
+</option>
 
-<i class="fa-solid fa-download"></i>
+<option
+value="oldest"
+{% if selected_sort == "oldest" %}
+selected
+{% endif %}
+>
+Oldest
+</option>
 
-Export
+<option
+value="a_z"
+{% if selected_sort == "a_z" %}
+selected
+{% endif %}
+>
+A-Z
+</option>
 
-</button>
+<option
+value="z_a"
+{% if selected_sort == "z_a" %}
+selected
+{% endif %}
+>
+Z-A
+</option>
 
-</div>
+</select>
+
+</form>
 
 </div>
 <div class="table-wrapper">
@@ -827,7 +1184,7 @@ Category
 
 <th>
 
-Images
+Variants
 
 </th>
 
@@ -858,28 +1215,43 @@ Actions
 
 <div class="product-box">
 
-{% with product.images.first as image %}
+{% with variant=product.variants.first %}
 
-{% if image %}
+    {% if variant %}
 
-<img
-src="{{ image.image.url }}"
-class="product-image"
-alt="{{ product.product_name }}"
->
+        {% with image=variant.images.first %}
 
-{% else %}
+            {% if image %}
 
-<div class="no-image">
+                <img
+                src="{{ image.image.url }}"
+                class="product-image"
+                alt="{{ product.product_name }}"
+                >
 
-<i class="fa-solid fa-image"></i>
+            {% else %}
 
-</div>
+                <div class="no-image">
 
-{% endif %}
+                    <i class="fa-solid fa-image"></i>
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+    {% else %}
+
+        <div class="no-image">
+
+            <i class="fa-solid fa-image"></i>
+
+        </div>
+
+    {% endif %}
 
 {% endwith %}
-
 <div>
 
 <h4>
@@ -908,77 +1280,66 @@ alt="{{ product.product_name }}"
 
 <td>
 
-{{ product.images.count }}
+{{ product.variant_count }}
 
 </td>
-
 <td>
 
-{% if product.is_active %}
+    <div class="action-buttons">
 
-<span class="status active-status">
+        <a href="{% url 'variant_list' product.id %}"
+           class="variant-btn"
+           title="Manage Variants">
+            <i class="fa-solid fa-layer-group"></i>
+        </a>
 
-Active
+        <a href="{% url 'edit_product' product.id %}"
+           class="edit-btn"
+           title="Edit">
+            <i class="fa-solid fa-pen"></i>
+        </a>
 
-</span>
+        <form method="POST"
+              action="{% url 'edit_product' product.id %}"
+              class="status-form">
 
-{% else %}
+            {% csrf_token %}
 
-<span class="status inactive-status">
+            <input
+                type="hidden"
+                name="toggle_status"
+                value="1">
 
-Inactive
+            <input
+                type="hidden"
+                name="new_status"
+                value="{% if product.is_active %}False{% else %}True{% endif %}">
 
-</span>
+            <label class="switch">
+                <input
+                    type="checkbox"
+                    class="status-toggle"
+                    {% if product.is_active %}checked{% endif %}>
+                <span class="slider"></span>
+            </label>
 
-{% endif %}
+        </form>
 
-</td>
+        <form method="POST"
+              action="{% url 'delete_product' product.id %}"
+              class="delete-form">
 
-<td>
+            {% csrf_token %}
 
-<div class="action-buttons">
+            <button
+                type="button"
+                class="delete-btn">
+                <i class="fa-solid fa-trash"></i>
+            </button>
 
-<a
-href="{% url 'variant_list' product.id %}"
-class="variant-btn"
-title="Manage Variants"
->
+        </form>
 
-    <i class="fa-solid fa-layer-group"></i>
-</a>
-
-<a
-href="{% url 'edit_product' product.id %}"
-class="edit-btn"
-title="Edit"
->
-
-<i class="fa-solid fa-pen"></i>
-
-</a>
-
-<form
-method="POST"
-action="{% url 'delete_product' product.id %}"
-style="display:inline;"
->
-
-{% csrf_token %}
-
-<button
-type="submit"
-class="delete-btn"
-title="Delete"
-onclick="return confirm('Are you sure you want to delete this product?');"
->
-
-<i class="fa-regular fa-trash-can"></i>
-
-</button>
-
-</form>
-
-</div>
+    </div>
 
 </td>
 
@@ -1095,4 +1456,71 @@ href="?page={{ page_obj.next_page_number }}&search={{ search_query }}"
 
 </div>
 
+{% endblock %}
+{% block extra_js %}
+<script>
+
+document.querySelectorAll(".delete-btn").forEach(button=>{
+
+    button.addEventListener("click",function(){
+
+        const form=this.closest(".delete-form");
+
+        Swal.fire({
+
+            title:"Delete Product?",
+            text:"This product will be deleted.",
+            icon:"warning",
+            showCancelButton:true,
+            confirmButtonColor:"#dc2626",
+            cancelButtonColor:"#6b7280",
+            confirmButtonText:"Yes, Delete",
+            cancelButtonText:"Cancel",
+            reverseButtons:true
+
+        }).then(result=>{
+
+            if(result.isConfirmed){
+                form.submit();
+            }
+
+        });
+
+    });
+
+});
+
+document.querySelectorAll(".status-toggle").forEach(toggle=>{
+
+    toggle.addEventListener("change",function(e){
+
+        e.preventDefault();
+
+        const form=this.closest(".status-form");
+
+        Swal.fire({
+
+            title:"Change Product Status?",
+            text:"Do you want to change the product status?",
+            icon:"question",
+            showCancelButton:true,
+            confirmButtonText:"Yes",
+            cancelButtonText:"Cancel",
+            reverseButtons:true
+
+        }).then(result=>{
+
+            if(result.isConfirmed){
+                form.submit();
+            }else{
+                this.checked=!this.checked;
+            }
+
+        });
+
+    });
+
+});
+
+</script>
 {% endblock %}

@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth import update_session_auth_hash
 from django.utils import timezone
-
+from Admin_panel.category.models import Category
+from Admin_panel.product.models import Product
 from .models import User, Address
 from .validators import validate_signup
 from .utils import send_otp_email
@@ -202,14 +203,42 @@ def logout_view(request):
         messages.success(request, "Logged out successfully.")
         return redirect("login")
 
-    return redirect("profile")
+    return redirect("home")
 
 
-@never_cache
 @login_required(login_url="login")
 def user_home(request):
-    return render(request, "Authentication/home.html")
 
+    categories = Category.objects.filter(
+        is_active=True,
+        is_deleted=False,
+    ).order_by("-id")[:4]
+
+    products = (
+        Product.objects.filter(
+            is_active=True,
+            is_deleted=False,
+            category__is_active=True,
+            category__is_deleted=False,
+        )
+        .prefetch_related(
+            "images",
+            "variants",
+            "variants__images",
+        )
+        .order_by("-id")[:4]
+    )
+
+    context = {
+        "categories": categories,
+        "products": products,
+    }
+
+    return render(
+        request,
+        "Authentication/home.html",
+        context,
+    )
 
 def forgot_password(request):
     if request.method == "POST":
@@ -395,8 +424,15 @@ def edit_profile(request):
 
         phone_number = request.POST.get(
             "phone_number","").strip()
-        if len(phone_number)<10:
+        print(phone_number)
+        if not  phone_number.isdigit():
+            print("NOT DIGITS")
+
+            messages.error(request,"Phone number must contain only digits.")
+            return redirect("edit_profile")
+        if len(phone_number) != 10:
             messages.error(request,'Phone number should be 10 digits')
+        
             return redirect("edit_profile") 
 
         date_of_birth = request.POST.get(

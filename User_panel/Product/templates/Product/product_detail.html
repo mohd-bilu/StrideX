@@ -1,0 +1,1789 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ product.product_name }}</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+    /* ==========================================================
+   GLOBAL
+========================================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#050505;
+    color:#ffffff;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow-x:hidden;
+}
+
+img{
+    display:block;
+    max-width:100%;
+}
+
+a{
+    text-decoration:none;
+}
+
+button{
+    font-family:inherit;
+}
+
+.container{
+    width:90%;
+    max-width:1400px;
+    margin:auto;
+}
+
+
+
+/* ==========================================================
+   PRODUCT DETAIL
+========================================================== */
+
+.product-detail-section{
+    background:#070707;
+    padding:60px 0 90px;
+}
+
+
+
+/* ==========================================================
+   BREADCRUMB
+========================================================== */
+
+.breadcrumb{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:45px;
+    font-size:13px;
+}
+
+.breadcrumb a{
+    color:#8f8f8f;
+    transition:.3s;
+}
+
+.breadcrumb a:hover{
+    color:#ff7a00;
+}
+
+.breadcrumb span{
+    color:#555;
+}
+
+.breadcrumb strong{
+    color:#ffffff;
+}
+
+
+
+/* ==========================================================
+   PRODUCT WRAPPER
+========================================================== */
+
+.product-detail-wrapper{
+    display:grid;
+    grid-template-columns:55% 45%;
+    gap:60px;
+    align-items:flex-start;
+}
+
+
+
+/* ==========================================================
+   PRODUCT GALLERY
+========================================================== */
+
+.product-gallery{
+    display:flex;
+    gap:22px;
+    align-items:flex-start;
+}
+
+
+
+/* ==========================================================
+   THUMBNAILS
+========================================================== */
+
+.thumbnail-column{
+    width:82px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.thumbnail-item{
+    width:80px;
+    height:80px;
+    overflow:hidden;
+    border-radius:10px;
+    border:1px solid #2a2a2a;
+    cursor:pointer;
+    transition:.3s;
+    background:#111111;
+}
+
+.thumbnail-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.thumbnail-item:hover{
+    border-color:#ff7a00;
+}
+
+.thumbnail-item.active{
+    border:2px solid #ff7a00;
+}
+
+.thumbnail-item.active img{
+    transform:scale(.95);
+}
+
+
+
+/* ==========================================================
+   MAIN IMAGE
+========================================================== */
+
+.main-image{
+    flex:1;
+    background:#111111;
+    border-radius:14px;
+    min-height:620px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+    cursor:zoom-in;
+}
+
+.main-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    transition:transform .15s ease;
+    transform-origin:center center;
+    user-select:none;
+    pointer-events:none;
+}
+/* ==========================================================
+   PRODUCT INFORMATION
+========================================================== */
+
+.product-information{
+    width:100%;
+}
+
+.product-tag{
+    display:inline-block;
+    color:#ff7a00;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:18px;
+}
+
+
+
+/* ==========================================================
+   PRODUCT HEADER
+========================================================== */
+
+.product-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.product-header h1{
+    flex:1;
+    color:#ffffff;
+    font-size:52px;
+    font-weight:700;
+    line-height:1.1;
+    text-transform:uppercase;
+}
+
+
+
+/* ==========================================================
+   STOCK BADGE
+========================================================== */
+
+.stock-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 16px;
+    border-radius:50px;
+    background:#163b22;
+    color:#6dff94;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1px;
+    white-space:nowrap;
+}
+
+
+
+/* ==========================================================
+   RATING
+========================================================== */
+
+.rating-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#f6b300;
+    font-size:16px;
+    margin-bottom:30px;
+}
+
+.rating-row span{
+    color:#9d9d9d;
+    font-size:14px;
+}
+
+
+
+/* ==========================================================
+   PRICE
+========================================================== */
+
+.price-row{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:40px;
+}
+
+.offer-price{
+    color:#ffffff;
+    font-size:42px;
+    font-weight:700;
+    line-height:1;
+}
+
+.original-price{
+    color:#666666;
+    font-size:22px;
+    text-decoration:line-through;
+}
+
+.discount-badge{
+    background:#e63946;
+    color:#ffffff;
+    padding:6px 12px;
+    border-radius:4px;
+    font-size:12px;
+    font-weight:700;
+}
+
+
+
+/* ==========================================================
+   OPTION GROUP
+========================================================== */
+
+.option-group{
+    margin-bottom:30px;
+}
+
+.option-group label{
+    display:block;
+    color:#bdbdbd;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:16px;
+}
+
+
+
+/* ==========================================================
+   SIZE HEADER
+========================================================== */
+
+.size-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+}
+
+.size-header a{
+    color:#8a8a8a;
+    font-size:12px;
+    transition:.3s;
+}
+
+.size-header a:hover{
+    color:#ff7a00;
+}
+
+
+
+/* ==========================================================
+   COLOR OPTIONS
+========================================================== */
+
+.color-options{
+    display:flex;
+    gap:14px;
+}
+
+.color{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:2px solid #444444;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.color:hover{
+    transform:scale(1.1);
+    border-color:#ff7a00;
+}
+
+.color.active{
+    border-color:#ff7a00;
+}
+
+.color.black{
+    background:#000000;
+}
+
+.color.white{
+    background:#ffffff;
+}
+
+.color.red{
+    background:#e53935;
+}
+.color-options{
+    display:flex;
+    gap:12px;
+}
+
+.color-btn{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:2px solid #444;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.color-btn:hover{
+    transform:scale(1.08);
+}
+
+.color-btn.active{
+    border:2px solid #ff7a00;
+    box-shadow:0 0 0 3px rgba(255,122,0,.25);
+}
+
+
+
+/* ==========================================================
+   SIZE OPTIONS
+========================================================== */
+
+.size-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.size-options button{
+    width:58px;
+    height:48px;
+    border:1px solid #2d2d2d;
+    background:#111111;
+    color:#ffffff;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.size-options button:hover{
+    background:#ff7a00;
+    border-color:#ff7a00;
+}
+
+.size-options button.active{
+    background:#ff7a00;
+    border-color:#ff7a00;
+}
+
+.size-options button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+/* ==========================================================
+   QUANTITY
+========================================================== */
+
+.quantity-wrapper{
+    margin-bottom:38px;
+}
+
+.quantity-wrapper label{
+    display:block;
+    color:#bdbdbd;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:16px;
+}
+
+.quantity-box{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:170px;
+    height:52px;
+    border:1px solid #2b2b2b;
+    border-radius:6px;
+    overflow:hidden;
+    background:#111111;
+}
+
+.quantity-box button{
+    width:50px;
+    height:50px;
+    border:none;
+    background:#111111;
+    color:#ffffff;
+    font-size:28px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.quantity-box input{
+    width:70px;
+    border:none;
+    background:#070707;
+    color:#ffffff;
+    text-align:center;
+    font-size:18px;
+}
+
+
+
+/* ==========================================================
+   ACTION BUTTONS
+========================================================== */
+
+.action-buttons{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:32px;
+}
+
+
+
+/* ==========================================================
+   WISHLIST
+========================================================== */
+
+.wishlist-button{
+    width:58px;
+    height:58px;
+    border:1px solid #2b2b2b;
+    background:#111111;
+    color:#ffffff;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.wishlist-button i{
+    font-size:20px;
+}
+
+.wishlist-button:hover{
+    background:#ff7a00;
+    border-color:#ff7a00;
+}
+
+
+
+/* ==========================================================
+   ADD TO CART
+========================================================== */
+
+.cart-button{
+    flex:1;
+    height:58px;
+    border:none;
+    border-radius:8px;
+    background:#1b1b1b;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.cart-button:hover{
+    background:#ff7a00;
+}
+.cart-button.disabled{
+    pointer-events: none;
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+
+
+/* ==========================================================
+   BUY NOW
+========================================================== */
+
+.buy-button{
+    flex:1;
+    height:58px;
+    border:none;
+    border-radius:8px;
+    background:#ff7a00;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.buy-button:hover{
+    background:#ff9433;
+}
+
+
+
+/* ==========================================================
+   SHIPPING
+========================================================== */
+
+.shipping-info{
+    margin-top:25px;
+    padding-top:25px;
+    border-top:1px solid #232323;
+}
+
+.shipping-info span{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#9b9b9b;
+    font-size:15px;
+}
+
+.shipping-info i{
+    color:#ff7a00;
+    font-size:18px;
+}
+
+
+
+/* ==========================================================
+   PRODUCT ACCORDION
+========================================================== */
+
+.product-accordion{
+    background:#050505;
+    padding:90px 0;
+}
+
+.product-accordion .container{
+    width:90%;
+    max-width:1120px;
+    margin:auto;
+}
+
+.accordion-item{
+    border-bottom:1px solid #1f1f1f;
+}
+
+.accordion-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:32px 0;
+    cursor:pointer;
+}
+
+.accordion-header h3{
+    color:#ffffff;
+    font-size:17px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.accordion-icon{
+    color:#ffffff;
+    font-size:32px;
+    font-weight:300;
+    transition:.3s;
+}
+
+.accordion-item.active .accordion-icon{
+    transform:rotate(45deg);
+}
+
+.accordion-body{
+    display:none;
+    padding:0 0 34px;
+    max-width:720px;
+}
+
+.accordion-item.active .accordion-body{
+    display:block;
+}
+
+.accordion-body p{
+    color:#9b9b9b;
+    font-size:16px;
+    line-height:1.9;
+}
+/* ==========================================================
+   RATINGS & REVIEWS
+========================================================== */
+
+.rating-review-section{
+    background:#050505;
+    padding:90px 0 120px;
+}
+
+.rating-review-section .container{
+    width:90%;
+    max-width:1120px;
+    margin:auto;
+}
+
+.rating-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:40px;
+    margin-bottom:55px;
+}
+
+.rating-left{
+    max-width:520px;
+}
+
+.section-tag{
+    display:block;
+    color:#808080;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+}
+
+.rating-left h2{
+    color:#ffffff;
+    font-size:36px;
+    font-weight:700;
+    line-height:1.1;
+}
+
+.rating-summary{
+    min-width:170px;
+    text-align:center;
+}
+
+.rating-summary h1{
+    color:#ffffff;
+    font-size:54px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.rating-stars{
+    color:#7a7a7a;
+    font-size:18px;
+    letter-spacing:3px;
+    margin-bottom:10px;
+}
+
+.rating-summary span{
+    color:#707070;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.verified-review{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:24px 28px;
+    border:1px solid #1f1f1f;
+    border-radius:10px;
+    margin-bottom:40px;
+    color:#c0c0c0;
+}
+
+.verified-review i{
+    color:#ff7a00;
+    font-size:18px;
+}
+
+.empty-review{
+    border:1px dashed #2b2b2b;
+    border-radius:14px;
+    min-height:260px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.empty-review i{
+    font-size:52px;
+    color:#666666;
+    margin-bottom:20px;
+}
+
+.empty-review h3{
+    color:#ffffff;
+    font-size:22px;
+    margin-bottom:12px;
+}
+
+.empty-review p{
+    color:#8c8c8c;
+    font-size:15px;
+    line-height:1.6;
+}
+
+
+
+/* ==========================================================
+   SIMILAR PRODUCTS
+========================================================== */
+
+.similar-products-section{
+    background:#050505;
+    padding:40px 0 100px;
+}
+
+.similar-header{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.similar-header span{
+    display:block;
+    color:#808080;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+}
+
+.similar-header h2{
+    color:#ffffff;
+    font-size:38px;
+    font-weight:700;
+}
+
+.similar-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:28px;
+}
+
+.similar-card{
+    background:#111111;
+    border:1px solid #232323;
+    border-radius:12px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.similar-card:hover{
+    transform:translateY(-6px);
+    border-color:#ff7a00;
+}
+
+.similar-card a{
+    display:block;
+    color:#ffffff;
+}
+
+.similar-image{
+    height:280px;
+    overflow:hidden;
+    background:#181818;
+}
+
+.similar-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.4s;
+}
+
+.similar-card:hover img{
+    transform:scale(1.05);
+}
+
+.similar-content{
+    padding:18px;
+}
+
+.similar-category{
+    display:block;
+    color:#808080;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+
+.similar-content h3{
+    font-size:20px;
+    margin-bottom:12px;
+    color:#ffffff;
+}
+
+.similar-price{
+    color:#ff7a00;
+    font-size:22px;
+    font-weight:700;
+}
+
+.no-products{
+    grid-column:1/-1;
+    text-align:center;
+    color:#888888;
+    padding:50px 0;
+}
+
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:1100px){
+
+    .product-detail-wrapper{
+        grid-template-columns:1fr;
+        gap:50px;
+    }
+
+    .similar-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .rating-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .product-gallery{
+        flex-direction:column-reverse;
+    }
+
+    .thumbnail-column{
+        width:100%;
+        flex-direction:row;
+        flex-wrap:wrap;
+    }
+
+    .main-image{
+        min-height:420px;
+    }
+
+    .product-header{
+        flex-direction:column;
+    }
+
+    .action-buttons{
+        flex-direction:column;
+    }
+
+    .wishlist-button,
+    .cart-button,
+    .buy-button{
+        width:100%;
+    }
+
+    .similar-grid{
+        grid-template-columns:1fr;
+    }
+
+    .rating-left h2{
+        font-size:28px;
+    }
+
+    .product-header h1{
+        font-size:36px;
+    }
+
+    .offer-price{
+        font-size:34px;
+    }
+
+}
+
+@media (max-width:576px){
+
+    .container{
+        width:94%;
+    }
+
+    .breadcrumb{
+        flex-wrap:wrap;
+    }
+
+    .main-image{
+        min-height:320px;
+    }
+
+    .thumbnail-item{
+        width:65px;
+        height:65px;
+    }
+
+    .quantity-box{
+        width:100%;
+    }
+
+    .accordion-header h3{
+        font-size:14px;
+    }
+
+    .similar-header h2{
+        font-size:30px;
+    }
+
+    .rating-summary h1{
+        font-size:44px;
+    }
+
+}
+</style>
+
+</head>
+
+<body>
+
+```html
+<section class="product-detail-section">
+    <div class="container">
+
+        <div class="breadcrumb">
+            <a href="{% url 'user_home' %}">
+                HOME
+            </a>
+
+            <span>/</span>
+
+            <a href="#">
+                {{ product.category.category_name }}
+            </a>
+
+            <span>/</span>
+
+            <strong>
+                {{ product.product_name }}
+            </strong>
+        </div>
+
+        <div class="product-detail-wrapper">
+
+            <!-- LEFT -->
+            <div class="product-gallery">
+
+                <div class="thumbnail-column">
+                    {% with variant as selected_variant %}
+                        {% if selected_variant %}
+
+                            {% for image in selected_variant.images.all %}
+                                <div class="thumbnail-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}"
+                                         alt="{{ product.product_name }}">
+                                </div>
+                            {% endfor %}
+
+                            {% if not selected_variant.images.all %}
+                                <div class="thumbnail-item active">
+                                    <img src="{% static 'images/no-image.png' %}"
+                                         alt="No Image">
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+
+                            <div class="thumbnail-item active">
+                                <img src="{% static 'images/no-image.png' %}"
+                                     alt="No Image">
+                            </div>
+
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <div class="main-image">
+                    {% with variant as selected_variant %}
+                        {% if selected_variant and selected_variant.images.first %}
+                            <img id="mainProductImage"
+                                 src="{{ selected_variant.images.first.image.url }}"
+                                 alt="{{ product.product_name }}">
+                        {% else %}
+                            <img id="mainProductImage"
+                                 src="{% static 'images/no-image.png' %}"
+                                 alt="No Image">
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="product-information">
+
+                <span class="product-tag">
+                    {{ product.category.category_name|upper }}
+                </span>
+
+                <div class="product-header">
+
+                    <h1>{{ product.product_name }}</h1>
+
+                    {% with variant as selected_variant %}
+                        {% if selected_variant and selected_variant.stock > 0 %}
+                            <span class="stock-badge" id="stockBadge">
+                                IN STOCK
+                            </span>
+                        {% else %}
+                            <span class="stock-badge" id="stockBadge">
+                                OUT OF STOCK
+                            </span>
+                        {% endif %}
+                    {% endwith %}
+
+                </div>
+
+                <div class="rating-row">
+                    ★★★★★
+                    <span>0 Reviews</span>
+                </div>
+
+                {% with variant as selected_variant %}
+
+                    <div class="price-row">
+                        <span class="offer-price" id="productPrice">
+                            ₹{{ selected_variant.price }}
+                        </span>
+                    </div>
+
+                    <div class="sku-row">
+                        SKU :
+                        <span id="productSku">
+                            {{ selected_variant.sku }}
+                        </span>
+                    </div>
+
+                {% endwith %}
+
+                <div class="option-group">
+
+                    <label>SELECT COLOR</label>
+
+                    <div class="color-options">
+                        {% for color in colors %}
+                            <button type="button"
+                                    class="color-btn {% if forloop.first %}active{% endif %}"
+                                    data-color="{{ color }}"
+                                    style="background-color: {{ color|lower }};"
+                                    title="{{ color }}">
+                            </button>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="option-group">
+
+                    <div class="size-header">
+                        <label>SELECT SIZE</label>
+                        <a href="#">Size Guide</a>
+                    </div>
+
+                    <div class="size-options">
+                        {% for variant in active_variants %}
+                            <button type="button"
+                                    class="size-btn {% if forloop.first %}active{% endif %}"
+                                    data-variant-id="{{ variant.id }}"
+                                    data-color="{{ variant.color }}"
+                                    data-size="{{ variant.size }}"
+                                    data-price="{{ variant.price }}"
+                                    data-stock="{{ variant.stock }}"
+                                    data-sku="{{ variant.sku }}">
+                                {{ variant.size }}
+                            </button>
+                        {% empty %}
+                            <button type="button" disabled>
+                                N/A
+                            </button>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <div class="quantity-wrapper">
+
+                    <label>QUANTITY</label>
+
+                    <div class="quantity-box">
+                        <button type="button" id="decreaseQty">
+                            −
+                        </button>
+
+                        <input type="text"
+                               id="quantityInput"
+                               value="1"
+                               readonly>
+
+                        <button type="button" id="increaseQty">
+                            +
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="action-buttons">
+
+                    <a id="wishlistBtn"
+   href="#"
+   class="wishlist-btn">
+
+    <i class="fa-regular fa-heart"></i>
+
+</a>
+
+                    <a id="addToCartBtn"
+                       href="#"
+                       class="cart-button">
+                        ADD TO CART
+                    </a>
+
+                    <button type="button" class="buy-button">
+                        BUY NOW
+                    </button>
+
+                </div>
+
+                <div class="shipping-info">
+                    <span>
+                        <i class="fa-solid fa-truck-fast"></i>
+                        Free shipping on orders above ₹999
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="product-accordion">
+
+    <div class="container">
+
+        <div class="accordion-item active">
+
+            <div class="accordion-header">
+
+                <h3>
+
+                    PRODUCT DESCRIPTION
+
+                </h3>
+
+                <span class="accordion-icon">
+
+                    +
+
+                </span>
+
+            </div>
+
+            <div class="accordion-body">
+
+                <p>
+
+                    {{ product.description }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="accordion-item">
+
+            <div class="accordion-header">
+
+                <h3>
+
+                    HIGHLIGHTS
+
+                </h3>
+
+                <span class="accordion-icon">
+
+                    +
+
+                </span>
+
+            </div>
+
+            <div class="accordion-body">
+
+                <p>
+
+                    Premium quality materials designed for comfort, durability and everyday performance.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="accordion-item">
+
+            <div class="accordion-header">
+
+                <h3>
+
+                    SHIPPING & RETURNS
+
+                </h3>
+
+                <span class="accordion-icon">
+
+                    +
+
+                </span>
+
+            </div>
+
+            <div class="accordion-body">
+
+                <p>
+
+                    Free shipping on eligible orders. Easy returns and exchanges within 7 days.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="rating-review-section">
+
+    <div class="container">
+
+        <div class="rating-header">
+
+            <div class="rating-left">
+
+                <span class="section-tag">
+
+                    COMMUNITY FEEDBACK
+
+                </span>
+
+                <h2>
+
+                    RATINGS & REVIEWS
+
+                </h2>
+
+            </div>
+
+            <div class="rating-summary">
+
+                <h1>
+
+                    0.0
+
+                </h1>
+
+                <div class="rating-stars">
+
+                    ☆ ☆ ☆ ☆ ☆
+
+                </div>
+
+                <span>
+
+                    0 REVIEWS
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="verified-review">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span>
+
+                Only verified purchasers can review this product.
+
+            </span>
+
+        </div>
+
+        <div class="empty-review">
+
+            <i class="fa-regular fa-star"></i>
+
+            <h3>
+
+                NO REVIEWS YET
+
+            </h3>
+
+            <p>
+
+                Be the first customer to review this product.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+<section class="similar-products-section">
+
+    <div class="container">
+
+        <div class="similar-header">
+
+            <span>
+
+                YOU MAY ALSO LIKE
+
+            </span>
+
+            <h2>
+
+                SIMILAR PRODUCTS
+
+            </h2>
+
+        </div>
+
+        <div class="similar-grid">
+
+            {% for item in similar_products %}
+
+            <div class="similar-card">
+
+                <a href="{% url 'product:product_detail' item.id %}">
+
+                    <div class="similar-image">
+
+                        {% if item.images.first %}
+
+                        <img src="{{ item.images.first.image.url }}"
+                             alt="{{ item.product_name }}">
+
+                        
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="similar-content">
+
+                        <span class="similar-category">
+
+                            {{ item.category.category_name }}
+
+                        </span>
+
+                        <h3>
+
+                            {{ item.product_name }}
+
+                        </h3>
+
+                        {% with item.variants.first as variant %}
+
+                        {% if variant %}
+
+                        <div class="similar-price">
+
+                            ₹{{ variant.price }}
+
+                        </div>
+
+                        {% endif %}
+
+                        {% endwith %}
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            {% empty %}
+
+            <div class="no-products">
+
+                <p>
+
+                    No similar products available.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+{{ variant_data|json_script:"variant-data" }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const mainImage = document.getElementById("mainProductImage");
+    const thumbnails = document.querySelectorAll(".thumbnail-item");
+    const variantData = JSON.parse(document.getElementById("variant-data").textContent);
+
+    const variantButtons = document.querySelectorAll(".size-btn");
+    const colorButtons = document.querySelectorAll(".color-btn");
+
+    const price = document.getElementById("productPrice");
+    const stockBadge = document.getElementById("stockBadge");
+    const sku = document.getElementById("productSku");
+    const addToCartBtn = document.getElementById("addToCartBtn");
+
+    thumbnails.forEach(function (item) {
+
+        item.addEventListener("click", function () {
+
+            thumbnails.forEach(function (thumb) {
+                thumb.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const image = this.querySelector("img");
+
+            if (image) {
+                mainImage.src = image.src;
+            }
+
+        });
+
+    });
+
+    if (mainImage) {
+
+        const imageContainer = document.querySelector(".main-image");
+
+        imageContainer.addEventListener("mousemove", function (e) {
+
+            const rect = imageContainer.getBoundingClientRect();
+
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            mainImage.style.transformOrigin = x + "% " + y + "%";
+            mainImage.style.transform = "scale(2)";
+
+        });
+
+        imageContainer.addEventListener("mouseleave", function () {
+
+            mainImage.style.transform = "scale(1)";
+            mainImage.style.transformOrigin = "center";
+
+        });
+
+    }
+
+
+    colorButtons.forEach(function (colorButton) {
+
+        colorButton.addEventListener("click", function () {
+
+            colorButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const selectedColor = this.dataset.color;
+
+            let firstVisibleSize = null;
+
+            variantButtons.forEach(function (sizeButton) {
+
+    const buttonColor = sizeButton.dataset.color.trim().toLowerCase();
+    const currentColor = selectedColor.trim().toLowerCase();
+
+    if (buttonColor === currentColor) {
+
+        sizeButton.style.display = "";
+
+        if (!firstVisibleSize) {
+            firstVisibleSize = sizeButton;
+        }
+
+    } else {
+
+        sizeButton.style.display="none";
+        sizeButton.classList.remove("active");
+
+    }
+
+});
+
+            if (firstVisibleSize) {
+                firstVisibleSize.click();
+            }
+
+        });
+
+    });
+
+    const decreaseBtn = document.getElementById("decreaseQty");
+    const increaseBtn = document.getElementById("increaseQty");
+    const quantityInput = document.getElementById("quantityInput");
+    const stock = parseInt(document.querySelector(".size-btn.active").dataset.stock);
+
+    if (decreaseBtn && increaseBtn && quantityInput) {
+
+        decreaseBtn.addEventListener("click", function () {
+
+            let qty = parseInt(quantityInput.value);
+
+            if (qty > 1) {
+                quantityInput.value = qty - 1;
+            }
+
+        });
+
+        increaseBtn.addEventListener("click", function () {
+
+            let qty = parseInt(quantityInput.value);
+
+            const activeButton = document.querySelector(".size-btn.active");
+
+            if (!activeButton) return;
+
+            const stock = parseInt(activeButton.dataset.stock);
+
+            if (qty < stock) {
+                quantityInput.value = qty + 1;
+            }
+
+        });
+
+    }
+
+    const accordionItems = document.querySelectorAll(".accordion-item");
+
+    accordionItems.forEach(function (item) {
+
+        const header = item.querySelector(".accordion-header");
+
+        header.addEventListener("click", function () {
+
+            if (item.classList.contains("active")) {
+
+                item.classList.remove("active");
+
+            } else {
+
+                accordionItems.forEach(function (accordion) {
+                    accordion.classList.remove("active");
+                });
+
+                item.classList.add("active");
+
+            }
+
+        });
+
+    });
+
+    variantButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+            if (addToCartBtn) {
+                quantityInput.value=1;
+                addToCartBtn.href = `/cart/add/${this.dataset.variantId}/`;
+                wishlistBtn.href = `/cart/wishlist/add/${this.dataset.variantId}/`;
+            }
+
+            variantButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            if (price) {
+                price.textContent = "₹" + this.dataset.price;
+            }
+
+            if (sku) {
+                sku.textContent = this.dataset.sku;
+            }
+
+            if (stockBadge) {
+
+                if (parseInt(this.dataset.stock) > 0) {
+
+                    stockBadge.textContent = "IN STOCK";
+
+                    stockBadge.classList.remove("out-stock");
+                    stockBadge.classList.add("in-stock");
+
+                    addToCartBtn.href = `/cart/add/${this.dataset.variantId}/`;
+                    addToCartBtn.classList.remove("disabled");
+
+                } else {
+
+                    stockBadge.textContent = "OUT OF STOCK";
+
+                    stockBadge.classList.remove("in-stock");
+                    stockBadge.classList.add("out-stock");
+
+                    addToCartBtn.removeAttribute("href");
+                    addToCartBtn.classList.add("disabled");
+
+                }
+
+            }
+
+            const selectedVariant = variantData.find(function (variant) {
+
+                return variant.id == button.dataset.variantId;
+
+            });
+
+            if (selectedVariant && selectedVariant.images.length > 0) {
+
+                mainImage.src = selectedVariant.images[0];
+
+                const thumbnailContainer = document.querySelector(".thumbnail-column");
+
+                thumbnailContainer.innerHTML = "";
+
+                selectedVariant.images.forEach(function (imageUrl, index) {
+
+                    thumbnailContainer.innerHTML += `
+                        <div class="thumbnail-item ${index === 0 ? "active" : ""}">
+                            <img src="${imageUrl}" alt="Product Image">
+                        </div>
+                    `;
+
+                });
+
+                const newThumbnails = thumbnailContainer.querySelectorAll(".thumbnail-item");
+
+                newThumbnails.forEach(function (item) {
+
+                    item.addEventListener("click", function () {
+
+                        newThumbnails.forEach(function (thumb) {
+                            thumb.classList.remove("active");
+                        });
+
+                        this.classList.add("active");
+
+                        const image = this.querySelector("img");
+
+                        if (image) {
+                            mainImage.src = image.src;
+                        }
+
+                    });
+
+                });
+
+            }
+
+        });
+
+    });
+
+    const activeColor = document.querySelector(".color-btn.active");
+
+    if (activeColor) {
+        activeColor.click();
+    }
+
+});
+</script>
+</body>
+
+</html>

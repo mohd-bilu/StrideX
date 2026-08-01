@@ -1,0 +1,776 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}
+Cart
+{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.cart-section{
+    width:100%;
+    min-height:100vh;
+    padding:40px 0 80px;
+}
+
+.container{
+    width:92%;
+    max-width:1400px;
+    margin:auto;
+}
+
+.breadcrumb{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:14px;
+    color:#888;
+    margin-bottom:20px;
+}
+
+.breadcrumb a{
+    color:#f5a623;
+}
+
+.page-title{
+
+    font-size:34px;
+    font-weight:800;
+    margin-bottom:35px;
+    letter-spacing:1px;
+    color:#ffffff;
+
+}
+
+.cart-wrapper{
+    display:grid;
+    grid-template-columns:2fr 420px;
+    gap:35px;
+    align-items:start;
+}
+
+.cart-items{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+.cart-item{
+    display:grid;
+    grid-template-columns:150px 1fr 120px 160px 120px 60px;
+    align-items:center;
+    gap:20px;
+    background:#1a1a1a;
+    border:1px solid #2b2b2b;
+    border-radius:18px;
+    padding:20px;
+    transition:.3s;
+}
+
+.cart-item:hover{
+    border-color:#f5a623;
+}
+
+.cart-image{
+    width:150px;
+    height:150px;
+    overflow:hidden;
+    border-radius:14px;
+    background:#111;
+}
+
+.cart-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.cart-details h3{
+
+    font-size:22px;
+    margin-bottom:12px;
+    color:#ffffff;
+    font-weight:700;
+
+}
+
+.cart-details p{
+    color:#a8a8a8;
+    margin-bottom:8px;
+    font-size:15px;
+}
+
+.cart-price{
+
+    font-size:22px;
+    font-weight:800;
+    color:#f58220;
+    text-align:center;
+
+}
+
+.cart-total{
+
+    font-size:22px;
+    font-weight:800;
+    text-align:center;
+    color:#f58220;
+
+}
+.cart-quantity{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+}
+
+.qty-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#2a2a2a;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:22px;
+    transition:.3s;
+}
+.qty-disabled{
+
+    width:42px;
+    height:42px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    background:#141414;
+    border:1px solid rgba(255,255,255,.08);
+    color:#5e5e5e;
+    cursor:not-allowed;
+    pointer-events:none;
+    opacity:.65;
+
+}
+
+.qty-btn:hover{
+
+    background:#f58220;
+    color:#111;
+    transform:scale(1.06);
+
+}
+
+.cart-quantity input{
+
+    width:55px;
+    height:42px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+    background:#101010;
+    color:#ffffff;
+    font-weight:700;
+    text-align:center;
+    font-size:18px;
+
+}
+
+.cart-remove{
+    display:flex;
+    justify-content:center;
+}
+
+.cart-remove a{
+    width:45px;
+    height:45px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    background:#272727;
+    color:#ff5a5a;
+    transition:.3s;
+    font-size:18px;
+}
+
+.cart-remove a:hover{
+    background:#ff5a5a;
+    color:#fff;
+}
+.cart-summary{
+    position:sticky;
+    top:30px;
+    background:#1a1a1a;
+    border:1px solid #2b2b2b;
+    border-radius:18px;
+    padding:30px;
+}
+
+.cart-summary h2{
+
+    font-size:28px;
+    margin-bottom:30px;
+    color:#ffffff;
+    font-weight:800;
+
+}
+.summary-row{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    color:#d0d0d0;
+    font-size:17px;
+
+}
+
+.summary-row span:last-child{
+
+    color:#ffffff;
+    font-weight:600;
+
+}
+
+.summary-total{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:25px;
+    padding-top:25px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:24px;
+    font-weight:800;
+    color:#ffffff;
+
+}
+
+.summary-total span:last-child{
+
+    color:#f58220;
+
+}
+
+.checkout-btn{
+    width:100%;
+    height:58px;
+    border:none;
+    border-radius:12px;
+    margin-top:30px;
+    background:#f5a623;
+    color:#000;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.checkout-btn:hover{
+    background:#ffbf3f;
+    transform:translateY(-2px);
+}
+
+.checkout-btn:disabled{
+    background:#444;
+    color:#999;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.empty-cart{
+    width:100%;
+    background:#1a1a1a;
+    border:1px solid #2b2b2b;
+    border-radius:18px;
+    padding:80px 30px;
+    text-align:center;
+}
+
+.empty-cart h2{
+    font-size:30px;
+    color:#bdbdbd;
+}
+
+.cart-item,
+.cart-summary,
+.empty-cart{
+    box-shadow:0 15px 35px rgba(0,0,0,.35);
+}
+
+.cart-item,
+.cart-summary{
+    transition:.3s;
+}
+
+.cart-summary:hover{
+    border-color:#f5a623;
+}
+
+.qty-btn,
+.checkout-btn,
+.cart-remove a{
+    user-select:none;
+}
+
+.cart-price,
+.cart-total{
+    white-space:nowrap;
+}
+
+.cart-details{
+    min-width:0;
+}
+
+.cart-details h3{
+    word-break:break-word;
+}
+
+@media(max-width:1200px){
+
+    .cart-wrapper{
+        grid-template-columns:1fr;
+    }
+
+    .cart-summary{
+        position:static;
+    }
+
+}
+
+@media(max-width:992px){
+
+    .cart-item{
+
+        grid-template-columns:120px 1fr;
+
+        gap:18px;
+
+    }
+
+    .cart-price,
+    .cart-quantity,
+    .cart-total,
+    .cart-remove{
+
+        grid-column:2;
+
+        justify-self:start;
+
+    }
+
+    .cart-price{
+
+        margin-top:8px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .container{
+
+        width:95%;
+
+    }
+
+    .page-title{
+
+        font-size:28px;
+
+    }
+
+    .cart-item{
+
+        grid-template-columns:1fr;
+
+        text-align:center;
+
+    }
+
+    .cart-image{
+
+        margin:auto;
+
+    }
+
+    .cart-price,
+    .cart-total,
+    .cart-remove{
+
+        justify-self:center;
+
+    }
+
+    .cart-quantity{
+
+        justify-content:center;
+
+    }
+
+    .cart-summary{
+
+        padding:22px;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .page-title{
+
+        font-size:24px;
+
+    }
+
+    .cart-image{
+
+        width:120px;
+
+        height:120px;
+
+    }
+
+    .cart-details h3{
+
+        font-size:20px;
+
+    }
+
+    .summary-total{
+
+        font-size:20px;
+
+    }
+
+    .checkout-btn{
+
+        height:52px;
+
+        font-size:16px;
+
+    }
+
+}
+.delete-modal{
+
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+    z-index:9999;
+
+}
+
+.delete-modal.active{
+
+    opacity:1;
+    visibility:visible;
+
+}
+
+.delete-modal-content{
+
+    width:420px;
+    background:#1a1a1a;
+    border:1px solid #333;
+    border-radius:18px;
+    padding:35px;
+    text-align:center;
+
+}
+
+.delete-icon{
+
+    font-size:55px;
+    color:#ff5a5a;
+    margin-bottom:20px;
+
+}
+
+.delete-modal-content h2{
+
+    color:#fff;
+    margin-bottom:12px;
+
+}
+
+.delete-modal-content p{
+
+    color:#bdbdbd;
+    margin-bottom:30px;
+
+}
+
+.delete-modal-buttons{
+
+    display:flex;
+    gap:15px;
+
+}
+
+.cancel-btn,
+.delete-btn{
+
+    flex:1;
+    height:48px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.cancel-btn{
+
+    background:#333;
+    color:#fff;
+
+}
+
+.delete-btn{
+
+    background:#ff5a5a;
+    color:#fff;
+
+}
+
+.delete-btn:hover{
+
+    background:#ff3b3b;
+
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <section class="cart-section">
+        <div class="container">
+
+            <div class="breadcrumb">
+                <a href="{% url 'user_home' %}">HOME</a>
+                <span>/</span>
+                <strong>CART</strong>
+            </div>
+
+            <h1 class="page-title">SHOPPING CART</h1>
+
+            <div class="cart-wrapper">
+
+                <div class="cart-items">
+                    {% for item in cart.items.all %}
+
+                    <div class="cart-item">
+
+                        <div class="cart-image">
+                            {% if item.variant.images.first %}
+                            <img src="{{ item.variant.images.first.image.url }}"
+                                 alt="{{ item.variant.product.product_name }}">
+                            {% endif %}
+                        </div>
+
+                        <div class="cart-details">
+                            <h3>{{ item.variant.product.product_name }}</h3>
+                            <p>Color : {{ item.variant.color }}</p>
+                            <p>Size : {{ item.variant.size }}</p>
+                        </div>
+
+                        <div class="cart-price">
+                            ₹{{ item.variant.price }}
+                        </div>
+
+                        <div class="cart-quantity">
+
+    {% if item.quantity > 1 %}
+
+        <a href="{% url 'update_cart' item.id %}?action=decrease"
+           class="qty-btn">
+
+            −
+
+        </a>
+
+    {% else %}
+
+        <span class="qty-btn qty-disabled">
+
+            −
+
+        </span>
+
+    {% endif %}
+
+    <input
+        type="text"
+        value="{{ item.quantity }}"
+        readonly>
+
+    {% if item.quantity < 5 and item.quantity < item.variant.stock %}
+
+    <a href="{% url 'update_cart' item.id %}?action=increase"
+       class="qty-btn">
+
+        +
+
+    </a>
+
+{% else %}
+
+    <span class="qty-btn qty-disabled">
+
+        +
+
+    </span>
+
+{% endif %}
+
+</div>
+
+                        <div class="cart-total">
+                            ₹{{ item.total_price }}
+                        </div>
+
+                        <div class="cart-remove">
+                            <a href="#"
+   class="remove-btn"
+   data-url="{% url 'remove_from_cart' item.id %}">
+    <i class="fa-solid fa-trash"></i>
+</a>
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="empty-cart">
+                        <h2>Your cart is empty.</h2>
+                    </div>
+
+                    {% endfor %}
+                </div>
+
+                <div class="cart-summary">
+
+                    <h2>Order Summary</h2>
+
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ subtotal }}</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Discount</span>
+                        <span>₹{{ discount }}</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>
+                            {% if shipping == 0 %}
+                                FREE
+                            {% else %}
+                                ₹{{ shipping }}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span>₹{{ total }}</span>
+                    </div>
+
+                    {% if cart and cart.items.exists %}
+                    <button class="checkout-btn">
+                        Proceed to Checkout
+                    </button>
+                    {% else %}
+                    <button class="checkout-btn" disabled>
+                        Cart is Empty
+                    </button>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+<div class="delete-modal" id="deleteModal">
+
+    <div class="delete-modal-content">
+
+        <i class="fa-solid fa-trash-can delete-icon"></i>
+
+        <h2>Remove Item?</h2>
+
+        <p>Are you sure you want to remove this product from your cart?</p>
+
+        <div class="delete-modal-buttons">
+
+            <button id="cancelDelete" class="cancel-btn">
+                Cancel
+            </button>
+
+            <a href="#" id="confirmDelete" class="delete-btn">
+                Remove
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+{% block extra_js %}
+<script>
+
+const deleteModal = document.getElementById("deleteModal");
+
+const confirmDelete = document.getElementById("confirmDelete");
+
+const cancelDelete = document.getElementById("cancelDelete");
+
+document.querySelectorAll(".remove-btn").forEach(button => {
+
+    button.addEventListener("click", function(e){
+
+        e.preventDefault();
+
+        confirmDelete.href = this.dataset.url;
+
+        deleteModal.classList.add("active");
+
+    });
+
+});
+
+cancelDelete.addEventListener("click", function(){
+
+    deleteModal.classList.remove("active");
+
+});
+
+deleteModal.addEventListener("click", function(e){
+
+    if(e.target === deleteModal){
+
+        deleteModal.classList.remove("active");
+
+    }
+
+});
+
+</script>
+{% endblock %}
+{% endblock %}

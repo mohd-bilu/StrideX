@@ -6,504 +6,304 @@ Add Product
 {% endblock %}
 
 {% block extra_css %}
-
-
-{% endblock %}
-
-{% block content %}
 <style>
-    *{
 
+*{
     margin:0;
-
     padding:0;
-
     box-sizing:border-box;
-
 }
 
 .product-page{
-
     max-width:1200px;
-
-    margin:auto;
-
+    margin:0 auto;
+    padding:10px;
 }
 
 .page-header{
-
     display:flex;
-
     justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:35px;
-
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:30px;
 }
 
 .header-left{
-
     display:flex;
-
-    align-items:center;
-
+    align-items:flex-start;
     gap:18px;
-
 }
 
 .back-btn{
-
-    width:42px;
-
-    height:42px;
-
+    width:46px;
+    height:46px;
     border-radius:50%;
-
     background:#fff;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
     color:#111;
-
+    display:flex;
+    justify-content:center;
+    align-items:center;
     text-decoration:none;
-
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
-
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
     transition:.3s;
-
 }
 
 .back-btn:hover{
-
     background:#111;
-
     color:#fff;
-
 }
 
 .header-left span{
-
+    display:block;
     font-size:12px;
-
     font-weight:700;
-
-    color:#8a99b5;
-
+    color:#8b97aa;
     letter-spacing:1px;
-
+    margin-bottom:6px;
+    text-transform:uppercase;
 }
 
 .header-left h2{
-
-    margin-top:6px;
-
     font-size:34px;
-
     font-weight:800;
+    color:#111;
+    margin-bottom:8px;
+}
 
+.header-left p{
+    color:#6b7280;
+    font-size:15px;
+}
+
+.header-actions{
+    display:flex;
+    gap:15px;
+    align-items:center;
 }
 
 .product-card{
-
     background:#fff;
-
     border-radius:24px;
-
     padding:40px;
-
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
-
+    box-shadow:0 6px 24px rgba(0,0,0,.08);
 }
 
-.card-header{
-
+.card-title{
     display:flex;
-
-    justify-content:space-between;
-
     align-items:center;
-
-    margin-bottom:40px;
-
+    gap:18px;
+    margin-bottom:35px;
+    padding-bottom:25px;
+    border-bottom:1px solid #eceff3;
 }
 
-.title{
-
+.card-icon{
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    background:#111;
+    color:#fff;
     display:flex;
-
+    justify-content:center;
     align-items:center;
-
-    gap:12px;
-
-}
-
-.title i{
-
     font-size:22px;
-
 }
 
-.title h3{
-
-    font-size:22px;
-
+.card-title h3{
+    font-size:24px;
     font-weight:700;
-
+    color:#111;
+    margin-bottom:6px;
 }
 
-.status-toggle{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-}
-
-.status-toggle label{
-
-    font-size:13px;
-
-    font-weight:700;
-
-    color:#7f8aa3;
-
-    letter-spacing:1px;
-
-}
-.form-group{
-
-    margin-bottom:30px;
-
-}
-
-.form-group label{
-
-    display:block;
-
-    margin-bottom:12px;
-
-    font-size:13px;
-
-    font-weight:700;
-
-    color:#8a99b5;
-
-    letter-spacing:1px;
-
-}
-
-.form-group input,
-
-.form-group select,
-
-.form-group textarea{
-
-    width:100%;
-
-    padding:18px 20px;
-
-    border:1px solid #e5e7eb;
-
-    border-radius:14px;
-
-    outline:none;
-
-    font-size:16px;
-
-    transition:.3s;
-
-    background:#fff;
-
-}
-
-.form-group textarea{
-
-    resize:none;
-
-    min-height:150px;
-
-}
-
-.form-group input:focus,
-
-.form-group select:focus,
-
-.form-group textarea:focus{
-
-    border-color:#111;
-
-}
-
-.error{
-
-    margin-top:8px;
-
-    color:#dc3545;
-
-    font-size:14px;
-
+.card-title p{
+    color:#7b8798;
+    font-size:15px;
 }
 
 .row{
-
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:25px;
+}
 
+.form-group{
+    margin-bottom:28px;
+}
+
+.form-group label{
+    display:block;
     margin-bottom:10px;
-
-}
-.variant-btn{
-
-    width:100%;
-
-    padding:18px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:#111;
-
-    color:#fff;
-
-    font-size:15px;
-
+    font-size:13px;
     font-weight:700;
-
-    cursor:pointer;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    margin-top:34px;
-
+    color:#7f8ca2;
+    text-transform:uppercase;
+    letter-spacing:.8px;
 }
 
-.variant-btn:hover{
+.form-group label span{
+    color:#dc2626;
+}
 
-    background:#000;
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    padding:16px 18px;
+    border:1px solid #dfe4ea;
+    border-radius:14px;
+    font-size:15px;
+    outline:none;
+    transition:.3s;
+    background:#fff;
+}
 
+.form-group textarea{
+    resize:vertical;
+    min-height:180px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+    border-color:#111;
+    box-shadow:0 0 0 3px rgba(17,17,17,.08);
+}
+
+.status-wrapper{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    min-height:54px;
+}
+
+.status-wrapper span{
+    font-size:15px;
+    font-weight:600;
+    color:#374151;
+}
+
+.status-wrapper input[type="checkbox"]{
+    appearance:none;
+    width:58px;
+    height:32px;
+    background:#d1d5db;
+    border-radius:50px;
+    position:relative;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.status-wrapper input[type="checkbox"]::before{
+    content:"";
+    position:absolute;
+    width:26px;
+    height:26px;
+    background:#fff;
+    border-radius:50%;
+    top:3px;
+    left:3px;
+    transition:.3s;
+}
+
+.status-wrapper input[type="checkbox"]:checked{
+    background:#111;
+}
+
+.status-wrapper input[type="checkbox"]:checked::before{
+    left:29px;
 }
 
 .info-box{
-
-    margin-top:35px;
-
+    margin-top:15px;
     padding:22px;
-
-    border:1px solid #edf0f5;
-
-    border-radius:16px;
-
+    border-radius:18px;
     background:#f8fafc;
-
+    border:1px solid #e6ebf2;
     display:flex;
-
-    align-items:flex-start;
-
-    gap:16px;
-
+    gap:18px;
 }
 
 .info-icon{
-
-    width:42px;
-
-    height:42px;
-
+    width:46px;
+    height:46px;
     border-radius:50%;
-
-    background:#eef4ff;
-
-    color:#4f73b8;
-
+    background:#eef2ff;
+    color:#4f46e5;
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
-    font-size:18px;
-
     flex-shrink:0;
-
+    font-size:18px;
 }
 
 .info-content h4{
-
-    font-size:14px;
-
-    font-weight:700;
-
-    color:#4b5c79;
-
     margin-bottom:8px;
-
-    letter-spacing:.5px;
-
+    font-size:16px;
+    font-weight:700;
 }
 
 .info-content p{
-
-    color:#7d8797;
-
+    color:#6b7280;
     line-height:1.7;
-
-    font-size:14px;
-
 }
 
 .form-footer{
-
     display:flex;
-
     justify-content:flex-end;
-
-    gap:18px;
-
+    gap:16px;
     margin-top:40px;
-
 }
 
 .discard-btn{
-
-    padding:16px 34px;
-
-    border:1px solid #e5e7eb;
-
+    padding:15px 34px;
     border-radius:30px;
-
-    text-decoration:none;
-
-    color:#111;
-
-    font-weight:700;
-
+    border:1px solid #d7dce3;
     background:#fff;
-
+    color:#111;
+    text-decoration:none;
+    font-weight:700;
     transition:.3s;
-
 }
 
 .discard-btn:hover{
-
-    background:#f5f5f5;
-
+    background:#f3f4f6;
 }
 
 .save-btn{
-
-    padding:16px 38px;
-
+    padding:15px 34px;
     border:none;
-
     border-radius:30px;
-
     background:#111;
-
     color:#fff;
-
-    font-weight:700;
-
     cursor:pointer;
-
+    font-weight:700;
     transition:.3s;
-
 }
 
 .save-btn:hover{
-
     background:#000;
-
 }
 
-.status-toggle input[type="checkbox"]{
-
-    appearance:none;
-
-    width:54px;
-
-    height:30px;
-
-    border-radius:30px;
-
-    background:#d1d5db;
-
-    position:relative;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-.status-toggle input[type="checkbox"]::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:24px;
-
-    height:24px;
-
-    border-radius:50%;
-
-    background:#fff;
-
-    left:3px;
-
-    top:3px;
-
-    transition:.3s;
-
-}
-
-.status-toggle input[type="checkbox"]:checked{
-
-    background:#111;
-
-}
-
-.status-toggle input[type="checkbox"]:checked::before{
-
-    left:27px;
-
+.error{
+    margin-top:8px;
+    color:#dc2626;
+    font-size:14px;
 }
 
 @media (max-width:992px){
 
-    .row{
-
-        grid-template-columns:1fr;
-
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    .card-header{
+    .header-actions{
+        width:100%;
+    }
 
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:25px;
-
+    .row{
+        grid-template-columns:1fr;
     }
 
 }
@@ -511,1180 +311,213 @@ Add Product
 @media (max-width:768px){
 
     .product-card{
-
         padding:25px;
-
     }
 
     .header-left h2{
-
         font-size:28px;
-
     }
 
-    .form-footer{
-
+    .form-footer,
+    .header-actions{
         flex-direction:column;
-
     }
 
     .discard-btn,
-
     .save-btn{
-
         width:100%;
-
         text-align:center;
-
-    }
-
-    .variant-btn{
-
-        margin-top:0;
-
     }
 
 }
-.variant-section{
 
-    margin-top:40px;
-
-    border:1px solid #e5e7eb;
-
-    border-radius:18px;
-
-    padding:25px;
-
-    background:#fff;
-
-}
-
-.variant-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:20px;
-
-}
-
-.variant-header h3{
-
-    font-size:22px;
-
-    font-weight:700;
-
-}
-
-.variant-list{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:18px;
-
-}
-
-.empty-variant{
-
-    text-align:center;
-
-    padding:40px;
-
-    border:2px dashed #d7dbe3;
-
-    border-radius:14px;
-
-    color:#8b96a9;
-
-    font-size:15px;
-
-}
-
-.variant-card{
-
-    border:1px solid #ececec;
-
-    border-radius:16px;
-
-    padding:20px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-}
-
-.variant-left{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:8px;
-
-}
-
-.variant-title{
-
-    font-size:18px;
-
-    font-weight:700;
-
-}
-
-.variant-meta{
-
-    color:#666;
-
-    font-size:14px;
-
-}
-
-.variant-right{
-
-    display:flex;
-
-    gap:10px;
-
-}
-
-.variant-right button{
-
-    border:none;
-
-    padding:10px 18px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-}
-
-.editVariant{
-
-    background:#0d6efd;
-
-    color:#fff;
-
-}
-
-.deleteVariant{
-
-    background:#dc3545;
-
-    color:#fff;
-
-}/* Variant Modal */
-
-.variant-modal{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.55);
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:9999;
-
-}
-
-.variant-modal.show{
-
-    display:flex;
-
-}
-
-.variant-modal-content{
-
-    width:900px;
-
-    max-width:95%;
-
-    background:#fff;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
-}
-
-.variant-modal-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:25px;
-
-    border-bottom:1px solid #eee;
-
-}
-
-.variant-modal-header h2{
-
-    margin:0;
-
-    font-size:24px;
-
-    font-weight:700;
-
-}
-
-.close-modal{
-
-    border:none;
-
-    background:none;
-
-    font-size:24px;
-
-    cursor:pointer;
-
-}
-
-.variant-modal-body{
-
-    padding:30px;
-
-}
-
-.variant-modal-footer{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:15px;
-
-    padding:25px;
-
-    border-top:1px solid #eee;
-
-}
-
-.image-preview{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-
-    gap:15px;
-
-    margin-top:20px;
-
-}
-
-.image-preview img{
-
-    width:100%;
-
-    height:120px;
-
-    object-fit:cover;
-
-    border-radius:10px;
-
-    border:1px solid #ddd;
-
-}
-@media (max-width:576px){
-
-    .product-page{
-
-        padding:0 10px;
-
-    }
-
-    .header-left{
-
-        gap:12px;
-
-    }
-
-    .header-left h2{
-
-        font-size:24px;
-
-    }
-
-    .info-box{
-
-        flex-direction:column;
-
-    }
-
-}
 </style>
+{% endblock %}
+
+{% block content %}
 
 <div class="product-page">
 
-<div class="page-header">
-
-<div class="header-left">
-
-<a
-href="{% url 'product_list' %}"
-class="back-btn"
->
-
-<i class="fa-solid fa-arrow-left"></i>
-
-</a>
-
-<div>
-
-<span>
-
-MANAGEMENT
-
-</span>
-
-<h2>
-
-Add New Product
-
-</h2>
-
-</div>
-
-</div>
-
-</div>
-
-<form
-method="POST"
-class="product-form"
->
-
-{% csrf_token %}
-<div class="product-card">
-
-<div class="card-header">
-
-<div class="title">
-
-<i class="fa-solid fa-list-check"></i>
-
-<h3>
-
-PRODUCT INFORMATION
-
-</h3>
-
-</div>
-
-<div class="status-toggle">
-
-<label>
-
-ACTIVE STATUS
-
-</label>
-
-{{ form.is_active }}
-
-</div>
-
-</div>
-<div class="form-group">
-
-<label>
-
-PRODUCT NAME
-
-</label>
-
-{{ form.product_name }}
-
-{% if form.product_name.errors %}
-
-<div class="error">
-
-{{ form.product_name.errors }}
-
-</div>
-
-{% endif %}
-
-</div>
-<div class="row">
-
-<div class="form-group">
-
-<label>
-
-CATEGORY
-
-</label>
-
-{{ form.category }}
-
-{% if form.category.errors %}
-
-<div class="error">
-
-{{ form.category.errors }}
-
-</div>
-
-{% endif %}
-
-</div>
-
-<div class="form-group">
-
-<label>
-
-FIRST VARIANT
-
-</label>
-
-<button
-type="button"
-class="variant-btn"
-id="openVariantModal"
->
-
-<i class="fa-solid fa-plus"></i>
-
-Add First Variant
-
-</button>
-
-</div>
-
-</div>
-<div class="form-group">
-
-<label>
-
-DESCRIPTION
-
-</label>
-
-{{ form.description }}
-
-{% if form.description.errors %}
-
-<div class="error">
-
-{{ form.description.errors }}
-
-</div>
-
-{% endif %}
-
-</div>
-<div class="info-box">
-
-<div class="info-icon">
-
-<i class="fa-solid fa-circle-info"></i>
-
-</div>
-
-<div class="info-content">
-
-<h4>
-
-PRODUCT IMAGES MANAGED THROUGH VARIANTS
-
-</h4>
-
-<p>
-
-Product images are uploaded while creating variants.
-Each variant should include Size, Color, SKU, Price,
-Stock and at least 3 images.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="form-footer">
-
-<a
-href="{% url 'product_list' %}"
-class="discard-btn"
->
-
-DISCARD
-
-</a>
-
-<button
-type="submit"
-class="save-btn"
->
-
-SAVE PRODUCT
-
-</button>
-
-</div>
-
-</div>
-<div class="variant-section">
-
-    <div class="variant-header">
-
-        <h3>
-
-            Added Variants
-
-        </h3>
-
-        <button
-        type="button"
-        class="variant-btn"
-        id="addAnotherVariant"
-        style="display:none;"
-        >
-
-            <i class="fa-solid fa-plus"></i>
-
-            Add Another Variant
-
-        </button>
-
-    </div>
-
-    <div
-    id="variantList"
-    class="variant-list"
-    >
-
-        <div class="empty-variant">
-
-            No variants added yet.
+    <div class="page-header">
+
+        <div class="header-left">
+
+            <a href="{% url 'product_list' %}" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <div>
+                <span>PRODUCT MANAGEMENT</span>
+                <h2>Create New Product</h2>
+                <p>Add a new product to your catalog.</p>
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <a href="{% url 'product_list' %}" class="discard-btn">
+                Discard
+            </a>
+
+            <button
+                type="submit"
+                form="productForm"
+                class="save-btn"
+            >
+                Save & Continue
+            </button>
 
         </div>
 
     </div>
 
-</div>
+    <form
+        method="POST"
+        id="productForm"
+        class="product-form"
+    >
 
-<input
-type="hidden"
-name="variants_json"
-id="variantsJson"
-><!-- ========================= -->
-<!-- Variant Modal -->
-<!-- ========================= -->
+        {% csrf_token %}
 
-<div
-id="variantModal"
-class="variant-modal"
->
+        <div class="product-card">
 
-<div class="variant-modal-content">
+            <div class="card-title">
 
-<div class="variant-modal-header">
+                <div class="card-icon">
 
-<h2>
-
-Add Variant
-
-</h2>
-
-<button
-type="button"
-id="closeVariantModal"
-class="close-modal"
->
-
-<i class="fa-solid fa-xmark"></i>
-
-</button>
-
-</div>
-
-<div class="variant-modal-body">
-
-<div class="row">
-
-<div class="form-group">
-
-<label>
-
-COLOR
-
-</label>
-
-<input
-type="text"
-id="variantColor"
-placeholder="Black"
->
-
-<div
-class="error"
-id="colorError"
-></div>
-
-</div>
-
-<div class="form-group">
-
-<label>
-
-SIZE
-
-</label>
-
-<input
-type="number"
-id="variantSize"
-placeholder="42"
->
-
-<div
-class="error"
-id="sizeError"
-></div>
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="form-group">
-
-<label>
-
-SKU
-
-</label>
-
-<input
-type="text"
-id="variantSku"
-placeholder="SKU123"
->
-
-<div
-class="error"
-id="skuError"
-></div>
-
-</div>
-
-<div class="form-group">
-
-<label>
-
-PRICE
-
-</label>
-
-<input
-type="number"
-id="variantPrice"
-placeholder="4999"
->
-
-<div
-class="error"
-id="priceError"
-></div>
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="form-group">
-
-<label>
-
-STOCK
-
-</label>
-
-<input
-type="number"
-id="variantStock"
-placeholder="20"
->
-
-<div
-class="error"
-id="stockError"
-></div>
-
-</div>
-
-<div class="form-group">
-
-<label>
-
-STATUS
-
-</label>
-
-<select id="variantStatus">
-
-<option value="True">
-
-Active
-
-</option>
-
-<option value="False">
-
-Inactive
-
-</option>
-
-</select>
-
-</div>
-
-</div>
-
-<div class="form-group">
-
-<label>
-
-UPLOAD IMAGES
-
-</label>
-
-<input
-type="file"
-id="variantImages"
-multiple
-accept="image/*"
->
-
-<small>
-
-Upload at least 3 images
-
-</small>
-
-<div
-class="error"
-id="imageError"
-></div>
-
-</div>
-
-<div
-id="imagePreview"
-class="image-preview"
->
-
-</div>
-
-</div>
-
-<div class="variant-modal-footer">
-
-<button
-type="button"
-class="discard-btn"
-id="cancelVariant"
->
-
-Cancel
-
-</button>
-
-<button
-type="button"
-class="save-btn"
-id="completeVariant"
->
-
-Complete Variant
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-</form>
-<script>
-
-const variantModal = document.getElementById("variantModal");
-
-const openVariantModal = document.getElementById("openVariantModal");
-
-const closeVariantModal = document.getElementById("closeVariantModal");
-
-const cancelVariant = document.getElementById("cancelVariant");
-
-const completeVariant = document.getElementById("completeVariant");
-
-const addAnotherVariant = document.getElementById("addAnotherVariant");
-
-const variantList = document.getElementById("variantList");
-
-const variantsJson = document.getElementById("variantsJson");
-
-const imagePreview = document.getElementById("imagePreview");
-
-const imageInput = document.getElementById("variantImages");
-
-let variants = [];
-
-let editIndex = -1;
-
-function openModal(){
-
-    variantModal.classList.add("show");
-
-}
-
-function closeModal(){
-
-    variantModal.classList.remove("show");
-
-}
-
-if(openVariantModal){
-
-    openVariantModal.onclick = openModal;
-
-}
-
-if(addAnotherVariant){
-
-    addAnotherVariant.onclick = openModal;
-
-}
-
-if(closeVariantModal){
-
-    closeVariantModal.onclick = closeModal;
-
-}
-
-if(cancelVariant){
-
-    cancelVariant.onclick = closeModal;
-
-}
-
-window.onclick=function(e){
-
-    if(e.target===variantModal){
-
-        closeModal();
-
-    }
-
-};
-
-imageInput.addEventListener("change",function(){
-
-    imagePreview.innerHTML="";
-
-    const files=this.files;
-
-    for(let i=0;i<files.length;i++){
-
-        const reader=new FileReader();
-
-        reader.onload=function(e){
-
-            const img=document.createElement("img");
-
-            img.src=e.target.result;
-
-            imagePreview.appendChild(img);
-
-        }
-
-        reader.readAsDataURL(files[i]);
-
-    }
-
-});
-
-function clearErrors(){
-
-    document.getElementById("colorError").innerHTML="";
-
-    document.getElementById("sizeError").innerHTML="";
-
-    document.getElementById("skuError").innerHTML="";
-
-    document.getElementById("priceError").innerHTML="";
-
-    document.getElementById("stockError").innerHTML="";
-
-    document.getElementById("imageError").innerHTML="";
-
-}
-
-function clearVariantForm(){
-
-    document.getElementById("variantColor").value="";
-
-    document.getElementById("variantSize").value="";
-
-    document.getElementById("variantSku").value="";
-
-    document.getElementById("variantPrice").value="";
-
-    document.getElementById("variantStock").value="";
-
-    document.getElementById("variantStatus").value="True";
-
-    document.getElementById("variantImages").value="";
-
-    imagePreview.innerHTML="";
-
-    clearErrors();
-
-}
-completeVariant.addEventListener("click", function () {
-
-    clearErrors();
-
-    const color = document.getElementById("variantColor").value.trim();
-
-    const size = document.getElementById("variantSize").value.trim();
-
-    const sku = document.getElementById("variantSku").value.trim();
-
-    const price = document.getElementById("variantPrice").value.trim();
-
-    const stock = document.getElementById("variantStock").value.trim();
-
-    const status = document.getElementById("variantStatus").value;
-
-    const files = imageInput.files;
-
-    let valid = true;
-
-    if(color === ""){
-
-        document.getElementById("colorError").innerHTML="Color is required";
-
-        valid=false;
-
-    }
-
-    if(size === ""){
-
-        document.getElementById("sizeError").innerHTML="Size is required";
-
-        valid=false;
-
-    }
-
-    if(sku === ""){
-
-        document.getElementById("skuError").innerHTML="SKU is required";
-
-        valid=false;
-
-    }
-
-    if(price === ""){
-
-        document.getElementById("priceError").innerHTML="Price is required";
-
-        valid=false;
-
-    }
-
-    if(stock === ""){
-
-        document.getElementById("stockError").innerHTML="Stock is required";
-
-        valid=false;
-
-    }
-
-    if(files.length < 3){
-
-        document.getElementById("imageError").innerHTML="Upload at least 3 images";
-
-        valid=false;
-
-    }
-
-    if(!valid){
-
-        return;
-
-    }
-
-    const variant = {
-
-        color: color,
-
-        size: size,
-
-        sku: sku,
-
-        price: price,
-
-        stock: stock,
-
-        status: status,
-
-        images: []
-
-    };
-
-    for(let i=0;i<files.length;i++){
-
-        variant.images.push({
-
-            name: files[i].name,
-
-            file: files[i]
-
-        });
-
-    }
-
-    if(editIndex === -1){
-
-        variants.push(variant);
-
-    }else{
-
-        variants[editIndex]=variant;
-
-        editIndex=-1;
-
-    }
-
-    renderVariants();
-
-    clearVariantForm();
-
-    closeModal();
-
-});
-
-function renderVariants(){
-
-    variantList.innerHTML="";
-
-    if(variants.length===0){
-
-        variantList.innerHTML=`
-
-            <div class="empty-variant">
-
-                No variants added yet.
-
-            </div>
-
-        `;
-
-        addAnotherVariant.style.display="none";
-
-        return;
-
-    }
-
-    addAnotherVariant.style.display="inline-flex";
-
-    variants.forEach(function(item,index){
-
-        const card=document.createElement("div");
-
-        card.className="variant-card";
-
-        card.innerHTML=`
-
-            <div class="variant-left">
-
-                <div class="variant-title">
-
-                    ${item.color}
+                    <i class="fa-solid fa-box-open"></i>
 
                 </div>
 
-                <div class="variant-meta">
+                <div>
 
-                    Size : ${item.size}
+                    <h3>General Information</h3>
 
-                </div>
-
-                <div class="variant-meta">
-
-                    SKU : ${item.sku}
-
-                </div>
-
-                <div class="variant-meta">
-
-                    Price : ₹${item.price}
-
-                </div>
-
-                <div class="variant-meta">
-
-                    Stock : ${item.stock}
+                    <p>
+                        Enter the basic information about your product.
+                    </p>
 
                 </div>
 
             </div>
 
-            <div class="variant-right">
+            <div class="form-group">
+
+                <label for="{{ form.product_name.id_for_label }}">
+                    Product Name <span>*</span>
+                </label>
+
+                {{ form.product_name }}
+
+                {% if form.product_name.errors %}
+                    <div class="error">
+                        {{ form.product_name.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="row">
+
+                <div class="form-group">
+
+                    <label for="{{ form.category.id_for_label }}">
+                        Category <span>*</span>
+                    </label>
+
+                    {{ form.category }}
+
+                    {% if form.category.errors %}
+                        <div class="error">
+                            {{ form.category.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Product Status
+                    </label>
+
+                    <div class="status-wrapper">
+
+                        {{ form.is_active }}
+
+                        <span>
+                            Active Product
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="{{ form.description.id_for_label }}">
+                    Description
+                </label>
+
+                {{ form.description }}
+
+                {% if form.description.errors %}
+                    <div class="error">
+                        {{ form.description.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="info-box">
+
+                <div class="info-icon">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                </div>
+
+                <div class="info-content">
+
+                    <h4>
+                        What's Next?
+                    </h4>
+
+                    <p>
+                        After saving this product, you'll be redirected to the
+                        <strong>Add Variant</strong> page where you can create
+                        product variants, upload images, and manage stock.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="form-footer">
+
+                <a
+                    href="{% url 'product_list' %}"
+                    class="discard-btn"
+                >
+                    Discard
+                </a>
 
                 <button
-                type="button"
-                class="editVariant"
-                onclick="editVariant(${index})"
+                    type="submit"
+                    class="save-btn"
                 >
-
-                    Edit
-
-                </button>
-
-                <button
-                type="button"
-                class="deleteVariant"
-                onclick="deleteVariant(${index})"
-                >
-
-                    Delete
-
+                    Save & Continue
                 </button>
 
             </div>
 
-        `;
+        </div>
 
-        variantList.appendChild(card);
+    </form>
 
-    });
-
-}
-</script>
 </div>
 
 {% endblock %}

@@ -1,0 +1,1689 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}
+Product List 
+{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.hero{
+
+    width:100%;
+
+    padding:90px 6%;
+
+    text-align:center;
+
+    background:
+    radial-gradient(
+        circle at center,
+        rgba(255,122,0,.14),
+        transparent 38%
+    ),
+    linear-gradient(
+        180deg,
+        #17100d,
+        #100b09
+    );
+}
+
+.hero-content{
+
+    max-width:760px;
+
+    margin:auto;
+}
+
+.hero-subtitle{
+
+    color:#ff7a00;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    letter-spacing:3px;
+
+    margin-bottom:18px;
+}
+
+.hero h1{
+
+    font-size:72px;
+
+    font-weight:900;
+
+    letter-spacing:-2px;
+
+    margin-bottom:18px;
+
+    color:#ffffff;
+
+}
+
+.hero p{
+
+    color:#a8a19d;
+
+    font-size:15px;
+
+    line-height:1.9;
+
+    max-width:640px;
+
+    margin:auto;
+}
+
+.hero-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-top:40px;
+}
+
+.hero-buttons button:first-child{
+
+    height:52px;
+
+    padding:0 30px;
+
+    background:#ff7a00;
+
+    color:#ffffff;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.hero-buttons button:first-child:hover{
+
+    background:#ff8c20;
+
+    transform:translateY(-3px);
+}
+
+.hero-buttons button:last-child{
+
+    height:52px;
+
+    padding:0 30px;
+
+    background:transparent;
+
+    color:#ffffff;
+
+    border-radius:8px;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.hero-buttons button:last-child:hover{
+
+    border-color:#ff7a00;
+
+    color:#ff7a00;
+}
+
+.products-section{
+
+    width:100%;
+
+    padding:60px 6% 80px;
+}
+
+.products-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+}
+
+.products-header strong{
+
+    color:#ff7a00;
+}
+
+.products-header label{
+
+    font-size:13px;
+
+    color:#b5b5b5;
+
+    margin-right:10px;
+
+    font-weight:600;
+}
+
+.products-header select{
+
+    width:180px;
+
+    height:42px;
+
+    background:#221713;
+
+    color:#ffffff;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:8px;
+
+    padding:0 14px;
+
+    outline:none;
+}
+
+.products-header select option{
+
+    background:#221713;
+
+    color:#ffffff;
+}
+
+.products-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+}
+
+.filter-btn{
+
+    height:42px;
+
+    padding:0 22px;
+
+    background:#ff7a00;
+
+    color:#fff;
+
+    border-radius:8px;
+
+    font-weight:600;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+}
+
+.filter-btn:hover{
+
+    background:#ff922d;
+}
+
+.sort-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+.filter-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.65);
+
+    display:none;
+
+    justify-content:flex-start;
+
+    z-index:9999;
+}
+
+.filter-overlay.active{
+
+    display:flex;
+}
+
+.filter-modal{
+
+    width:360px;
+
+    height:100vh;
+
+    background:#18100d;
+
+    padding:30px;
+
+    overflow-y:auto;
+
+    animation:slideIn .35s ease;
+}
+
+@keyframes slideIn{
+
+    from{
+
+        transform:translateX(-100%);
+    }
+
+    to{
+
+        transform:translateX(0);
+    }
+}
+
+.filter-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+}
+
+.filter-header h2{
+
+    font-size:24px;
+
+    color:#ffffff;
+
+}
+
+.filter-header button{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:50%;
+
+    background:#2b211d;
+
+    color:white;
+}
+
+.filter-group{
+
+    margin-bottom:30px;
+}
+
+.filter-group h3{
+
+    margin-bottom:15px;
+
+    color:#ff7a00;
+
+    font-size:15px;
+}
+
+.filter-group label{
+
+    display:block;
+
+    margin-bottom:12px;
+
+    cursor:pointer;
+
+    color:#ddd;
+}
+
+.size-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:10px;
+}
+
+.size-grid button{
+
+    height:42px;
+
+    background:#2b211d;
+
+    color:white;
+
+    border-radius:8px;
+}
+
+.filter-buttons{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    margin-top:35px;
+}
+
+.apply-filter{
+
+    height:46px;
+
+    background:#ff7a00;
+
+    color:white;
+
+    border-radius:8px;
+
+    font-weight:600;
+}
+
+.clear-filter{
+
+    height:46px;
+
+    background:#2b211d;
+
+    color:white;
+
+    border-radius:8px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-decoration:none;
+}
+
+.product-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:24px;
+}
+
+.product-card{
+
+    background:#1b1310;
+
+    border:1px solid rgba(255,255,255,.07);
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    position:relative;
+}
+
+.product-card:hover{
+
+    transform:translateY(-8px);
+
+    border-color:rgba(255,122,0,.45);
+
+    box-shadow:
+    0 20px 40px
+    rgba(0,0,0,.35);
+}
+
+.product-card>a{
+
+    display:block;
+
+    height:100%;
+}
+
+.product-image{
+
+    height:250px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    position:relative;
+
+    overflow:hidden;
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:18px;
+
+    background:#1d1d1d;
+}
+
+.product-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+}
+
+.product-card:hover .product-image img{
+
+    transform:scale(1.08);
+}
+
+.wishlist-btn{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,.35);
+
+    color:#ffffff;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    transition:.3s;
+}
+
+.wishlist-btn:hover{
+
+    background:#ff7a00;
+
+    border-color:#ff7a00;
+}
+
+.product-info{
+
+    padding:20px;
+}
+.product-info h3{
+
+    font-size:17px;
+
+    font-weight:600;
+
+    color:#ffffff;
+
+    margin-bottom:12px;
+
+    line-height:1.5;
+
+    min-height:48px;
+}
+
+.product-info h4{
+
+    color:#ff7a00;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:18px;
+}
+/* ==========================================
+            PRODUCT RATING
+========================================== */
+
+.product-rating{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:4px;
+
+    margin-bottom:15px;
+
+    color:#ffb400;
+
+    font-size:13px;
+}
+
+.product-rating span{
+
+    color:#bfbfbf;
+
+    margin-left:8px;
+
+    font-size:12px;
+}
+
+
+
+/* ==========================================
+            PRICE
+========================================== */
+
+.price-section{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:15px;
+}
+#priceValue{
+
+    margin-top:12px;
+
+    color:#ff7a00;
+
+    font-size:15px;
+
+    font-weight:700;
+
+}
+
+.offer-price{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#ff7a00;
+}
+
+.original-price{
+
+    color:#777;
+
+    font-size:14px;
+
+    text-decoration:line-through;
+}
+
+
+.stock i{
+
+    font-size:9px;
+}
+
+.stock.out{
+
+    color:#ff6969;
+}
+
+.cart-btn:hover{
+
+    background:#ff7a00;
+}
+
+.product-badge{
+
+    position:absolute;
+
+    left:15px;
+
+    bottom:15px;
+
+    background:#ff7a00;
+
+    color:#ffffff;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    padding:6px 10px;
+
+    border-radius:30px;
+
+    letter-spacing:.6px;
+
+    background:#ff7a00;
+
+    color:#fff;
+
+    padding:6px 14px;
+
+    border-radius:50px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:.5px;
+}
+
+.no-products{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:100px 20px;
+
+    background:#1b1310;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.no-products h2{
+
+    font-size:28px;
+
+    margin-bottom:10px;
+
+    color:#ffffff;
+
+}
+
+.no-products p{
+
+    color:#9b9794;
+
+    font-size:14px;
+}
+
+.product-card{
+
+    animation:fadeUp .5s ease;
+}
+/* ==========================================
+            PRODUCT IMAGE
+========================================== */
+
+
+.product-card:hover .product-image img{
+
+    transform:scale(1.08);
+}
+
+.product-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
+}
+.results{
+
+    color:#ffffff;
+
+    font-size:15px;
+
+}
+.search-result-heading{
+
+    color:#ffffff;
+
+    margin:20px 0;
+
+}
+
+.search-result-heading span{
+
+    color:#ff7a00;
+
+    font-weight:700;
+
+}
+/* ==========================================
+            IMAGE OVERLAY
+========================================== */
+
+.product-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    padding:18px;
+
+    pointer-events:none;
+}
+
+.product-overlay button,
+
+.product-overlay span{
+
+    pointer-events:auto;
+}
+/* ==========================================
+            PRODUCT TITLE
+========================================== */
+
+.product-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+    margin:12px 0;
+
+    line-height:1.4;
+}
+
+
+
+/* ==========================================
+            CATEGORY
+========================================== */
+
+.product-category{
+
+    display:inline-block;
+
+    font-size:13px;
+
+    color:#ff7a00;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    margin-bottom:8px;
+}
+
+
+
+/* ==========================================
+            STOCK
+========================================== */
+
+.stock{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:18px;
+
+    font-size:14px;
+
+    font-weight:500;
+}
+
+.in-stock{
+    background:#163b22;
+    color:#6dff94;
+}
+
+.out-stock{
+    background:#4d1d1d;
+    color:#ff8f8f;
+}
+
+
+
+/* ==========================================
+            CART BUTTON
+========================================== */
+
+.cart-btn{
+
+    width:100%;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#ff7a00;
+
+    color:#ffffff;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.cart-btn:hover{
+
+    background:#ff922d;
+
+    transform:translateY(-2px);
+}
+
+.cart-btn i{
+
+    margin-right:10px;
+}
+
+
+/* ==========================================
+            WISHLIST
+========================================== */
+
+
+.wishlist-btn:hover{
+
+    background:#ff7a00;
+
+    transform:scale(1.08);
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+}
+
+.pagination{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:70px;
+}
+
+.pagination button{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:#1b1310;
+
+    color:#ffffff;
+
+    font-size:14px;
+
+    transition:.3s;
+}
+
+.pagination button:hover{
+
+    background:#ff7a00;
+
+    border-color:#ff7a00;
+
+    transform:translateY(-3px);
+}
+
+.pagination .active{
+
+    background:#ff7a00;
+
+    border-color:#ff7a00;
+}
+
+@media(max-width:1100px){
+
+    .product-grid{
+
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .hero h1{
+
+        font-size:56px;
+    }
+
+}
+
+@media(max-width:900px){
+
+    .product-grid{
+
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .products-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:18px;
+    }
+
+    .hero{
+
+        padding:70px 5%;
+    }
+
+    .hero h1{
+
+        font-size:48px;
+    }
+
+    .hero-buttons{
+
+        flex-wrap:wrap;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .product-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .products-section{
+
+        padding:45px 5% 70px;
+    }
+
+    .hero{
+
+        padding:60px 5%;
+    }
+
+    .hero h1{
+
+        font-size:38px;
+    }
+
+    .hero-buttons{
+
+        flex-direction:column;
+    }
+
+    .hero-buttons button{
+
+        width:100%;
+    }
+
+    .pagination{
+
+        gap:8px;
+
+        flex-wrap:wrap;
+    }
+
+    .pagination button{
+
+        width:40px;
+
+        height:40px;
+    }
+
+
+}
+</style>
+{% endblock %}
+{% block content %}
+
+
+<!-- ==========================================
+                HERO
+=========================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <p class="hero-subtitle">
+
+            NEW ARRIVALS
+
+        </p>
+
+
+        <h1>
+
+            SHOP THE DROP
+
+        </h1>
+
+
+        <p>
+
+            Hand-picked styles from the StrideX
+            Laboratory where technology meets
+            craftsmanship.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <button>
+
+                SHOP THE DROP
+
+            </button>
+
+            <button>
+
+                VIEW COLLECTIONS
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==========================================
+             PRODUCT SECTION
+=========================================== -->
+
+ <section class="products-section"> 
+
+    <div class="products-header">
+
+    <div class="results">
+
+        Showing
+
+        <strong>
+
+            {{ products|length }}
+
+        </strong>
+
+        Results
+
+    </div>
+
+
+    <div class="products-actions">
+
+        <button
+            id="openFilterModal"
+            class="filter-btn">
+
+            <i class="fa-solid fa-sliders"></i>
+
+            Filters
+
+        </button>
+
+
+        <div class="sort-box">
+
+            <label>
+
+                Sort By
+
+            </label>
+
+            <select>
+
+                <option>
+                    Newest First
+                </option>
+
+                <option>
+                    Price Low to High
+                </option>
+
+                <option>
+                    Price High to Low
+                </option>
+
+                <option>
+                    A - Z
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+</div>
+{% if search %}
+
+<div class="search-result-heading">
+
+    Showing results for
+
+    <span>"{{ search }}"</span>
+
+</div>
+
+{% endif %}
+
+
+<!-- ==========================================
+             PRODUCT GRID
+=========================================== -->
+<!-- ==========================================
+                FILTER MODAL
+========================================== -->
+
+<div
+    class="filter-overlay"
+    id="filterOverlay">
+
+    <form
+        method="GET"
+        action="{% url 'product:product_list' %}"
+        class="filter-modal">
+
+        <div class="filter-header">
+
+            <h2>
+
+                Filters
+
+            </h2>
+
+            <button
+                id="closeFilterModal">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <div class="filter-group">
+
+            <h3>Categories</h3>
+
+            {% for category in categories %}
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="category"
+                    value="{{ category.id }}"
+                    {% if selected_category == category.id|stringformat:"s" %}checked{% endif %}>
+
+                    {{ category.category_name }}
+
+                </label>
+
+            {% endfor %}
+
+        </div>
+
+
+
+        <!-- Price -->
+
+        <div class="filter-group">
+
+            <h3>
+
+                Price Range
+
+            </h3>
+
+            <input
+                type="range"
+                name="price"
+                min="0"
+                max="20000"
+                step="500"
+                value="{{ selected_price|default:'20000' }}"
+                id="priceRange">
+
+            <p id="priceValue">
+
+                ₹{{ selected_price|default:"20000" }}
+
+            </p>
+
+        </div>
+
+
+
+        <!-- Size -->
+
+        <div class="filter-group">
+
+            <h3>
+
+                Size Selection
+
+            </h3>
+
+            <div class="size-grid">
+
+                <button>6</button>
+
+                <button>7</button>
+
+                <button>8</button>
+
+                <button>9</button>
+
+                <button>10</button>
+
+                <button>11</button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Release -->
+
+        <div class="filter-group">
+
+            <h3>
+
+                Release Type
+
+            </h3>
+
+            <label>
+
+                <input type="checkbox">
+
+                New Arrival
+
+            </label>
+
+            <label>
+
+                <input type="checkbox">
+
+                Trending
+
+            </label>
+
+            <label>
+
+                <input type="checkbox">
+
+                Best Seller
+
+            </label>
+
+            <label>
+
+                <input type="checkbox">
+
+                Limited Edition
+
+            </label>
+
+        </div>
+
+
+
+        <div class="filter-buttons">
+
+            <button
+                type="submit"
+                class="apply-filter">
+
+                Apply Filters
+
+            </button>
+
+            <a
+                href="{% url 'product:product_list' %}"
+                class="clear-filter">
+
+                Clear Filters
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+<div class="product-grid">
+
+    {% for product in products %}
+    <div class="product-card">
+
+        <a href="{% url 'product:product_detail' product.id %}">
+
+            <div class="product-image">
+
+    {% with product.variants.first as variant %}
+
+        {% if variant and variant.images.first %}
+
+            <img src="{{ variant.images.first.image.url }}"
+                 alt="{{ product.product_name }}">
+
+        {% else %}
+
+            <img src="{% static 'images/no-image.png' %}"
+                 alt="No Image">
+
+        {% endif %}
+
+    {% endwith %}
+
+    <div class="product-overlay">
+
+        {% with product.variants.first as variant %}
+            <button
+                class="wishlist-btn"
+                    data-url="{% url 'add_to_wishlist' variant.id %}">
+
+                    <i class="fa-regular fa-heart"></i>
+
+            </button>
+        {% endwith %}
+
+        <span class="product-badge">
+
+            NEW ARRIVAL
+
+        </span>
+
+    </div>
+
+</div>
+
+            <div class="product-info">
+
+    <span class="product-category">
+
+        {{ product.category.category_name }}
+
+    </span>
+
+    <h3 class="product-title">
+
+        {{ product.product_name }}
+
+    </h3>
+
+    <div class="product-rating">
+
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star-half-stroke"></i>
+
+        <span>(4.8)</span>
+
+    </div>
+
+    {% with product.variants.first as variant %}
+
+        {% if variant %}
+
+        <div class="price-section">
+
+            <span class="offer-price">
+
+                ₹{{ variant.price }}
+
+            </span>
+
+            <span class="original-price">
+
+                ₹5999
+
+            </span>
+
+        </div>
+
+        <div class="stock in-stock">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            In Stock
+
+        </div>
+
+        {% else %}
+
+        <div class="price-section">
+
+            <span class="offer-price">
+
+                Price Not Available
+
+            </span>
+
+        </div>
+
+        <div class="stock out-stock">
+
+            <i class="fa-solid fa-circle-xmark"></i>
+
+            Out of Stock
+
+        </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+    <button class="cart-btn">
+
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        Add To Cart
+
+    </button>
+
+</div>
+
+        </a>
+
+    </div>
+
+    {% empty %}
+
+    <div class="no-products">
+
+        <h2>No Products Available</h2>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- ==========================================
+             PAGINATION
+=========================================== -->
+
+<div class="pagination">
+
+    <button>
+
+        <i class="fa-solid fa-angle-left"></i>
+
+    </button>
+
+    <button class="active">
+
+        1
+
+    </button>
+
+    <button>
+
+        2
+
+    </button>
+
+    <button>
+
+        3
+
+    </button>
+
+    <button>
+
+        <i class="fa-solid fa-angle-right"></i>
+
+    </button>
+
+</div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filterOverlay = document.getElementById("filterOverlay");
+    const openFilterButton = document.getElementById("openFilterModal");
+    const closeFilterButton = document.getElementById("closeFilterModal");
+
+    openFilterButton.addEventListener("click", function () {
+
+        filterOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+
+    });
+
+    closeFilterButton.addEventListener("click", function () {
+
+        filterOverlay.classList.remove("active");
+        document.body.style.overflow = "auto";
+
+    });
+
+    const sizeButtons = document.querySelectorAll(".size-grid button");
+
+    sizeButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            sizeButtons.forEach(function (btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+            this.classList.add("active");
+
+        });
+
+    });
+
+    filterOverlay.addEventListener("click", function (event) {
+
+        if (event.target === filterOverlay) {
+
+            filterOverlay.classList.remove("active");
+            document.body.style.overflow = "auto";
+
+        }
+
+    });
+
+    // ==========================
+    // Wishlist Button
+    // ==========================
+
+    document.querySelectorAll(".wishlist-btn").forEach(function(button){
+
+        button.addEventListener("click", function(event){
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const url = this.dataset.url;
+
+            window.location.href = url;
+
+        });
+    });
+    const priceRange = document.getElementById("priceRange");
+    const priceValue = document.getElementById("priceValue");
+
+    if (priceRange && priceValue) {
+
+        priceValue.textContent = "₹" + priceRange.value;
+
+        priceRange.addEventListener("input", function () {
+
+            priceValue.textContent = "₹" + this.value;
+
+        });
+
+    }
+
+});
+</script>
+{% endblock %}

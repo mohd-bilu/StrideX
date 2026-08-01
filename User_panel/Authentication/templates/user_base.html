@@ -1,0 +1,2204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        {% block title %}
+            StrideX
+        {% endblock %}
+
+    </title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+/*==================================================
+                    GOOGLE FONT
+==================================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+
+/*==================================================
+                    ROOT VARIABLES
+==================================================*/
+
+:root{
+
+    --primary:#f58220;
+
+    --primary-dark:#dd6b0a;
+
+    --secondary:#111111;
+
+    --text:#2b2b2b;
+
+    --text-light:#777777;
+
+    --background:#0f0f0f;
+
+    --white:#ffffff;
+
+    --border:#ebebeb;
+
+    --danger:#dc2626;
+
+    --shadow-sm:0 4px 12px rgba(0,0,0,.05);
+
+    --shadow-md:0 10px 30px rgba(0,0,0,.08);
+
+    --shadow-lg:0 20px 60px rgba(0,0,0,.12);
+
+    --radius-sm:10px;
+
+    --radius-md:18px;
+
+    --radius-lg:26px;
+
+    --transition:.30s ease;
+
+}
+
+
+/*==================================================
+                    RESET
+==================================================*/
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+*::before,
+*::after{
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+    background:#0f0f0f;
+
+}
+
+.user-navbar{
+
+    position:sticky;
+
+    top:0;
+
+    width:100%;
+
+    background:#15100f;
+
+    z-index:1000;
+
+}
+
+img{
+
+    max-width:100%;
+
+    display:block;
+
+}
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+}
+
+button{
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    font-family:inherit;
+
+}
+
+input,
+textarea,
+select{
+
+    border:none;
+
+    outline:none;
+
+    background:none;
+
+    font-family:inherit;
+
+}
+
+ul{
+
+    list-style:none;
+
+}
+
+body{
+
+    background:#0f0f0f;
+    margin:0;
+    min-height:100vh;
+
+}
+
+
+/*==================================================
+                GLOBAL CONTAINER
+==================================================*/
+
+.container{
+
+    width:100%;
+
+    max-width:1440px;
+
+    margin:0 auto;
+
+    padding:0 20px;
+
+}
+
+
+/*==================================================
+                COMMON BUTTON
+==================================================*/
+
+.primary-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:14px 28px;
+
+    border-radius:999px;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:var(--transition);
+
+}
+
+.primary-btn:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+
+}
+
+
+/*==================================================
+                PAGE SPACING
+==================================================*/
+
+main{
+
+    background:#0f0f0f;
+    min-height:100vh;
+
+}
+/*==================================================
+                NAVBAR
+==================================================*/
+
+.navbar-container{
+
+    max-width:1600px;
+
+    margin:auto;
+
+    height:78px;
+
+    padding:0 35px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:30px;
+
+}
+/*==================================================
+                    LOGO
+==================================================*/
+
+
+.brand-logo{
+
+    font-size:30px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    color:#ffffff;
+
+    text-transform:uppercase;
+
+    transition:.3s;
+
+}
+
+.brand-logo span{
+
+    color:#ff7a00;
+
+}
+
+.brand-logo:hover{
+
+    opacity:.9;
+
+}
+/*==================================================
+                NAVIGATION
+==================================================*/
+
+.nav-links{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:45px;
+
+    flex:1;
+
+}
+
+.nav-links a{
+
+    color:#d6d6d6;
+
+    position:relative;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    letter-spacing:1px;
+
+    transition:.3s;
+
+}
+
+.nav-links a:hover{
+
+    color:#ffffff;
+
+}
+.nav-links a.active{
+
+    color:#ffffff;
+
+}
+.nav-links a.active::after{
+
+    width:100%;
+
+}
+
+.nav-links a::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    bottom:-8px;
+
+    width:0;
+
+    height:2px;
+
+    background:var(--primary);
+
+    transition:var(--transition);
+
+}
+
+.nav-links a:hover::after{
+
+    width:100%;
+
+}
+
+
+/*==================================================
+                RIGHT SIDE
+==================================================*/
+
+.navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex-shrink:0;
+
+}
+
+/*==================================================
+                SEARCH BAR
+==================================================*/
+
+.search-form{
+
+    width:340px;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    background:#f5f5f5;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    transition:var(--transition);
+
+}
+
+.search-form:focus-within{
+
+    background:#fff;
+
+    border:1px solid var(--primary);
+
+    box-shadow:0 8px 24px rgba(245,130,32,.12);
+
+}
+
+.search-btn{
+
+    width:52px;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:var(--text-light);
+
+}
+
+.search-input{
+
+    flex:1;
+
+    height:100%;
+
+    padding-right:18px;
+
+    font-size:14px;
+
+    color:var(--secondary);
+
+}
+
+.search-input::placeholder{
+
+    color:#999;
+
+}
+.clear-search{
+
+    width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#666;
+
+    transition:.3s;
+
+}
+
+.clear-search:hover{
+
+    color:#ff7a00;
+
+}
+
+
+/*==================================================
+                ICON BUTTONS
+==================================================*/
+
+.icon-button{
+
+    width:48px;
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:transparent;
+
+    position:relative;
+
+    transition:var(--transition);
+
+}
+
+.icon-button:hover{
+
+    background:rgba(255,255,255,.08);
+
+    transform:translateY(-2px);
+
+}
+
+.icon-button i{
+
+    font-size:22px;
+
+    color:#ffffff;
+
+    transition:.3s;
+
+}
+
+
+/*==================================================
+                BADGES
+==================================================*/
+
+.badge{
+
+    position:absolute;
+
+    top:4px;
+
+    right:2px;
+
+    min-width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    background:#ef4444;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    border:2px solid #fff;
+
+    animation:pulseBadge 2s infinite;
+
+}
+
+@keyframes pulseBadge{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.12);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
+
+
+/*==================================================
+                PROFILE BUTTON
+==================================================*/
+
+.profile-button{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    background:#ececec;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:var(--transition);
+
+}
+
+.profile-button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+
+}
+
+.profile-button img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.profile-initial{
+
+    width:100%;
+
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:700;
+
+}
+
+.profile-button i{
+
+    font-size:20px;
+
+    color:#777;
+
+}
+/*==================================================
+                PROFILE OVERLAY
+==================================================*/
+
+.profile-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.18);
+
+    backdrop-filter:blur(3px);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:var(--transition);
+
+    z-index:9998;
+
+}
+
+.profile-overlay.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+
+/*==================================================
+                PROFILE DROPDOWN
+==================================================*/
+
+.profile-menu{
+
+    position:fixed;
+
+    top:110px;
+
+    right:30px;
+
+    width:380px;
+
+    background:var(--white);
+
+    border-radius:24px;
+
+    box-shadow:var(--shadow-lg);
+
+    overflow:hidden;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:translateY(20px);
+
+    transition:all .35s ease;
+
+    z-index:9999;
+
+}
+
+.profile-menu.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:translateY(0);
+
+}
+
+
+/*==================================================
+                PROFILE HEADER
+==================================================*/
+
+.profile-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:26px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.profile-avatar{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    flex-shrink:0;
+
+    background:#f3f3f3;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.profile-avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.profile-avatar i{
+
+    font-size:44px;
+
+    color:#b8b8b8;
+
+}
+
+.profile-avatar-letter{
+
+    width:100%;
+
+    height:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.profile-details{
+
+    flex:1;
+
+}
+
+.profile-details h3{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:var(--secondary);
+
+    margin-bottom:5px;
+
+}
+
+.profile-details p{
+
+    font-size:13px;
+
+    color:var(--text-light);
+
+    word-break:break-word;
+
+}
+
+
+/*==================================================
+                SECTION TITLE
+==================================================*/
+
+.profile-section{
+
+    padding:14px 0;
+
+}
+
+.section-title{
+
+    padding:0 26px 12px;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    color:#999;
+
+    text-transform:uppercase;
+
+}
+
+
+/*==================================================
+                MENU ITEMS
+==================================================*/
+
+.profile-item{
+
+    height:56px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:0 26px;
+
+    transition:var(--transition);
+
+}
+
+.profile-item:hover{
+
+    background:#f8f8f8;
+
+}
+
+.profile-item i{
+
+    width:22px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    color:#555;
+
+}
+
+.profile-item span{
+
+    flex:1;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:var(--text);
+
+}
+
+
+/*==================================================
+                FOOTER
+==================================================*/
+
+.profile-footer{
+
+    border-top:1px solid var(--border);
+
+    padding:20px;
+
+}
+
+
+/*==================================================
+                LOGOUT BUTTON
+==================================================*/
+
+.logout-button{
+
+    height:52px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+    background:#fff4f4;
+
+    color:var(--danger);
+
+    font-weight:700;
+
+    transition:var(--transition);
+
+}
+
+.logout-button:hover{
+
+    background:#ffeaea;
+
+}
+
+.logout-button i{
+
+    font-size:17px;
+
+}
+
+
+/*==================================================
+                DROPDOWN ANIMATION
+==================================================*/
+
+@keyframes profileFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(18px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.profile-menu.active{
+
+    animation:profileFade .25s ease;
+
+}
+/*==================================================
+                LARGE DESKTOP
+==================================================*/
+
+@media (max-width:1600px){
+
+    .navbar-container{
+
+        max-width:1450px;
+
+        padding:0 28px;
+
+    }
+
+    .nav-links{
+
+        gap:40px;
+
+    }
+
+    .search-form{
+
+        width:260px;
+
+        flex-shrink:0;
+
+    }
+
+}
+
+
+/*==================================================
+                LAPTOP
+==================================================*/
+
+@media (max-width:1400px){
+
+    .navbar-container{
+
+        height:72px;
+
+        padding:0 24px;
+
+    }
+
+    .brand-logo{
+
+        font-size:36px;
+
+    }
+
+    .nav-links{
+
+        gap:28px;
+
+    }
+
+    .nav-links a{
+
+        font-size:13px;
+
+    }
+
+    .search-form{
+
+        width:250px;
+
+    }
+
+    .profile-menu{
+
+        width:360px;
+
+    }
+
+}
+
+
+/*==================================================
+                TABLET
+==================================================*/
+
+@media (max-width:1100px){
+
+    .navbar-container{
+
+        padding:0 20px;
+
+    }
+
+    .nav-links{
+
+        display:none;
+
+    }
+
+    .search-form{
+
+        width:220px;
+
+    }
+
+}
+
+
+/*==================================================
+                SMALL TABLET
+==================================================*/
+
+@media (max-width:768px){
+
+    .user-navbar{
+
+        padding:14px;
+
+    }
+
+    .navbar-container{
+
+        height:68px;
+
+        border-radius:20px;
+
+        padding:0 18px;
+
+    }
+
+    .brand-logo{
+
+        font-size:30px;
+
+    }
+
+    .search-form{
+
+        display:none;
+
+    }
+
+    .navbar-right{
+
+        gap:10px;
+
+    }
+
+    .icon-button{
+
+        width:42px;
+
+        height:42px;
+
+    }
+
+    .icon-button i{
+
+        font-size:19px;
+
+    }
+
+    .profile-button{
+
+        width:42px;
+
+        height:42px;
+
+    }
+
+    .profile-initial{
+
+        font-size:18px;
+
+    }
+
+    .profile-menu{
+
+        width:330px;
+
+        right:14px;
+
+        top:95px;
+
+    }
+
+}
+
+
+/*==================================================
+                MOBILE
+==================================================*/
+
+@media (max-width:576px){
+
+    .user-navbar{
+
+        padding:10px;
+
+    }
+
+    .navbar-container{
+
+        height:64px;
+
+        padding:0 14px;
+
+        border-radius:16px;
+
+    }
+
+    .brand-logo{
+
+        font-size:26px;
+
+    }
+
+    .navbar-right{
+
+        gap:8px;
+
+    }
+
+    .icon-button{
+
+        width:38px;
+
+        height:38px;
+
+    }
+
+    .icon-button i{
+
+        font-size:18px;
+
+    }
+
+    .badge{
+
+        min-width:16px;
+
+        height:16px;
+
+        font-size:9px;
+
+    }
+
+    .profile-button{
+
+        width:38px;
+
+        height:38px;
+
+    }
+
+    .profile-initial{
+
+        font-size:16px;
+
+    }
+
+    .profile-menu{
+
+        width:calc(100% - 20px);
+
+        right:10px;
+
+        top:84px;
+
+        border-radius:18px;
+
+    }
+
+    .profile-header{
+
+        padding:18px;
+
+        gap:14px;
+
+    }
+
+    .profile-avatar{
+
+        width:56px;
+
+        height:56px;
+
+    }
+
+    .profile-avatar-letter{
+
+        font-size:22px;
+
+    }
+
+    .profile-details h3{
+
+        font-size:16px;
+
+    }
+
+    .profile-details p{
+
+        font-size:12px;
+
+    }
+
+    .profile-item{
+
+        height:52px;
+
+        padding:0 20px;
+
+    }
+
+    .logout-button{
+
+        height:48px;
+
+        font-size:14px;
+
+    }
+
+}
+/*==================================================
+                    FOOTER
+==================================================*/
+
+.user-footer{
+
+    background:#0f0f0f;
+
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:0;
+
+}
+
+.footer-container{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:30px 25px;
+
+}
+
+.footer-links{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:45px;
+
+    padding-bottom:22px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.footer-links a{
+
+    color:#bcbcbc;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    transition:.3s;
+
+    position:relative;
+
+}
+
+.footer-links a:hover{
+
+    color:var(--primary);
+
+}
+
+.footer-links a::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    bottom:-6px;
+
+    width:0;
+
+    height:2px;
+
+    background:var(--primary);
+
+    transition:.3s;
+
+}
+
+.footer-links a:hover::after{
+
+    width:100%;
+
+}
+
+
+/*==================================================
+                COPYRIGHT
+==================================================*/
+
+.footer-copyright{
+
+    margin-top:22px;
+
+    text-align:center;
+
+    color:#8d8d8d;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    letter-spacing:.3px;
+
+}
+
+.footer-copyright span{
+
+    color:var(--primary);
+
+    font-weight:700;
+
+}
+
+
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:768px){
+
+    .footer-links{
+
+        flex-direction:column;
+
+        gap:18px;
+
+    }
+
+}
+.logout-modal{
+
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.75);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:999999;
+
+}
+
+.logout-modal.active{
+
+    opacity:1;
+    visibility:visible;
+
+}
+
+.logout-modal.active .logout-modal-content{
+
+    transform:scale(1);
+
+}
+
+.logout-modal-content{
+
+    position:relative;
+
+    width:420px;
+    max-width:90%;
+
+    margin:auto;
+
+    background:#1a1a1a;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:36px 32px;
+
+    text-align:center;
+
+    box-shadow:0 25px 60px rgba(0,0,0,.45);
+
+    transform:scale(.95);
+    transition:.25s;
+
+}
+.logout-icon{
+
+    font-size:60px;
+    color:#f58220;
+    margin-bottom:18px;
+
+}
+
+.logout-modal-content h2{
+
+    font-size:26px;
+    color:#ffffff;
+    margin-bottom:10px;
+
+}
+
+.logout-modal-content p{
+
+    color:#bdbdbd;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:30px;
+
+}
+
+.logout-buttons{
+
+    display:flex;
+    gap:16px;
+    margin-top:10px;
+
+}
+
+.logout-buttons > *{
+
+    flex:1;
+
+}
+
+.cancel-btn,
+.logout-btn{
+
+    width:100%;
+    height:48px;
+    border:none;
+    border-radius:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:700;
+    cursor:pointer;
+
+}
+
+.cancel-btn{
+
+    width:100%;
+    height:52px;
+    border:2px solid rgba(255,255,255,.15);
+    border-radius:12px;
+    background:transparent;
+    color:#ffffff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+
+}
+
+.cancel-btn:hover{
+
+    background:rgba(255,255,255,.08);
+    border-color:#ffffff;
+
+}
+
+.logout-btn{
+
+    width:100%;
+    height:52px;
+    border:none;
+    border-radius:12px;
+    background:#f58220;
+    color:#111111;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+
+}
+
+.logout-btn:hover{
+
+    background:#ff9a2f;
+    transform:translateY(-2px);
+
+}
+#logoutForm{
+
+    flex:1;
+
+}
+
+    </style>
+
+    {% block extra_css %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <!-- ===========================
+            HEADER
+    ============================ -->
+
+<header class="user-navbar">
+
+    <div class="navbar-container">
+
+        <!-- ===========================
+                LOGO
+        ============================ -->
+
+        <a href="{% url 'home' %}" class="brand-logo">
+
+            STRIDE<span>X</span>
+
+        </a>
+
+
+        <!-- ===========================
+                NAVIGATION
+        ============================ -->
+
+        <nav class="nav-links">
+
+    <a href="{% url 'home' %}"
+       class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        Home
+    </a>
+
+    <a href="{% url 'product:product_list' %}"
+       class="{% if request.resolver_match.url_name == 'product:product_list' %}active{% endif %}">
+        Categories
+    </a>
+
+    <a href="#">
+        About
+    </a>
+
+</nav>
+
+        <!-- ===========================
+                RIGHT SECTION
+        ============================ -->
+
+        <div class="navbar-right">
+
+
+            <!-- Search -->
+
+            <form
+                action="{% url 'product:product_list' %}"
+                method="GET"
+                class="search-form">
+
+                <button
+                    type="submit"
+                    class="search-btn">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </button>
+
+                <input
+                    type="text"
+                    name="search"
+                    class="search-input"
+                    placeholder="Search shoes, brands..."
+                    value="{{ search }}">
+
+                {% if search %}
+                <a
+                    href="{% url 'product:product_list' %}"
+                    class="clear-search">
+
+                     <i class="fa-solid fa-xmark"></i>
+
+                </a>
+                {% endif %}
+
+            </form>
+
+
+            <!-- Wishlist -->
+
+            <a
+                href="{% url 'wishlist' %}"
+                class="icon-button">
+
+                <i class="fa-regular fa-heart"></i>
+
+                {% if wishlist_count %}
+
+                    <span class="badge">
+
+                        {{ wishlist_count }}
+
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+
+            <!-- Cart -->
+
+            <a
+                href="{% url 'cart' %}"
+                class="icon-button">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                {% if cart_count %}
+
+                    <span class="badge">
+
+                        {{ cart_count }}
+
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+
+            <!-- Profile -->
+
+            <button
+                id="profileButton"
+                class="profile-button">
+
+                {% if request.user.is_authenticated %}
+
+                    {% if request.user.profile_photo %}
+
+                        <img
+                            src="{{ request.user.profile_photo.url }}"
+                            alt="Profile">
+
+                    {% else %}
+
+                        <div class="profile-initial">
+
+                            {{ request.user.full_name|default:request.user.email|first|upper }}
+
+                        </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <i class="fa-regular fa-user"></i>
+
+                {% endif %}
+
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+    <!-- ===========================
+            PROFILE OVERLAY
+    ============================ -->
+
+    <div id="profileOverlay"
+         class="profile-overlay">
+
+    </div>
+
+
+    <!-- ===========================
+            PROFILE MENU
+    ============================ -->
+
+<div id="profileMenu"
+     class="profile-menu">
+
+    <!-- ===========================
+            PROFILE HEADER
+    ============================ -->
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+
+            {% if request.user.is_authenticated %}
+
+                {% if request.user.profile_photo %}
+
+    <img
+        src="{{ request.user.profile_photo.url }}"
+        alt="Profile">
+
+{% else %}
+
+    <div class="profile-avatar-letter">
+
+        {{ request.user.full_name|default:request.user.email|first|upper }}
+
+    </div>
+
+{% endif %}
+
+            {% else %}
+
+                <i class="fa-regular fa-user"></i>
+
+            {% endif %}
+
+        </div>
+
+        <div class="profile-details">
+
+            {% if request.user.is_authenticated %}
+
+                <h3>
+
+                    {{ request.user.full_name|default:"StrideX User" }}
+
+                </h3>
+
+                <p>
+
+                    {{ request.user.email }}
+
+                </p>
+
+            {% else %}
+
+                <h3>
+
+                    Guest User
+
+                </h3>
+
+                <p>
+
+                    Welcome to StrideX
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ===========================
+            ACCOUNT SECTION
+    ============================ -->
+
+    <div class="profile-section">
+
+        <div class="section-title">
+
+            ACCOUNT
+
+        </div>
+
+        <a href="{% url 'profile' %}"
+           class="profile-item">
+
+            <i class="fa-regular fa-user"></i>
+
+            <span>
+
+                My Profile
+
+            </span>
+
+        </a>
+
+        <a href="{% url 'address_list' %}"
+           class="profile-item">
+
+            <i class="fa-solid fa-location-dot"></i>
+
+            <span>
+
+                Address Book
+
+            </span>
+
+        </a>
+
+        <a href="#"
+           class="profile-item">
+
+            <i class="fa-solid fa-box"></i>
+
+            <span>
+
+                My Orders
+
+            </span>
+
+        </a>
+
+        <a href="{% url 'wishlist' %}"
+           class="profile-item">
+
+            <i class="fa-regular fa-heart"></i>
+
+            <span>
+
+                Wishlist
+
+            </span>
+
+        </a>
+
+        <a href="#"
+           class="profile-item">
+
+            <i class="fa-solid fa-wallet"></i>
+
+            <span>
+
+                Wallet
+
+            </span>
+
+        </a>
+
+    </div>
+
+    <!-- ===========================
+            LOGOUT
+    ============================ -->
+
+{% if request.user.is_authenticated %}
+
+<div class="profile-footer">
+
+    <a href="#"
+       id="openLogoutModal"
+       class="logout-button">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        <span>Logout</span>
+
+    </a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+    <!-- ===========================
+            MAIN CONTENT
+    ============================ -->
+
+    <main>
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+
+<footer class="user-footer">
+
+    <div class="footer-container">
+
+        <div class="footer-links">
+
+            <a href="#">Privacy Policy</a>
+
+            <a href="#">Terms of Sale</a>
+
+            <a href="#">Cookie Policy</a>
+
+        </div>
+
+        <div class="footer-copyright">
+
+            © {% now "Y" %} <span>StrideX</span>, Inc. All Rights Reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+<div class="logout-modal" id="logoutModal">
+
+    <div class="logout-modal-content">
+
+        <i class="fa-solid fa-right-from-bracket logout-icon"></i>
+
+        <h2>Logout?</h2>
+
+        <p>Are you sure you want to logout from your account?</p>
+
+        <div class="logout-buttons">
+
+    <button type="button"
+            id="cancelLogout"
+            class="cancel-btn">
+        Cancel
+    </button>
+
+    <form method="POST"
+          action="{% url 'logout' %}">
+
+        {% csrf_token %}
+
+        <button type="submit"
+                class="logout-btn">
+            Logout
+        </button>
+
+    </form>
+
+</div>
+
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const profileButton = document.getElementById("profileButton");
+    const profileMenu = document.getElementById("profileMenu");
+    const profileOverlay = document.getElementById("profileOverlay");
+
+    function openProfileMenu() {
+        if (!profileMenu || !profileOverlay) return;
+
+        profileMenu.classList.add("active");
+        profileOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeProfileMenu() {
+        if (!profileMenu || !profileOverlay) return;
+
+        profileMenu.classList.remove("active");
+        profileOverlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    // Profile button
+    if (profileButton) {
+        profileButton.addEventListener("click", function (e) {
+            console.log("PROFILE BUTTON CLICKED");
+
+            e.stopPropagation();
+
+            if (profileMenu.classList.contains("active")) {
+                closeProfileMenu();
+            } else {
+                openProfileMenu();
+            }
+        });
+    }
+
+    // Overlay click
+    if (profileOverlay) {
+        profileOverlay.addEventListener("click", closeProfileMenu);
+    }
+
+    // Outside click
+    document.addEventListener("click", function (e) {
+        if (
+            profileMenu &&
+            profileButton &&
+            !profileMenu.contains(e.target) &&
+            !profileButton.contains(e.target)
+        ) {
+            closeProfileMenu();
+        }
+    });
+
+    // Prevent menu click from closing
+    if (profileMenu) {
+        profileMenu.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    }
+
+    // Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeProfileMenu();
+        }
+    });
+
+    // Logout Modal
+    const logoutModal = document.getElementById("logoutModal");
+    const cancelLogout = document.getElementById("cancelLogout");
+
+    const openLogoutButtons = document.querySelectorAll(
+        "#openLogoutModal, .open-logout-modal"
+    );
+
+    openLogoutButtons.forEach(function (button) {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (button.closest("#profileMenu")) {
+                closeProfileMenu();
+            }
+
+            if (logoutModal) {
+                logoutModal.classList.add("active");
+            }
+        });
+    });
+
+    if (cancelLogout && logoutModal) {
+        cancelLogout.addEventListener("click", function (e) {
+            e.stopPropagation();
+            logoutModal.classList.remove("active");
+        });
+    }
+
+    if (logoutModal) {
+        logoutModal.addEventListener("click", function (e) {
+            if (e.target === logoutModal) {
+                logoutModal.classList.remove("active");
+            }
+        });
+    }
+
+});
+</script>
+    {% block extra_js %}
+
+    {% endblock %}
+{% if messages %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    {% for message in messages %}
+
+    Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}",
+        title: "{{ message|escapejs }}",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: "#21130e",
+        color: "#ffffff"
+    });
+
+    {% endfor %}
+
+});
+</script>
+{% endif %}
+</body>
+
+</html>

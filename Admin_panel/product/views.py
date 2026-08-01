@@ -1,45 +1,107 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Count, Prefetch, Q
 from django.shortcuts import (get_object_or_404, redirect, render)
 from .forms import (ProductForm, VariantForm,)
-
-from .models import ( Product,ProductImage,Variant,VariantImage,)
+from Admin_panel.category.models import Category
+from .models import ( Product,Variant,VariantImage,)
+from django.utils import timezone
+from datetime import timedelta
 
 def product_list(request):
-    search_query = request.GET.get("search", "").strip()
+    search_query=request.GET.get("search","").strip()
+    selected_category=request.GET.get("category","")
+    selected_sort=request.GET.get("sort","latest")
 
-    products = Product.objects.filter(is_deleted=False,).select_related("category")
+    products=(
+        Product.objects.filter(is_deleted=False)
+        .select_related("category")
+        .annotate(
+            variant_count=Count(
+                "variants",
+                filter=Q(variants__is_deleted=False),
+            ),
+        )
+        .prefetch_related(
+            Prefetch(
+                "variants",
+                queryset=Variant.objects.filter(is_deleted=False).order_by("-updated_at").prefetch_related(
+                    Prefetch(
+                        "images",
+                        queryset=VariantImage.objects.order_by("-is_primary","id"),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    if selected_category:
+        products=products.filter(category_id=selected_category)
+
+    if selected_sort=="latest":
+        products=products.order_by("-created_at")
+    elif selected_sort=="oldest":
+        products=products.order_by("created_at")
+    elif selected_sort=="a_z":
+        products=products.order_by("product_name")
+    elif selected_sort=="z_a":
+        products=products.order_by("-product_name")
 
     if search_query:
-        products = products.filter(
-            Q(product_name__icontains=search_query)
-            | Q(description__icontains=search_query)
-            | Q(category__category_name__icontains=search_query)
+        products=products.filter(
+            Q(product_name__icontains=search_query)|
+            Q(description__icontains=search_query)|
+            Q(category__category_name__icontains=search_query)
         )
 
-    total_products = products.count()
+    total_products=products.count()
 
-    active_products = products.filter(is_active=True,).count()
+    low_stock_products=Variant.objects.filter(
+        is_deleted=False,
+        stock__gt=0,
+        stock__lte=5,
+    ).count()
 
-    inactive_products = products.filter(is_active=False,).count()
+    out_of_stock_products=Variant.objects.filter(
+        is_deleted=False,
+        stock=0,
+    ).count()
 
-    paginator = Paginator(products, 10)
+    new_arrivals=Product.objects.filter(
+        is_deleted=False,
+        created_at__gte=timezone.now()-timedelta(days=30),
+    ).count()
 
-    page_number = request.GET.get("page")
+    active_products=products.filter(is_active=True).count()
+    inactive_products=products.filter(is_active=False).count()
 
-    page_obj = paginator.get_page(page_number)
+    paginator=Paginator(products,5)
+    page_obj=paginator.get_page(request.GET.get("page"))
 
-    context = {
-        "page_obj": page_obj,
-        "search_query": search_query,
-        "total_products": total_products,
-        "active_products": active_products,
-        "inactive_products": inactive_products,
+    categories=Category.objects.filter(
+        is_deleted=False,
+        is_active=True,
+    ).order_by("category_name")
+
+    context={
+        "page_obj":page_obj,
+        "search_query":search_query,
+        "selected_category":selected_category,
+        "selected_sort":selected_sort,
+        "categories":categories,
+        "total_products":total_products,
+        "low_stock_products":low_stock_products,
+        "out_of_stock_products":out_of_stock_products,
+        "new_arrivals":new_arrivals,
+        "active_products":active_products,
+        "inactive_products":inactive_products,
     }
 
-    return render( request,"product/product_list.html",context,)
-
+    return render(
+        request,
+        "product/product_list.html",
+        context,
+    )
 def add_product(request):
 
     if request.method == "POST":
@@ -52,12 +114,12 @@ def add_product(request):
 
             messages.success(
                 request,
-                "Product created successfully. Now add the first variant."
+                "Product created successfully. Now add variants."
             )
 
             return redirect(
                 "add_variant",
-                product.id,
+                product_id=product.id
             )
 
     else:
@@ -81,6 +143,28 @@ def edit_product(request, product_id):
         id=product_id,
         is_deleted=False,
     )
+
+    if (
+        request.method == "POST"
+        and request.POST.get("toggle_status")
+    ):
+
+        product.is_active = (
+            request.POST.get("new_status") == "True"
+        )
+
+        product.save(
+            update_fields=["is_active"]
+        )
+
+        messages.success(
+            request,
+            "Product status updated successfully.",
+        )
+
+        return redirect(
+            "product_list",
+        )
 
     if request.method == "POST":
 
@@ -118,7 +202,6 @@ def edit_product(request, product_id):
         "product/edit_product.html",
         context,
     )
-
 def delete_product(request, product_id):
     product = get_object_or_404(Product,id=product_id,is_deleted=False,)
 

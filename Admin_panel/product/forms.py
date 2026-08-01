@@ -1,8 +1,12 @@
 from django import forms
+
+from Admin_panel.category.models import Category
+
 from .models import Product, Variant
 
 
 class ProductForm(forms.ModelForm):
+
     class Meta:
         model = Product
         fields = [
@@ -11,6 +15,7 @@ class ProductForm(forms.ModelForm):
             "description",
             "is_active",
         ]
+
         widgets = {
             "product_name": forms.TextInput(
                 attrs={
@@ -37,17 +42,24 @@ class ProductForm(forms.ModelForm):
             ),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["category"].queryset = Category.objects.filter(
+            is_deleted=False,
+            is_active=True,
+        ).order_by("category_name")
+
     def clean_product_name(self):
         product_name = self.cleaned_data["product_name"].strip()
 
-        exists = Product.objects.filter(
+        if Product.objects.filter(
             product_name__iexact=product_name,
             is_deleted=False,
         ).exclude(
             pk=self.instance.pk,
-        ).exists()
+        ).exists():
 
-        if exists:
             raise forms.ValidationError(
                 "Product already exists."
             )
@@ -56,6 +68,7 @@ class ProductForm(forms.ModelForm):
 
 
 class VariantForm(forms.ModelForm):
+
     class Meta:
         model = Variant
         fields = [
@@ -67,6 +80,7 @@ class VariantForm(forms.ModelForm):
             "is_active",
             "is_default",
         ]
+
         widgets = {
             "sku": forms.TextInput(
                 attrs={
@@ -112,19 +126,14 @@ class VariantForm(forms.ModelForm):
         }
 
     def clean_sku(self):
-        sku = (
-            self.cleaned_data["sku"]
-            .strip()
-            .upper()
-        )
+        sku = self.cleaned_data["sku"].strip().upper()
 
-        exists = Variant.objects.filter(
+        if Variant.objects.filter(
             sku__iexact=sku,
         ).exclude(
             pk=self.instance.pk,
-        ).exists()
+        ).exists():
 
-        if exists:
             raise forms.ValidationError(
                 "SKU already exists."
             )
