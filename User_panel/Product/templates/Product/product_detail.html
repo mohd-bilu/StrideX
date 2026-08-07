@@ -13,6 +13,7 @@
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     /* ==========================================================
@@ -238,22 +239,46 @@ button{
 /* ==========================================================
    STOCK BADGE
 ========================================================== */
-
 .stock-badge{
     display:inline-flex;
     align-items:center;
-    justify-content:center;
-    padding:8px 16px;
+    gap:8px;
+    padding:10px 18px;
     border-radius:50px;
-    background:#163b22;
-    color:#6dff94;
-    font-size:11px;
+    font-size:13px;
     font-weight:700;
-    letter-spacing:1px;
-    white-space:nowrap;
+    letter-spacing:.5px;
+    border:1px solid transparent;
+    transition:.3s;
 }
 
+.stock-badge i{
+    font-size:14px;
+}
 
+.stock-badge.success{
+    color:#16a34a;
+    background:#ecfdf5;
+    border-color:#bbf7d0;
+}
+
+.stock-badge.warning{
+    color:#d97706;
+    background:#fffbeb;
+    border-color:#fde68a;
+}
+
+.stock-badge.danger{
+    color:#dc2626;
+    background:#fef2f2;
+    border-color:#fecaca;
+}
+
+.stock-badge.out{
+    color:#6b7280;
+    background:#f3f4f6;
+    border-color:#d1d5db;
+}
 
 /* ==========================================================
    RATING
@@ -452,67 +477,16 @@ button{
     opacity:.5;
     cursor:not-allowed;
 }
-/* ==========================================================
-   QUANTITY
-========================================================== */
-
-.quantity-wrapper{
-    margin-bottom:38px;
-}
-
-.quantity-wrapper label{
-    display:block;
-    color:#bdbdbd;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    margin-bottom:16px;
-}
-
-.quantity-box{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    width:170px;
-    height:52px;
-    border:1px solid #2b2b2b;
-    border-radius:6px;
-    overflow:hidden;
-    background:#111111;
-}
-
-.quantity-box button{
-    width:50px;
-    height:50px;
-    border:none;
-    background:#111111;
-    color:#ffffff;
-    font-size:28px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.quantity-box input{
-    width:70px;
-    border:none;
-    background:#070707;
-    color:#ffffff;
-    text-align:center;
-    font-size:18px;
-}
-
 
 
 /* ==========================================================
    ACTION BUTTONS
 ========================================================== */
-
 .action-buttons{
     display:flex;
     align-items:center;
-    gap:16px;
-    margin-bottom:32px;
+    gap:20px;
+    margin-top:35px;
 }
 
 
@@ -521,22 +495,29 @@ button{
    WISHLIST
 ========================================================== */
 
-.wishlist-button{
-    width:58px;
-    height:58px;
-    border:1px solid #2b2b2b;
-    background:#111111;
+.wishlist-btn{
+    width:60px;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#141414;
+    border:1px solid #2f2f2f;
     color:#ffffff;
-    border-radius:8px;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.wishlist-button i{
+    transition:.35s ease;
     font-size:20px;
 }
 
-.wishlist-button:hover{
+.wishlist-btn:hover{
+    background:#ff7a00;
+    border-color:#ff7a00;
+    color:#fff;
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(255,122,0,.35);
+}
+
+.wishlist-btn.active{
     background:#ff7a00;
     border-color:#ff7a00;
 }
@@ -546,52 +527,61 @@ button{
 /* ==========================================================
    ADD TO CART
 ========================================================== */
-
 .cart-button{
     flex:1;
-    height:58px;
-    border:none;
-    border-radius:8px;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
     background:#1b1b1b;
-    color:#ffffff;
+    border:1px solid #303030;
+    border-radius:14px;
+    color:#fff;
     font-size:15px;
     font-weight:700;
-    letter-spacing:1px;
-    cursor:pointer;
-    transition:.3s;
+    letter-spacing:.8px;
+    transition:.35s ease;
 }
 
 .cart-button:hover{
     background:#ff7a00;
+    border-color:#ff7a00;
+    transform:translateY(-3px);
+    box-shadow:0 15px 35px rgba(255,122,0,.35);
+}
+
+.cart-button i{
+    font-size:18px;
 }
 .cart-button.disabled{
-    pointer-events: none;
-    opacity: .5;
-    cursor: not-allowed;
+    background:#2b2b2b;
+    color:#777;
+    border-color:#444;
+    pointer-events:none;
+    box-shadow:none;
+    transform:none;
 }
-
-
-
 /* ==========================================================
    BUY NOW
 ========================================================== */
 
 .buy-button{
     flex:1;
-    height:58px;
+    height:60px;
     border:none;
-    border-radius:8px;
-    background:#ff7a00;
-    color:#ffffff;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ff7a00,#ff9f1c);
+    color:#fff;
     font-size:15px;
     font-weight:700;
-    letter-spacing:1px;
-    cursor:pointer;
-    transition:.3s;
+    letter-spacing:.8px;
+    transition:.35s ease;
 }
 
 .buy-button:hover{
-    background:#ff9433;
+    transform:translateY(-3px);
+    box-shadow:0 18px 40px rgba(255,122,0,.45);
 }
 
 
@@ -1016,18 +1006,25 @@ button{
 
 <body>
 
-```html
+
 <section class="product-detail-section">
     <div class="container">
 
         <div class="breadcrumb">
+
             <a href="{% url 'user_home' %}">
-                HOME
+                Home
             </a>
 
             <span>/</span>
 
-            <a href="#">
+            <a href="{% url 'product:product_list' %}">
+                Products
+            </a>
+
+            <span>/</span>
+
+            <a href="{% url 'product:product_list' %}?category={{ product.category.id }}">
                 {{ product.category.category_name }}
             </a>
 
@@ -1036,6 +1033,7 @@ button{
             <strong>
                 {{ product.product_name }}
             </strong>
+
         </div>
 
         <div class="product-detail-wrapper">
@@ -1100,15 +1098,34 @@ button{
                     <h1>{{ product.product_name }}</h1>
 
                     {% with variant as selected_variant %}
-                        {% if selected_variant and selected_variant.stock > 0 %}
-                            <span class="stock-badge" id="stockBadge">
-                                IN STOCK
-                            </span>
-                        {% else %}
-                            <span class="stock-badge" id="stockBadge">
+
+                        {% if selected_variant.stock == 0 %}
+
+                            <span class="stock-badge out" id="stockBadge">
                                 OUT OF STOCK
                             </span>
+
+                        {% elif selected_variant.stock <= 3 %}
+
+                            <span class="stock-badge danger" id="stockBadge">
+                                ONLY {{ selected_variant.stock }} LEFT
+                            </span>
+
+                        {% elif selected_variant.stock <= 10 %}
+
+                            <span class="stock-badge warning" id="stockBadge">
+                                LOW STOCK
+                            </span>
+
+                        {% else %}
+
+                            <span class="stock-badge success" id="stockBadge">
+                                <i class="fa-solid fa-circle-check"></i>
+                                In Stock
+                            </span>
+
                         {% endif %}
+
                     {% endwith %}
 
                 </div>
@@ -1180,43 +1197,37 @@ button{
 
                 </div>
 
-                <div class="quantity-wrapper">
-
-                    <label>QUANTITY</label>
-
-                    <div class="quantity-box">
-                        <button type="button" id="decreaseQty">
-                            −
-                        </button>
-
-                        <input type="text"
-                               id="quantityInput"
-                               value="1"
-                               readonly>
-
-                        <button type="button" id="increaseQty">
-                            +
-                        </button>
-                    </div>
-
-                </div>
 
                 <div class="action-buttons">
 
-                    <a id="wishlistBtn"
-   href="#"
-   class="wishlist-btn">
+                    <button
+                        type="button"
+                        id="wishlistBtn"
+                        class="wishlist-button ajax-wishlist {% if variant.id in wishlist_variant_ids %}active{% endif %}"
+                        data-url="{% url 'add_to_wishlist' variant.id %}">
 
-    <i class="fa-regular fa-heart"></i>
+                        {% if variant.id in wishlist_variant_ids %}
 
-</a>
+                            <i class="fa-solid fa-heart"></i>
 
-                    <a id="addToCartBtn"
-                       href="#"
-                       class="cart-button">
+                        {% else %}
+
+                            <i class="fa-regular fa-heart"></i>
+
+                        {% endif %}
+
+                        WISHLIST
+
+                    </button> 
+
+                    <a
+                        id="addToCartBtn"
+                        class="cart-button ajax-cart"
+                        data-url="{% url 'add_to_cart' variant.id %}">
+                        <i class="fa-solid fa-cart-shopping"></i>
                         ADD TO CART
-                    </a>
 
+                    </a>
                     <button type="button" class="buy-button">
                         BUY NOW
                     </button>
@@ -1523,6 +1534,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const stockBadge = document.getElementById("stockBadge");
     const sku = document.getElementById("productSku");
     const addToCartBtn = document.getElementById("addToCartBtn");
+    const wishlistBtn = document.getElementById("wishlistBtn");
 
     thumbnails.forEach(function (item) {
 
@@ -1614,41 +1626,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    const decreaseBtn = document.getElementById("decreaseQty");
-    const increaseBtn = document.getElementById("increaseQty");
-    const quantityInput = document.getElementById("quantityInput");
-    const stock = parseInt(document.querySelector(".size-btn.active").dataset.stock);
-
-    if (decreaseBtn && increaseBtn && quantityInput) {
-
-        decreaseBtn.addEventListener("click", function () {
-
-            let qty = parseInt(quantityInput.value);
-
-            if (qty > 1) {
-                quantityInput.value = qty - 1;
-            }
-
-        });
-
-        increaseBtn.addEventListener("click", function () {
-
-            let qty = parseInt(quantityInput.value);
-
-            const activeButton = document.querySelector(".size-btn.active");
-
-            if (!activeButton) return;
-
-            const stock = parseInt(activeButton.dataset.stock);
-
-            if (qty < stock) {
-                quantityInput.value = qty + 1;
-            }
-
-        });
-
-    }
-
     const accordionItems = document.querySelectorAll(".accordion-item");
 
     accordionItems.forEach(function (item) {
@@ -1679,9 +1656,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         button.addEventListener("click", function () {
             if (addToCartBtn) {
-                quantityInput.value=1;
-                addToCartBtn.href = `/cart/add/${this.dataset.variantId}/`;
-                wishlistBtn.href = `/cart/wishlist/add/${this.dataset.variantId}/`;
+
+                addToCartBtn.dataset.url =
+                    `/cart/add/${this.dataset.variantId}/`;
+
+            }
+
+            if (wishlistBtn) {
+
+                wishlistBtn.dataset.url =
+                    `/cart/wishlist/add/${this.dataset.variantId}/`;
+
             }
 
             variantButtons.forEach(function (btn) {
@@ -1700,25 +1685,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (stockBadge) {
 
-                if (parseInt(this.dataset.stock) > 0) {
+                const stock = parseInt(this.dataset.stock);
 
-                    stockBadge.textContent = "IN STOCK";
+                stockBadge.classList.remove(
+                    "success",
+                    "warning",
+                    "danger",
+                    "out"
+                );
 
-                    stockBadge.classList.remove("out-stock");
-                    stockBadge.classList.add("in-stock");
+                if (stock === 0) {
+                    stockBadge.innerHTML =
+'                   <i class="fa-solid fa-circle-xmark"></i> Out of Stock';
+                    stockBadge.classList.add("out");
 
-                    addToCartBtn.href = `/cart/add/${this.dataset.variantId}/`;
+                    addToCartBtn.removeAttribute("data-url");
+                    addToCartBtn.classList.add("disabled");
+
+                } else if (stock <= 3) {
+                    stockBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ONLY ${stock} LEFT`;
+
+                    stockBadge.classList.add("danger");
+
+                    addToCartBtn.dataset.url = `/cart/add/${this.dataset.variantId}/`;
+                    addToCartBtn.classList.remove("disabled");
+
+                } else if (stock <= 10) {
+
+                    stockBadge.innerHTML =
+'                   <i class="fa-solid fa-triangle-exclamation"></i> Low Stock';
+
+                    stockBadge.classList.add("warning");
+
+                    addToCartBtn.dataset.url = `/cart/add/${this.dataset.variantId}/`;
                     addToCartBtn.classList.remove("disabled");
 
                 } else {
 
-                    stockBadge.textContent = "OUT OF STOCK";
+                    stockBadge.innerHTML =
+'                   <i class="fa-solid fa-circle-check"></i> In Stock';
 
-                    stockBadge.classList.remove("in-stock");
-                    stockBadge.classList.add("out-stock");
+                    stockBadge.classList.add("success");
 
-                    addToCartBtn.removeAttribute("href");
-                    addToCartBtn.classList.add("disabled");
+                    addToCartBtn.dataset.url = `/cart/add/${this.dataset.variantId}/`;
+                    addToCartBtn.classList.remove("disabled");
 
                 }
 
@@ -1780,6 +1790,112 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (activeColor) {
         activeColor.click();
+    }
+    // ==========================
+    // Wishlist AJAX
+    // ==========================
+
+
+    if(wishlistBtn){
+
+        wishlistBtn.addEventListener("click",function(e){
+
+            e.preventDefault();
+
+            fetch(this.dataset.url,{
+
+                headers:{
+                    "X-Requested-With":"XMLHttpRequest"
+                }
+
+            })
+
+            .then(response=>response.json())
+
+            .then(data=>{
+
+                if(!data.success){
+                    return;
+                }
+
+                const icon=this.querySelector("i");
+
+                if(data.added){
+
+                    this.classList.add("active");
+
+                    icon.classList.remove("fa-regular");
+                    icon.classList.add("fa-solid");
+
+                    Swal.fire({
+
+                        toast:true,
+                        position:"top-end",
+                        icon:"success",
+                        title:"Added to wishlist",
+                        showConfirmButton:false,
+                        timer:1800,
+                        timerProgressBar:true
+
+                    });
+
+                }else{
+
+                    this.classList.remove("active");
+
+                    icon.classList.remove("fa-solid");
+                    icon.classList.add("fa-regular");
+
+                    Swal.fire({
+
+                        toast:true,
+                        position:"top-end",
+                        icon:"info",
+                        title:"Removed from wishlist",
+                        showConfirmButton:false,
+                        timer:1800,
+                        timerProgressBar:true
+
+                    });
+
+                }
+
+                const wishlistCount=document.getElementById("wishlistCount");
+
+                if(wishlistCount){
+
+                    if(data.wishlist_count>0){
+
+                        wishlistCount.style.display="flex";
+                        wishlistCount.textContent=data.wishlist_count;
+
+                    }else{
+
+                        wishlistCount.style.display="none";
+
+                    }
+
+                }
+
+            })
+
+            .catch(function(){
+
+                Swal.fire({
+
+                    toast:true,
+                    position:"top-end",
+                    icon:"error",
+                    title:"Something went wrong",
+                    showConfirmButton:false,
+                    timer:1800
+
+                });
+
+            });
+
+        });
+
     }
 
 });

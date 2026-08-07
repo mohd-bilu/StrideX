@@ -650,6 +650,17 @@ body{
 
 }
 
+.upload-error{
+    margin-top:12px;
+    color:#dc2626;
+    font-size:14px;
+    font-weight:500;
+    display:none;
+}
+
+.upload-error.show{
+    display:block;
+}
 /*==================================================
 =                WARNING BOX                       =
 ==================================================*/
@@ -816,15 +827,9 @@ body{
 
 .crop-container{
 
-    width:1100px;
+    width:850px;
 
-    max-width:95%;
-
-    background:#fff;
-
-    border-radius:28px;
-
-    overflow:hidden;
+    max-width:90%;
 
 }
 
@@ -864,23 +869,35 @@ body{
 
     display:grid;
 
-    grid-template-columns:1fr 260px;
+    grid-template-columns:650px 220px;
+
+    justify-content:center;
 
 }
 
 .crop-preview{
 
-    padding:20px;
+    height:500px;
 
-    background:#111;
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
 
 }
 
 .crop-preview img{
 
-    width:100%;
+    max-width:100%;
 
-    display:block;
+    max-height:480px;
+
+    width:auto;
+
+    height:auto;
 
 }
 
@@ -1212,12 +1229,15 @@ body{
                     </div>
 
                     <div
-    class="image-grid"
-    id="currentImagesGrid">
+                        class="image-grid"
+                        id="currentImagesGrid"
+                        data-count="{{ images.count }}">
 
                         {% for image in images %}
 
-                        <div class="image-card">
+                        <div
+                            class="image-card"
+                            id="image-card-{{ image.id }}">
 
                             <img
                                 src="{{ image.image.url }}"
@@ -1238,21 +1258,20 @@ body{
                                 {% else %}
 
                                 <button
-                                    type="submit"
-                                    formaction="{% url 'make_primary_image' image.id %}"
-                                    class="primary-btn">
-
+                                    type="button"
+                                    class="primary-btn ajax-primary"
+                                    data-url="{% url 'make_primary_image' image.id %}">
                                     Set Primary
-
                                 </button>
-
                                 {% endif %}
 
+                        
+
                                 <button
-                                    type="submit"
-                                    formaction="{% url 'delete_variant_image' image.id %}"
-                                    class="delete-btn"
-                                    onclick="return confirm('Delete this image?')">
+                                    type="button"
+                                    class="delete-btn ajax-delete-image"
+                                    data-url="{% url 'delete_variant_image' image.id %}"
+                                    data-card="{{ image.id }}">
 
                                     <i class="fa-solid fa-trash"></i>
 
@@ -1286,16 +1305,16 @@ body{
                         </label>
 
                         <input
-    id="variant-images"
-    type="file"
-    name="images"
-    accept=".jpg,.jpeg,.png,.webp"
-    multiple
-    hidden>
+                            id="variant-images"
+                            type="file"
+                            name="images"
+                            accept=".jpg,.jpeg,.png,.webp"
+                            multiple
+                            hidden>
     
 
                     </div>
-
+<div id="imageUploadError" class="upload-error"></div>
 
 
                     <div class="warning-box">
@@ -1397,47 +1416,7 @@ body{
 
             <div class="crop-sidebar">
 
-                <div class="crop-group">
-
-                    <label>Aspect Ratio</label>
-
-                    <button
-                        type="button"
-                        class="ratio-btn"
-                        data-ratio="1">
-
-                        1 : 1
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="ratio-btn"
-                        data-ratio="0.8">
-
-                        4 : 5
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="ratio-btn"
-                        data-ratio="1.777777">
-
-                        16 : 9
-
-                    </button>
-
-                    <button
-                        type="button"
-                        class="ratio-btn"
-                        data-ratio="free">
-
-                        Free
-
-                    </button>
-
-                </div>
+                
 
                 <div class="crop-group">
 

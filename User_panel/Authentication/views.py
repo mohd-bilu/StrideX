@@ -12,6 +12,7 @@ from Admin_panel.product.models import Product
 from .models import User, Address
 from .validators import validate_signup
 from .utils import send_otp_email
+from User_panel.Cart.models import WishlistItem
 
 
 def generate_otp():
@@ -229,9 +230,25 @@ def user_home(request):
         .order_by("-id")[:4]
     )
 
+    wishlist_variant_ids = []
+
+    if request.user.is_authenticated:
+
+        wishlist_variant_ids = list(
+
+            WishlistItem.objects.filter(
+                wishlist__user=request.user
+            ).values_list(
+                "variant_id",
+                flat=True,
+            )
+
+        )
+
     context = {
         "categories": categories,
         "products": products,
+        "wishlist_variant_ids": wishlist_variant_ids,
     }
 
     return render(

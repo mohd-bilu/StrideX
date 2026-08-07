@@ -795,14 +795,18 @@
 
             background:#1b1310;
 
-            border-radius:14px;
+            border-radius:16px;
 
             overflow:hidden;
 
-            border:1px solid
-            rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.08);
 
-            transition:.4s;
+            transition:.35s;
+
+            display:flex;
+
+            flex-direction:column;
+
         }
 
 
@@ -818,14 +822,9 @@
 
         .product-image{
 
-            height:240px;
+            height:280px;
 
-            background:
-            linear-gradient(
-                145deg,
-                #33231d,
-                #211612
-            );
+            background:#ffffff;
 
             display:flex;
 
@@ -834,6 +833,9 @@
             align-items:center;
 
             position:relative;
+
+            overflow:hidden;
+
         }
 
 
@@ -842,6 +844,7 @@
             font-size:110px;
 
             color:#ff7a00;
+            position:relative;
 
             opacity:.55;
 
@@ -849,49 +852,30 @@
         }
         .product-photo{
 
-        width:100%;
+            width:100%;
 
-        height:100%;
+            height:100%;
 
-        object-fit:cover;
+            object-fit:contain;
 
-        display:block;
+            padding:20px;
 
-    }
+            display:block;
 
-        .heart{
-
-            position:absolute;
-
-            top:15px;
-
-            right:15px;
-
-            width:35px;
-
-            height:35px;
-
-            display:flex;
-
-            align-items:center;
-
-            justify-content:center;
-
-            border-radius:50%;
-
-            background:
-            rgba(0,0,0,.35);
-
-            color:#ffffff;
-            transition:.3s;
         }
 
 
         .product-details{
 
-            padding:20px;
-        }
+            padding:22px;
 
+            display:flex;
+
+            flex-direction:column;
+
+            gap:12px;
+
+        }
 
         .product-category{
 
@@ -907,72 +891,102 @@
 
         .product-details h3{
 
-            font-size:16px;
+            font-size:22px;
 
-            margin-top:7px;
+            line-height:1.4;
 
-            margin-bottom:8px;
+            margin:0;
+
         }
-
 
         .rating{
 
-            color:#ff9b3d;
+            display:flex;
 
-            font-size:11px;
+            align-items:center;
 
-            margin-bottom:12px;
+            gap:4px;
+
+            color:#ffb400;
+
+            font-size:13px;
+
+        }
+
+        .price-row{
+
+            margin-top:8px;
+
         }
 
 
-        .price-row{
+        .price{
+
+            font-size:26px;
+
+            font-weight:700;
+
+            color:#ff7a00;
+
+        }
+
+        .product-footer{
 
             display:flex;
 
             justify-content:space-between;
 
             align-items:center;
+
+            margin-top:15px;
+
         }
 
+        .product-sizes{
 
-        .price{
+            display:flex;
 
-            font-size:18px;
+            flex-wrap:wrap;
 
-            font-weight:700;
+            gap:8px;
+
+            margin:12px 0;
+
         }
 
+        .product-sizes span{
 
-    .add-button{
+            width:34px;
 
-        width:36px;
+            height:34px;
 
-        height:36px;
+            display:flex;
 
-        display:flex;
+            justify-content:center;
 
-        justify-content:center;
+            align-items:center;
 
-        align-items:center;
+            border:1px solid #444;
 
-        border:none;
+            border-radius:6px;
 
-        border-radius:7px;
+            color:#fff;
 
-        background:#ff7a00;
+            background:#1b1b1b;
 
-        color:#ffffff;
+        }
 
-        cursor:pointer;
+        .low-stock{
 
-        transition:.3s;
+            background:#4a2d00;
 
-    }
-    .add-button:hover{
+            color:#ffb347;
 
-        background:#ff8b18;
+            padding:6px 12px;
 
-    }
+            border-radius:30px;
+
+        }
 
 
         /* ========================================
@@ -1543,23 +1557,13 @@
         <div class="hero-buttons">
 
 
-            <button type="button"
-                    class="primary-btn">
+            <a href="{% url 'product:product_list' %}" class="primary-btn">
 
                 SHOP NOW
 
                 <i class="fa-solid fa-arrow-right"></i>
 
-            </button>
-
-
-            <button type="button"
-                    class="secondary-btn">
-
-                LEARN MORE
-
-            </button>
-
+            </a>
 
         </div>
 
@@ -1578,8 +1582,8 @@
 
 
         <div class="shoe-placeholder">
-    <img src="{% static 'Authentication/images/home_page' %}" alt="StrideX Shoe">
-</div>
+            <img src="{% static 'Authentication/images/home_page' %}" alt="StrideX Shoe">
+        </div>
 
 
         <div class="floating-card card-one">
@@ -1652,8 +1656,7 @@
         </div>
 
 
-        <a href="#"
-           class="view-all">
+       <a href="{% url 'product:product_list' %}">
 
             VIEW ALL
 
@@ -1727,12 +1730,9 @@
      TRENDING PRODUCTS
 ======================================== -->
 
-
 <section class="section products-section">
 
-
     <div class="section-header">
-
 
         <div>
 
@@ -1742,7 +1742,6 @@
 
             </p>
 
-
             <h2 class="section-title">
 
                 New Arrivals
@@ -1751,133 +1750,121 @@
 
         </div>
 
+        <a
+            href="{% url 'product:product_list' %}"
+            class="view-all">
 
-        <a href="{% url 'product:product_list' %}"
-   class="view-all">
+            VIEW ALL
 
-    VIEW ALL
+            <i class="fa-solid fa-arrow-right"></i>
 
-    <i class="fa-solid fa-arrow-right"></i>
-
-</a>
-
+        </a>
 
     </div>
 
-
-
     <div class="product-grid">
 
-    {% for product in products %}
+        {% for product in products %}
 
-        {% with product.variants.first as variant %}
+            {% with product.variants.first as variant %}
 
-        <div class="product-card">
-
-            <a href="{% url 'product:product_detail' product.id %}">
+            <div class="product-card">
 
                 <div class="product-image">
 
-                    {% if variant and variant.images.first %}
-
-                        <img
-                            src="{{ variant.images.first.image.url }}"
-                            alt="{{ product.product_name }}"
-                            class="product-photo">
-
-                    {% else %}
-
-                        <i class="fa-solid fa-shoe-prints"></i>
-
-                    {% endif %}
-
-                    {% if variant %}
-
-                    <a
-                        href="{% url 'add_to_wishlist' variant.id %}"
-                        class="heart wishlist-btn">
-
-                        <i class="fa-regular fa-heart"></i>
-
-                    </a>
-
-                    {% endif %}
-
-                </div>
-
-            </a>
-
-            <div class="product-details">
-
-                <span class="product-category">
-
-                    {{ product.category.category_name|upper }}
-
-                </span>
-
-                <h3>
-
                     <a href="{% url 'product:product_detail' product.id %}">
 
-                        {{ product.product_name }}
+                        {% if variant and variant.images.first %}
+
+                            <img
+                                src="{{ variant.images.first.image.url }}"
+                                alt="{{ product.product_name }}"
+                                class="product-photo">
+
+                        {% else %}
+
+                            <i class="fa-solid fa-shoe-prints"></i>
+
+                        {% endif %}
 
                     </a>
 
-                </h3>
 
-                <div class="rating">
+                <div class="product-details">
 
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
+                    <span class="product-category">
 
-                <span>(Coming Soon)</span>
-
-             </div>
-
-                <div class="price-row">
-
-                    <span class="price">
-
-                        ₹{{ variant.price }}
+                        {{ product.category.category_name|upper }}
 
                     </span>
 
-                    {% if variant %}
+                    <h3>
 
-<a
-    href="{% url 'add_to_cart' variant.id %}"
-    class="add-button">
+                        <a href="{% url 'product:product_detail' product.id %}">
 
-    <i class="fa-solid fa-plus"></i>
+                            {{ product.product_name }}
 
-</a>
+                        </a>
 
-{% endif %}
+                    </h3>
+
+                    <div class="rating">
+
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+
+                        <span>
+
+                            (Coming Soon)
+
+                        </span>
+
+                    </div>
+
+                   <div class="price-row">
+
+                        {% if variant %}
+
+                        <span class="price">
+
+                            ₹{{ variant.price }}
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="price">
+
+                            Price Not Available
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+            {% endwith %}
 
-        {% endwith %}
+        {% empty %}
 
-    {% empty %}
+            <p>
 
-        <p>No products available.</p>
+                No products available.
 
-    {% endfor %}
+            </p>
 
-</div>
+        {% endfor %}
 
+    </div>
 
 </section>
-
-
-
 <!-- ========================================
      PROMO
 ======================================== -->
@@ -1936,9 +1923,9 @@
 {% if messages %}
 
 <script>
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
+
+    {% if messages %}
 
         {% for message in messages %}
 
@@ -1955,8 +1942,88 @@ document.addEventListener(
         });
 
         {% endfor %}
-    }
-);
+
+    {% endif %}
+
+
+    document.querySelectorAll(".ajax-cart").forEach(function(button){
+
+        button.addEventListener("click", function(e){
+
+            e.preventDefault();
+
+            fetch(this.dataset.url, {
+
+                headers:{
+                    "X-Requested-With":"XMLHttpRequest"
+                }
+
+            })
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if(data.success){
+
+                    Swal.fire({
+
+                        toast:true,
+                        position:"top-end",
+                        icon:"success",
+                        title:data.message,
+                        showConfirmButton:false,
+                        timer:1800,
+                        timerProgressBar:true
+
+                    });
+
+                    const cartCount = document.getElementById("cartCount");
+
+                    if(cartCount){
+
+                        cartCount.style.display = "flex";
+                        cartCount.textContent = data.cart_count;
+
+                    }
+
+                }else{
+
+                    Swal.fire({
+
+                        toast:true,
+                        position:"top-end",
+                        icon:"warning",
+                        title:data.message,
+                        showConfirmButton:false,
+                        timer:1800
+
+                    });
+
+                }
+
+            })
+
+            .catch(function(){
+
+                Swal.fire({
+
+                    toast:true,
+                    position:"top-end",
+                    icon:"error",
+                    title:"Something went wrong",
+                    showConfirmButton:false,
+                    timer:1800
+
+                });
+
+            });
+
+        });
+
+    });
+
+});
 </script>
 
 {% endif %}

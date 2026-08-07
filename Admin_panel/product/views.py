@@ -1,107 +1,73 @@
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.db.models import Count, Prefetch, Q
-from django.shortcuts import (get_object_or_404, redirect, render)
-from .forms import (ProductForm, VariantForm,)
-from Admin_panel.category.models import Category
-from .models import ( Product,Variant,VariantImage,)
-from django.utils import timezone
 from datetime import timedelta
 
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Count, Min, Prefetch, Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from Admin_panel.category.models import Category
+from .forms import (ProductForm,VariantForm,)
+from .models import (Product,Variant,VariantImage,)
+
 def product_list(request):
-    search_query=request.GET.get("search","").strip()
-    selected_category=request.GET.get("category","")
-    selected_sort=request.GET.get("sort","latest")
+    search = request.GET.get("search", "").strip()
+    category = request.GET.get("category", "")
+    max_price = request.GET.get("price", "")
+    sort = request.GET.get("sort", "")
+    page = request.GET.get("page")
 
-    products=(
-        Product.objects.filter(is_deleted=False)
-        .select_related("category")
-        .annotate(
-            variant_count=Count(
-                "variants",
-                filter=Q(variants__is_deleted=False),
-            ),
-        )
-        .prefetch_related(
-            Prefetch(
-                "variants",
-                queryset=Variant.objects.filter(is_deleted=False).order_by("-updated_at").prefetch_related(
-                    Prefetch(
-                        "images",
-                        queryset=VariantImage.objects.order_by("-is_primary","id"),
-                    ),
-                ),
-            ),
-        )
-    )
+    products = Product.objects.filter(is_deleted=False).select_related("category").prefetch_related("variants", "variants__images").annotate(
+        variant_count=Count("variants", filter=Q(variants__is_deleted=False)),
+        min_price=Min("variants__price", filter=Q(variants__is_active=True, variants__is_deleted=False)),
+    ).distinct()
 
-    if selected_category:
-        products=products.filter(category_id=selected_category)
+    if search:
+        products = products.filter(Q(product_name__icontains=search) | Q(category__category_name__icontains=search))
 
-    if selected_sort=="latest":
-        products=products.order_by("-created_at")
-    elif selected_sort=="oldest":
-        products=products.order_by("created_at")
-    elif selected_sort=="a_z":
-        products=products.order_by("product_name")
-    elif selected_sort=="z_a":
-        products=products.order_by("-product_name")
+    if category:
+        products = products.filter(category_id=category)
 
-    if search_query:
-        products=products.filter(
-            Q(product_name__icontains=search_query)|
-            Q(description__icontains=search_query)|
-            Q(category__category_name__icontains=search_query)
-        )
+    if max_price:
+        products = products.filter(min_price__lte=max_price)
 
-    total_products=products.count()
+    if sort == "low":
+        products = products.order_by("min_price")
+    elif sort == "high":
+        products = products.order_by("-min_price")
+    elif sort == "az":
+        products = products.order_by("product_name")
+    elif sort == "za":
+        products = products.order_by("-product_name")
+    elif sort == "oldest":
+        products = products.order_by("created_at")
+    else:
+        products = products.order_by("-created_at")
 
-    low_stock_products=Variant.objects.filter(
-        is_deleted=False,
-        stock__gt=0,
-        stock__lte=5,
-    ).count()
+    paginator = Paginator(products, 5)
+    page_obj = paginator.get_page(page)
 
-    out_of_stock_products=Variant.objects.filter(
-        is_deleted=False,
-        stock=0,
-    ).count()
+    categories = Category.objects.filter(is_active=True, is_deleted=False)
+    total_products = Product.objects.filter(is_deleted=False).count()
+    low_stock_products = Variant.objects.filter(is_active=True, is_deleted=False, stock__gt=0, stock__lte=5).count()
+    out_of_stock_products = Variant.objects.filter(is_active=True, is_deleted=False, stock=0).count()
+    new_arrivals = Product.objects.filter(is_active=True, is_deleted=False, created_at__gte=timezone.now() - timedelta(days=30)).count()
 
-    new_arrivals=Product.objects.filter(
-        is_deleted=False,
-        created_at__gte=timezone.now()-timedelta(days=30),
-    ).count()
-
-    active_products=products.filter(is_active=True).count()
-    inactive_products=products.filter(is_active=False).count()
-
-    paginator=Paginator(products,5)
-    page_obj=paginator.get_page(request.GET.get("page"))
-
-    categories=Category.objects.filter(
-        is_deleted=False,
-        is_active=True,
-    ).order_by("category_name")
-
-    context={
-        "page_obj":page_obj,
-        "search_query":search_query,
-        "selected_category":selected_category,
-        "selected_sort":selected_sort,
-        "categories":categories,
-        "total_products":total_products,
-        "low_stock_products":low_stock_products,
-        "out_of_stock_products":out_of_stock_products,
-        "new_arrivals":new_arrivals,
-        "active_products":active_products,
-        "inactive_products":inactive_products,
+    context = {
+        "page_obj": page_obj,
+        "products": page_obj,
+        "categories": categories,
+        "search_query": search,
+        "selected_category": category,
+        "selected_price": max_price,
+        "selected_sort": sort,
+        "total_products": total_products,
+        "low_stock_products": low_stock_products,
+        "out_of_stock_products": out_of_stock_products,
+        "new_arrivals": new_arrivals,
     }
 
-    return render(
-        request,
-        "product/product_list.html",
-        context,
-    )
+    return render(request, "Product/product_list.html", context)
 def add_product(request):
 
     if request.method == "POST":
@@ -341,7 +307,8 @@ def edit_variant(request, variant_id):
         print("COUNT:", len(images))    
 
         if form.is_valid():
-
+            print("FORM VALID:", form.is_valid())
+            print(form.errors)
             variant = form.save(commit=False)
 
             variant.is_active = (
@@ -349,13 +316,15 @@ def edit_variant(request, variant_id):
             )
 
             variant.save()
-
+            print("Variant Saved")
             if images:
 
                 total_images = (
                     variant.images.count() + len(images)
                 )
-
+                print("Current Images:",variant.images.count())
+                print("New Images:",len(images))
+                print("Total Images:",variant.images.count()+len(images))
                 if total_images > 6:
 
                     messages.error(
@@ -371,9 +340,9 @@ def edit_variant(request, variant_id):
                 has_primary = variant.images.filter(
                     is_primary=True
                 ).exists()
-
+                print("Starting Image Loop")
                 for index, image in enumerate(images):
-
+                    print("Saving:",image.name)
                     VariantImage.objects.create(
                         variant=variant,
                         image=image,
@@ -381,12 +350,12 @@ def edit_variant(request, variant_id):
                             not has_primary and index == 0
                         ),
                     )
-
+                print("Image Loop Finished")
             messages.success(
                 request,
                 "Variant updated successfully.",
             )
-
+            print("RETURNING TO VARIANT LIST")
             return redirect(
                 "variant_list",
                 variant.product.id,
@@ -433,65 +402,57 @@ def delete_variant(request, variant_id):
         "variant_list",
         variant.product.id,
     )
-def delete_variant_image(request, image_id):
 
-    image = get_object_or_404(
+def delete_variant_image(request,image_id):
+
+    if request.method!="POST":
+        return JsonResponse({
+            "success":False
+        },status=400)
+
+    image=get_object_or_404(
+        VariantImage,
+        id=image_id
+    )
+
+    variant=image.variant
+
+    if variant.images.count()<=3:
+
+        return JsonResponse({
+            "success":False,
+            "message":"Minimum 3 images required."
+        })
+
+    image.delete()
+
+    return JsonResponse({
+        "success":True,
+        "count":variant.images.count()
+    })
+
+
+def make_primary_image(request,image_id):
+
+    if request.method!="POST":
+        return JsonResponse({"success":False},status=400)
+
+    image=get_object_or_404(
         VariantImage,
         id=image_id,
     )
 
-    variant = image.variant
+    variant=image.variant
 
-    if request.method == "POST":
-
-        if variant.images.count() <= 3:
-
-            messages.error(
-                request,
-                "A variant must have at least 3 images.",
-            )
-
-            return redirect(
-                "edit_variant",
-                variant.id,
-            )
-
-        image.delete()
-
-        messages.success(
-            request,
-            "Image deleted successfully.",
-        )
-
-    return redirect(
-        "edit_variant",
-        variant.id,
+    VariantImage.objects.filter(
+        variant=variant,
+    ).update(
+        is_primary=False,
     )
 
-def make_primary_image(request, image_id):
-    image = get_object_or_404(
-        VariantImage,
-        id=image_id,
-    )
+    image.is_primary=True
+    image.save(update_fields=["is_primary"])
 
-    variant = image.variant
-
-    if request.method == "POST":
-        VariantImage.objects.filter(
-            variant=variant,
-        ).update(
-            is_primary=False,
-        )
-
-        image.is_primary = True
-        image.save()
-
-        messages.success(
-            request,
-            "Primary image updated.",
-        )
-
-    return redirect(
-        "edit_variant",
-        variant.id,
-    )
+    return JsonResponse({
+        "success":True,
+    })

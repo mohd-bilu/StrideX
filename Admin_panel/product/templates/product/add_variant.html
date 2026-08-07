@@ -1418,6 +1418,71 @@ Add Variant
     background:#000;
 
 }
+.crop-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 25px;
+
+    border-top:1px solid #e5e7eb;
+
+}
+
+.crop-tools{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.tool-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#f3f4f6;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:16px;
+
+    color:#374151;
+
+}
+
+.tool-btn:hover{
+
+    background:#111827;
+
+    color:#fff;
+
+}
+
+.crop-actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
 
 /* ===========================================================
    LOADING STATE
@@ -1940,25 +2005,58 @@ Add Variant
 
         <div class="crop-footer">
 
-            <button
-                type="button"
-                class="cancel-btn"
-                id="cancelCrop"
-            >
+            <div class="crop-tools">
 
-                Cancel
+                <button
+                    type="button"
+                    class="tool-btn"
+                    id="zoomOut">
 
-            </button>
+                    <i class="fa-solid fa-magnifying-glass-minus"></i>
 
-            <button
-                type="button"
-                class="save-btn"
-                id="cropImageBtn"
-            >
+                </button>
 
-                Crop & Save
+                <button
+                    type="button"
+                    class="tool-btn"
+                    id="resetCrop">
 
-            </button>
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="tool-btn"
+                    id="zoomIn">
+
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+
+                </button>
+
+            </div>
+
+            <div class="crop-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    id="cancelCrop">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="save-btn"
+                    id="cropImageBtn">
+
+                    Crop & Save
+
+                </button>
+
+            </div>
 
         </div>
 
@@ -1970,624 +2068,462 @@ Add Variant
 
 {% block extra_js %}
 <script>
-// ==========================================================
-// PART 3A
-// IMAGE UPLOAD + DRAG DROP + PREVIEW
-// ==========================================================
+document.addEventListener("DOMContentLoaded",function(){
+    
+    
+const variantForm=document.getElementById("variantForm");
 
-document.addEventListener("DOMContentLoaded", () => {
+const imageInput=document.getElementById("imageInput");
 
-    const uploadBox = document.getElementById("uploadBox");
-    const imageInput = document.getElementById("imageInput");
-    const chooseImages = document.getElementById("chooseImages");
-    console.log("chooseImages =", chooseImages);
-    const previewContainer = document.getElementById("previewContainer");
-    const imageCounter = document.getElementById("imageCounter");
-    const variantForm = document.getElementById("variantForm");
+const chooseImages=document.getElementById("chooseImages");
 
-    const cropModal = document.getElementById("cropModal");
-    const cropImage = document.getElementById("cropImage");
-    const cropImageBtn = document.getElementById("cropImageBtn");
-    const cancelCrop = document.getElementById("cancelCrop");
-    const closeCrop = document.getElementById("closeCrop");
+const uploadBox=document.getElementById("uploadBox");
 
-    let uploadedImages = [];
-    let cropper = null;
-    let currentCropIndex = null;
+const previewContainer=document.getElementById("previewContainer");
 
-    const MAX_IMAGES = 5;
-    const MIN_IMAGES = 3;
-    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const imageCounter=document.getElementById("imageCounter");
 
-    chooseImages.addEventListener("click", () => {
-        imageInput.click();
-    });
+const cropModal=document.getElementById("cropModal");
 
-    uploadBox.addEventListener("click", e => {
+const cropImage=document.getElementById("cropImage");
 
-        if (e.target !== chooseImages) {
-            imageInput.click();
-        }
+const cropImageBtn=document.getElementById("cropImageBtn");
 
-    });
+const cancelCrop=document.getElementById("cancelCrop");
 
-    imageInput.addEventListener("change", e => {
+const closeCrop=document.getElementById("closeCrop");
 
-        handleFiles(Array.from(e.target.files));
+const zoomIn=document.getElementById("zoomIn");
 
-    });
+const zoomOut=document.getElementById("zoomOut");
 
-    uploadBox.addEventListener("dragover", e => {
+const resetCrop=document.getElementById("resetCrop");
 
-        e.preventDefault();
-        uploadBox.classList.add("drag-over");
+let cropper=null;
 
-    });
+let pendingFiles=[];
 
-    uploadBox.addEventListener("dragleave", () => {
+let croppedFiles=[];
 
-        uploadBox.classList.remove("drag-over");
+let currentIndex=0;
 
-    });
+chooseImages.addEventListener("click",function(){
 
-    uploadBox.addEventListener("drop", e => {
+    imageInput.click();
 
-        e.preventDefault();
+});    
+imageInput.addEventListener("change",function(){
 
-        uploadBox.classList.remove("drag-over");
-
-        handleFiles(Array.from(e.dataTransfer.files));
-
-    });
-
-    function handleFiles(files) {
-
-        if (!files.length) return;
-
-        if ((uploadedImages.length + files.length) > MAX_IMAGES) {
-
-            alert(`Maximum ${MAX_IMAGES} images allowed.`);
-            return;
-
-        }
-
-        files.forEach(file => {
-
-            if (!validateFile(file)) {
-                return;
-            }
-
-            uploadedImages.push({
-
-                originalFile: file,
-                croppedFile: null,
-                preview: URL.createObjectURL(file),
-                cropped: false,
-                primary: uploadedImages.length === 0
-
-            });
-
-        });
-
-        updateCounter();
-        renderPreview();
-
-    }
-
-    function validateFile(file) {
-
-        const allowed = [
-            "image/jpeg",
-            "image/png",
-            "image/webp"
-        ];
-
-        if (!allowed.includes(file.type)) {
-
-            alert(`${file.name} is not a supported image.`);
-            return false;
-
-        }
-
-        if (file.size > MAX_FILE_SIZE) {
-
-            alert(`${file.name} exceeds 5MB.`);
-            return false;
-
-        }
-
-        return true;
-
-    }
-
-    function updateCounter() {
-
-        imageCounter.textContent =
-            `${uploadedImages.length} / ${MAX_IMAGES} Images`;
-
-        imageCounter.classList.add("updated");
-
-        setTimeout(() => {
-
-            imageCounter.classList.remove("updated");
-
-        }, 250);
-
-    }
-
-    function renderPreview() {
-
-        previewContainer.innerHTML = "";
-
-        if (!uploadedImages.length) {
-
-            previewContainer.innerHTML = `
-
-            <div class="empty-preview">
-
-                <i class="fa-solid fa-images"></i>
-
-                <h3>No Images Uploaded</h3>
-
-                <p>Select up to 5 images.</p>
-
-            </div>
-
-            `;
-
-            return;
-
-        }
-
-        uploadedImages.forEach((image, index) => {
-
-            const card = document.createElement("div");
-
-            card.className = "preview-card";
-
-            card.innerHTML = `
-
-            <div class="preview-image">
-
-                <img src="${image.preview}">
-
-                <div class="image-overlay">
-
-                    <div class="overlay-icon">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                    </div>
-
-                </div>
-
-                ${image.primary ? `
-                <div class="primary-badge">
-
-                    <i class="fa-solid fa-star"></i>
-
-                    Primary
-
-                </div>` : ""}
-
-                <div class="image-status ${image.cropped ? "cropped" : "pending"}">
-
-                    ${image.cropped ? "Cropped" : "Pending"}
-
-                </div>
-
-            </div>
-
-            <div class="preview-body">
-
-                <div class="preview-title">
-
-                    Image ${index + 1}
-
-                </div>
-
-                <div class="preview-subtitle">
-
-                    ${image.originalFile.name}
-
-                </div>
-
-                <div class="image-actions">
-
-                    <button
-                        class="${image.cropped ? "crop-again-btn" : "crop-btn"}"
-                        data-index="${index}"
-                    >
-
-                        <i class="fa-solid fa-crop-simple"></i>
-
-                        ${image.cropped ? "Crop Again" : "Crop"}
-
-                    </button>
-
-                    <button
-                        class="delete-btn"
-                        data-delete="${index}"
-                    >
-
-                        <i class="fa-solid fa-trash"></i>
-
-                        Delete
-
-                    </button>
-
-                </div>
-
-            </div>
-
-            `;
-
-            previewContainer.appendChild(card);
-
-        });
-
-        bindPreviewEvents();
-
-    }
-
-    function bindPreviewEvents() {
-
-        document.querySelectorAll(".crop-btn,.crop-again-btn")
-            .forEach(btn => {
-
-                btn.addEventListener("click", () => {
-
-                    openCropper(btn.dataset.index);
-
-                });
-
-            });
-
-        document.querySelectorAll(".delete-btn")
-            .forEach(btn => {
-
-                btn.addEventListener("click", () => {
-
-                    deleteImage(btn.dataset.delete);
-
-                });
-
-            });
-
-    }
-
-    function deleteImage(index) {
-
-        URL.revokeObjectURL(uploadedImages[index].preview);
-
-        uploadedImages.splice(index, 1);
-
-        if (uploadedImages.length) {
-
-            uploadedImages[0].primary = true;
-
-        }
-
-        updateCounter();
-        renderPreview();
-
-    }
-
-    // ---------- Continue in Part 3B ----------
-
-// ==========================================================
-// PART 3B
-// CROPPER.JS + CROP MODAL + SAVE CROPPED IMAGE
-// ==========================================================
-
-function openCropper(index) {
-    console.log("Crop clicked", index);
-    currentCropIndex = Number(index);
-
-    const image = uploadedImages[currentCropIndex];
-    if (!image) {
+    if(!this.files.length){
 
         return;
 
     }
-    cropImage.src = image.preview;
 
-    cropModal.classList.add("show");
+    if(this.files.length<3){
 
-    cropImage.onload = () => {
+        Swal.fire({
 
-        if (cropper) {
+            icon:"error",
 
-            cropper.destroy();
+            title:"Minimum 3 Images Required"
+
+        });
+
+        this.value="";
+
+        return;
+
+    }
+
+    if(this.files.length>5){
+
+        Swal.fire({
+
+            icon:"error",
+
+            title:"Maximum 5 Images Allowed"
+
+        });
+
+        this.value="";
+
+        return;
+
+    }
+
+    const allowed=[
+
+        "image/jpeg",
+
+        "image/png",
+
+        "image/webp"
+
+    ];
+
+    for(const file of this.files){
+
+        if(!allowed.includes(file.type)){
+
+            Swal.fire({
+
+                icon:"error",
+
+                title:"Only JPG, PNG and WEBP allowed"
+
+            });
+
+            this.value="";
+
+            return;
 
         }
 
-        cropper = new Cropper(cropImage, {
+    }
 
-            aspectRatio: 1,
-            viewMode: 1,
-            dragMode: "move",
-            autoCropArea: 1,
-            responsive: true,
-            restore: false,
-            background: false,
-            guides: true,
-            highlight: false,
-            movable: true,
-            zoomable: true,
-            cropBoxMovable: true,
-            cropBoxResizable: true
+    pendingFiles=[...this.files];
 
+    croppedFiles=[];
+
+    currentIndex=0;
+
+    openNextCrop();
+
+});    
+uploadBox.addEventListener("dragover",function(e){
+
+    e.preventDefault();
+
+    uploadBox.classList.add("drag");
+
+});
+
+uploadBox.addEventListener("dragleave",function(){
+
+    uploadBox.classList.remove("drag");
+
+});
+
+uploadBox.addEventListener("drop",function(e){
+
+    e.preventDefault();
+
+    uploadBox.classList.remove("drag");
+
+    const files=e.dataTransfer.files;
+
+    imageInput.files=files;
+
+    imageInput.dispatchEvent(new Event("change"));
+
+});
+function updateCounter(){
+
+    imageCounter.textContent=
+
+    croppedFiles.length+" / 5 Images";
+
+}
+function openNextCrop(){
+
+    if(currentIndex>=pendingFiles.length){
+
+        const dt=new DataTransfer();
+
+        croppedFiles.forEach(file=>{
+            dt.items.add(file);
         });
+
+        imageInput.files=dt.files;
+
+        renderPreview();
+
+        updateCounter();
+
+        closeCropModal();
+
+        pendingFiles=[];
+
+        currentIndex=0;
+
+        return;
+
+    }
+
+    const reader=new FileReader();
+
+    reader.onload=function(e){
+
+        cropImage.src=e.target.result;
+
+        cropModal.classList.add("show");
+
+    };
+
+    reader.readAsDataURL(
+        pendingFiles[currentIndex]
+    );
+
+}
+cropImage.onload=function(){
+
+    if(cropper){
+
+        cropper.destroy();
+
+    }
+
+    cropper=new Cropper(cropImage,{
+
+        viewMode:1,
+
+        autoCropArea:1,
+
+        dragMode:"move",
+
+        movable:true,
+
+        zoomable:true,
+
+        cropBoxMovable:true,
+
+        cropBoxResizable:true,
+
+        responsive:true
+
+    });
+
+};
+function closeCropModal(){
+
+    cropModal.classList.remove("show");
+
+    if(cropper){
+
+        cropper.destroy();
+
+        cropper=null;
+
+    }
+
+    cropImage.src="";
+
+}
+closeCrop.onclick=closeCropModal;
+
+cancelCrop.onclick=closeCropModal;
+if(zoomIn){
+
+    zoomIn.onclick=function(){
+
+        if(cropper){
+
+            cropper.zoom(0.1);
+
+        }
 
     };
 
 }
 
-cropImageBtn.removeEventListener("click", saveCroppedImage);
+if(zoomOut){
 
-cropImageBtn.addEventListener("click", saveCroppedImage);
-function saveCroppedImage() {
+    zoomOut.onclick=function(){
 
-    if (!cropper) return;
+        if(cropper){
 
-    const canvas = cropper.getCroppedCanvas({
+            cropper.zoom(-0.1);
 
-        width: 1000,
-        height: 1000,
-        imageSmoothingEnabled: true,
-        imageSmoothingQuality: "high"
+        }
+
+    };
+
+}
+
+if(resetCrop){
+
+    resetCrop.onclick=function(){
+
+        if(cropper){
+
+            cropper.reset();
+
+        }
+
+    };
+
+}
+cropImageBtn.onclick=function(){
+
+    if(!cropper){
+
+        return;
+
+    }
+
+    const canvas=cropper.getCroppedCanvas({
+
+        width:800,
+
+        height:800,
+
+        imageSmoothingEnabled:true,
+
+        imageSmoothingQuality:"high"
 
     });
 
-    canvas.toBlob(blob => {
-        if (!blob) {
+    canvas.toBlob(function(blob){
 
-            alert("Cropping failed.");
-
-                return;
-
-        }
-        const original = uploadedImages[currentCropIndex].originalFile;
-
-        const croppedFile = new File(
+        const file=new File(
 
             [blob],
-            original.name,
+
+            pendingFiles[currentIndex].name,
+
             {
-                type: original.type,
-                lastModified: Date.now()
+
+                type:"image/png",
+
+                lastModified:Date.now()
+
             }
 
         );
 
-        uploadedImages[currentCropIndex].croppedFile = croppedFile;
+        croppedFiles.push(file);
 
-        uploadedImages[currentCropIndex].preview =
-            URL.createObjectURL(blob);
+        currentIndex++;
 
-        uploadedImages[currentCropIndex].cropped = true;
+        openNextCrop();
 
-        closeCropModal();
-
-        renderPreview();
-
-    }, uploadedImages[currentCropIndex].originalFile.type);
-
-}
-
-function closeCropModal() {
-
-    cropModal.classList.remove("show");
-
-    if (cropper) {
-
-        cropper.destroy();
-        cropper = null;
-
-    }
-
-    cropImage.src = "";
-
-}
-
-cancelCrop.addEventListener("click", closeCropModal);
-
-closeCrop.addEventListener("click", closeCropModal);
-
-cropModal.addEventListener("click", e => {
-
-    if (e.target === cropModal) {
-
-        closeCropModal();
-
-    }
-
-});
-
-document.addEventListener("keydown", e => {
-
-    if (e.key === "Escape" && cropModal.classList.contains("show")) {
-
-        closeCropModal();
-
-    }
-});
-
-// ==========================================================
-// PART 3C
-// FORM VALIDATION + DATATRANSFER + SAVE VARIANT
-// ==========================================================
-
-variantForm.addEventListener("submit", function (e) {
-
-    if (uploadedImages.length < MIN_IMAGES) {
-
-        e.preventDefault();
-
-        alert(`Please upload at least ${MIN_IMAGES} images.`);
-
-        return;
-
-    }
-
-    const pendingImages = uploadedImages.filter(img => !img.cropped);
-
-    if (pendingImages.length > 0) {
-
-        e.preventDefault();
-
-        alert("Please crop every image before saving.");
-
-        return;
-
-    }
-
-    const dataTransfer = new DataTransfer();
-
-    uploadedImages.forEach(image => {
-
-        dataTransfer.items.add(image.croppedFile);
-
-    });
-
-    imageInput.files = dataTransfer.files;
-
-});
-
-// ==========================================================
-// PRIMARY IMAGE
-// ==========================================================
-
-previewContainer.addEventListener("dblclick", function (e) {
-
-    const card = e.target.closest(".preview-card");
-
-    if (!card) return;
-
-    const cards = [...previewContainer.querySelectorAll(".preview-card")];
-
-    const index = cards.indexOf(card);
-
-    uploadedImages.forEach(img => {
-
-        img.primary = false;
-
-    });
-
-    uploadedImages[index].primary = true;
-
-    renderPreview();
-
-});
-
-// ==========================================================
-// REMOVE OBJECT URL
-// ==========================================================
-
-window.addEventListener("beforeunload", () => {
-
-    uploadedImages.forEach(image => {
-
-        if (image.preview) {
-
-            URL.revokeObjectURL(image.preview);
-
-        }
-
-    });
-
-});
-
-// ==========================================================
-// EMPTY PREVIEW
-// ==========================================================
-
-renderPreview();
-
-// ==========================================================
-// OPTIONAL IMAGE LIMIT MESSAGE
-// ==========================================================
-
-function remainingImages() {
-
-    return MAX_IMAGES - uploadedImages.length;
-
-}
-
-// ==========================================================
-// OPTIONAL SUCCESS EFFECT
-// ==========================================================
-
-function flashCounter() {
-
-    imageCounter.classList.add("updated");
-
-    setTimeout(() => {
-
-        imageCounter.classList.remove("updated");
-
-    }, 300);
-
-}
-
-// ==========================================================
-// PREVENT MORE THAN 5 IMAGES
-// ==========================================================
-
-imageInput.addEventListener("click", function () {
-
-    if (uploadedImages.length >= MAX_IMAGES) {
-
-        alert("Maximum 5 images allowed.");
-
-        return false;
-
-    }
-
-});
-
-// ==========================================================
-// REORDER PRIMARY AFTER DELETE
-// ==========================================================
-
-function normalizePrimaryImage() {
-
-    if (!uploadedImages.length) return;
-
-    const hasPrimary = uploadedImages.some(img => img.primary);
-
-    if (!hasPrimary) {
-
-        uploadedImages[0].primary = true;
-
-    }
-
-}
-
-// ==========================================================
-// FINAL REFRESH
-// ==========================================================
-
-const originalDeleteImage = deleteImage;
-
-deleteImage = function(index){
-
-    originalDeleteImage(index);
-
-    normalizePrimaryImage();
-
-    updateCounter();
-
-    renderPreview();
+    },"image/png");
 
 };
+function renderPreview(){
 
-});   // Close DOMContentLoaded here
+    previewContainer.innerHTML="";
 
+    croppedFiles.forEach((file,index)=>{
 
-// ==========================================================
-// END OF SCRIPT
-// ==========================================================
+        const url=URL.createObjectURL(file);
+
+        const card=document.createElement("div");
+
+        card.className="preview-card";
+
+        card.innerHTML=`
+            <div class="preview-image">
+
+                <img src="${url}">
+
+            </div>
+
+            <div class="preview-body">
+
+                <p>${file.name}</p>
+
+                <small>${(file.size/1024).toFixed(1)} KB</small>
+
+                <div class="image-actions">
+
+                    <button
+                        type="button"
+                        class="delete-preview"
+                        data-index="${index}">
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        previewContainer.appendChild(card);
+
+    });
+
+    bindDeleteButtons();
+
+}
+function bindDeleteButtons(){
+
+    previewContainer.querySelectorAll(".delete-preview").forEach(button=>{
+
+        button.onclick=function(){
+
+            const index=Number(this.dataset.index);
+
+            croppedFiles.splice(index,1);
+
+            const dt=new DataTransfer();
+
+            croppedFiles.forEach(file=>{
+
+                dt.items.add(file);
+
+            });
+
+            imageInput.files=dt.files;
+
+            renderPreview();
+
+            updateCounter();
+
+        };
+
+    });
+
+}
+variantForm.addEventListener("submit",function(e){
+
+    if(croppedFiles.length<3){
+
+        e.preventDefault();
+
+        Swal.fire({
+
+            icon:"error",
+
+            title:"Minimum 3 images required."
+
+        });
+
+        return;
+
+    }
+
+    if(croppedFiles.length>5){
+
+        e.preventDefault();
+
+        Swal.fire({
+
+            icon:"error",
+
+            title:"Maximum 5 images allowed."
+
+        });
+
+        return;
+
+    }
+
+    const dt=new DataTransfer();
+
+    croppedFiles.forEach(file=>{
+
+        dt.items.add(file);
+
+    });
+
+    imageInput.files=dt.files;
+
+});
+});
 </script>
+
 {% endblock %}

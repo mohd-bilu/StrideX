@@ -1425,7 +1425,48 @@ document.addEventListener("DOMContentLoaded",function(){
 
         const form=document.getElementById("editVariantForm");
         const fileInput=document.getElementById("variant-images");
+        modalContent.querySelectorAll(".ajax-primary").forEach(button=>{
 
+            button.onclick=function(){
+
+                fetch(this.dataset.url,{
+
+                    method:"POST",
+
+                    headers:{
+                        "X-CSRFToken":form.querySelector("[name=csrfmiddlewaretoken]").value,
+                        "X-Requested-With":"XMLHttpRequest"
+                    }
+
+                })
+                .then(response=>response.json())
+                .then(data=>{
+
+                    if(data.success){
+
+                        fetch(form.action)
+                        .then(response=>response.text())
+                        .then(html=>{
+
+                            modalContent.innerHTML=html;
+
+                            initializeEditVariant();
+
+                        });
+
+                    }
+
+                })
+                .catch(error=>console.error(error));
+
+            };
+
+        });
+        const currentImagesGrid=modalContent.querySelector("#currentImagesGrid");
+        const uploadError=document.getElementById("imageUploadError");
+        const existingImageCount=currentImagesGrid
+            ?Number(currentImagesGrid.dataset.count)
+            :0;
         if(!form||!fileInput)return;
 
         const cropModal=document.getElementById("cropModal");
@@ -1439,11 +1480,10 @@ document.addEventListener("DOMContentLoaded",function(){
         const zoomOut=document.getElementById("zoomOut");
         const resetCrop=document.getElementById("resetCrop");
 
-        const ratioButtons=document.querySelectorAll(".ratio-btn");
-
         let cropper=null;
-        let selectedFile=null;
-        let pendingImages=[];
+        let pendingFiles=[];
+        let croppedFiles=[];
+        let currentIndex=0;
 
         function renderPendingImages(){
 
@@ -1455,7 +1495,7 @@ document.addEventListener("DOMContentLoaded",function(){
                 card.remove();
             });
 
-            pendingImages.forEach((file,index)=>{
+            croppedFiles.forEach((file,index)=>{
 
                 const url=URL.createObjectURL(file);
 
@@ -1464,17 +1504,17 @@ document.addEventListener("DOMContentLoaded",function(){
                 card.className="image-card pending-image";
 
                 card.innerHTML=`
-<img src="${url}">
-<span class="primary-tag">NEW</span>
-<div class="image-overlay">
-    <button
-        type="button"
-        class="delete-btn pending-delete"
-        data-index="${index}">
-        <i class="fa-solid fa-trash"></i>
-    </button>
-</div>
-`;
+                <img src="${url}">
+                <span class="primary-tag">NEW</span>
+                <div class="image-overlay">
+                    <button
+                        type="button"
+                        class="delete-btn pending-delete"
+                        data-index="${index}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                `;
 
                 grid.appendChild(card);
 
@@ -1486,15 +1526,15 @@ document.addEventListener("DOMContentLoaded",function(){
 
                     const index=Number(this.dataset.index);
 
-                    URL.revokeObjectURL(pendingImages[index]);
+                    URL.revokeObjectURL(croppedFiles[index]);
 
-                    pendingImages.splice(index,1);
+                    croppedFiles.splice(index,1);
 
                     renderPendingImages();
 
                     const dt=new DataTransfer();
 
-                    pendingImages.forEach(file=>{
+                    croppedFiles.forEach(file=>{
                         dt.items.add(file);
                     });
 
@@ -1505,35 +1545,49 @@ document.addEventListener("DOMContentLoaded",function(){
             });
 
         }
+        fileInput.addEventListener("change",function(){
 
-                fileInput.onchange=function(){
+            if(!this.files.length)return;
 
-            selectedFile=this.files[0];
+            const existingImageCount=
+            modalContent.querySelectorAll(
+            "#currentImagesGrid .image-card:not(.pending-image)"
+            ).length;
 
-            if(!selectedFile)return;
+            const totalImages=
+            existingImageCount+
+            this.files.length;
+            if(totalImages>6){
 
-            const allowed=[
-                "image/jpeg",
-                "image/png",
-                "image/webp"
-            ];
+                const remaining=6-existingImageCount;
 
-            if(!allowed.includes(selectedFile.type)){
-                alert("Only JPG, PNG and WEBP allowed");
+                uploadError.textContent=
+                remaining<=0
+                ?"Maximum 6 images are allowed."
+                :`You can upload only ${remaining} more image(s).`;
+
+                uploadError.classList.add("show");
+
                 this.value="";
+
                 return;
+
             }
 
-            const reader=new FileReader();
+            uploadError.classList.remove("show");
 
-            reader.onload=function(e){
-                cropImage.src=e.target.result;
-                cropModal.classList.add("show");
-            };
+            uploadError.textContent="";
 
-            reader.readAsDataURL(selectedFile);
+            pendingFiles=[...this.files];
 
-        };
+            croppedFiles=[];
+
+            currentIndex=0;
+
+            openNextCrop();
+
+        });
+
 
         cropImage.onload=function(){
 
@@ -1542,13 +1596,71 @@ document.addEventListener("DOMContentLoaded",function(){
             }
 
             cropper=new Cropper(cropImage,{
-                aspectRatio:1,
+
                 viewMode:1,
-                autoCropArea:1,
-                responsive:true
+
+                autoCropArea:.35,
+
+                dragMode:"move",
+
+                movable:true,
+
+                zoomable:true,
+
+                cropBoxMovable:true,
+
+                cropBoxResizable:true,
+
+                responsive:true,
+
+                background:false,
+
+                ready:function(){
+
+                    this.cropper.zoom(-0.6);
+
+                }
+
             });
 
         };
+        function openNextCrop(){
+
+            if(currentIndex>=pendingFiles.length){
+
+            const dt=new DataTransfer();
+
+            croppedFiles.forEach(file=>{
+                dt.items.add(file);
+            });
+
+            fileInput.files=dt.files;
+
+            renderPendingImages();
+
+            pendingFiles=[];
+
+            currentIndex=0;
+
+            closeCropModal();
+
+            return;
+
+        }
+
+        const reader=new FileReader();
+
+        reader.onload=function(e){
+
+            cropImage.src=e.target.result;
+
+            cropModal.classList.add("show");
+
+        };
+
+        reader.readAsDataURL(pendingFiles[currentIndex]);
+
+    }
 
         function closeCropModal(){
 
@@ -1560,7 +1672,6 @@ document.addEventListener("DOMContentLoaded",function(){
             }
 
             cropImage.src="";
-            selectedFile=null;
 
         }
 
@@ -1585,24 +1696,6 @@ document.addEventListener("DOMContentLoaded",function(){
             };
         }
 
-        ratioButtons.forEach(btn=>{
-
-            btn.onclick=function(){
-
-                if(!cropper)return;
-
-                const ratio=this.dataset.ratio;
-
-                cropper.setAspectRatio(
-                    ratio==="free"
-                    ?NaN
-                    :parseFloat(ratio)
-                );
-
-            };
-
-        });
-
         if(saveCrop){
 
             saveCrop.onclick=function(){
@@ -1620,34 +1713,77 @@ document.addEventListener("DOMContentLoaded",function(){
 
                     const file=new File(
                         [blob],
-                        selectedFile.name,
+                        pendingFiles[currentIndex].name,
                         {
                             type:"image/png",
                             lastModified:Date.now()
                         }
                     );
 
-                    pendingImages.push(file);
+                    croppedFiles.push(file);
 
-                    const dt=new DataTransfer();
+                    currentIndex++;
 
-                    pendingImages.forEach(image=>{
-                        dt.items.add(image);
-                    });
-
-                    fileInput.files=dt.files;
-
-                    renderPendingImages();
-
-                    console.log("After Crop:",fileInput.files);
-
-                    closeCropModal();
+                    openNextCrop();
 
                 },"image/png");
 
             };
 
         }
+        modalContent.querySelectorAll(".ajax-delete-image").forEach(button=>{
+
+            button.onclick=function(){
+
+                console.log("Delete clicked");
+                console.log("URL:",this.dataset.url);
+
+                fetch(this.dataset.url,{
+                    method:"POST",
+                    headers:{
+                        "X-CSRFToken":form.querySelector("[name=csrfmiddlewaretoken]").value,
+                        "X-Requested-With":"XMLHttpRequest"
+                    }
+                })
+                .then(response=>{
+
+                    console.log("Status:",response.status);
+
+                    return response.json();
+
+                })
+                .then(data=>{
+
+                    console.log(data);
+
+                    const card=modalContent.querySelector(
+                        "#image-card-"+button.dataset.card
+                    );
+
+                    console.log(card);
+
+                    if(card){
+                        card.remove();
+                    }
+
+                    const count=modalContent.querySelector(".image-header span");
+
+                    if(count){
+                        count.textContent=data.count+" Images";
+                    }
+
+                    currentImagesGrid.dataset.count=data.count;
+
+                })
+                .catch(error=>{
+
+                    console.error(error);
+
+                });
+
+            };
+
+        });
 
     }
 
@@ -1675,46 +1811,44 @@ document.addEventListener("DOMContentLoaded",function(){
         });
 
     });
-    document.querySelectorAll(".delete-btn").forEach(button=>{
+    document.querySelectorAll(".delete-form .delete-btn").forEach(button=>{
 
-    button.addEventListener("click",function(){
+        button.onclick=function(){
 
-        const form=this.closest(".delete-form");
+            console.log("Delete Variant clicked");
 
-        Swal.fire({
+            const form=this.closest(".delete-form");
 
-            title:"Delete Variant?",
+            Swal.fire({
 
-            text:"This variant will be deleted.",
+                title:"Delete Variant?",
 
-            icon:"warning",
+                text:"This variant will be deleted.",
 
-            showCancelButton:true,
+                icon:"warning",
 
-            confirmButtonColor:"#dc2626",
+                showCancelButton:true,
 
-            cancelButtonColor:"#6b7280",
+                confirmButtonColor:"#dc2626",
 
-            confirmButtonText:"Yes, Delete",
+                cancelButtonColor:"#6b7280",
 
-            cancelButtonText:"Cancel",
+                confirmButtonText:"Delete"
 
-            reverseButtons:true
+            }).then(result=>{
 
-        }).then(result=>{
+                if(result.isConfirmed){
 
-            if(result.isConfirmed){
+                    form.submit();
 
-                form.submit();
+                }
 
-            }
+            });
 
-        });
+        };
 
     });
-
-});
-    
+     
 
 });
 </script>

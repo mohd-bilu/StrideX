@@ -554,160 +554,155 @@ Cart
 </style>
 {% endblock %}
 
-{% block content %}
-    <section class="cart-section">
-        <div class="container">
+{{% block content %}
+<section class="cart-section">
+    <div class="container">
 
-            <div class="breadcrumb">
-                <a href="{% url 'user_home' %}">HOME</a>
-                <span>/</span>
-                <strong>CART</strong>
+        <div class="breadcrumb">
+            <a href="{% url 'user_home' %}">HOME</a>
+            <span>/</span>
+            <strong>CART</strong>
+        </div>
+
+        <h1 class="page-title">SHOPPING CART</h1>
+
+        <div class="cart-wrapper">
+
+            <div class="cart-items">
+
+                {% for item in cart.items.all %}
+
+                <div class="cart-item" data-item="{{ item.id }}">
+
+                    <div class="cart-image">
+                        {% if item.variant.images.first %}
+                        <img src="{{ item.variant.images.first.image.url }}"
+                             alt="{{ item.variant.product.product_name }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="cart-details">
+                        <h3>{{ item.variant.product.product_name }}</h3>
+                        <p>Color : {{ item.variant.color }}</p>
+                        <p>Size : {{ item.variant.size }}</p>
+                    </div>
+
+                    <div class="cart-price">
+                        ₹{{ item.variant.price }}
+                    </div>
+
+                    <div class="cart-quantity">
+
+                        <button
+                            type="button"
+                            class="qty-btn ajax-qty"
+                            data-action="decrease"
+                            data-url="{% url 'update_cart' item.id %}?action=decrease">
+                            −
+                        </button>
+
+                        <input
+                            class="qty-input"
+                            type="text"
+                            value="{{ item.quantity }}"
+                            readonly>
+
+                        <button
+                            type="button"
+                            class="qty-btn ajax-qty"
+                            data-action="increase"
+                            data-url="{% url 'update_cart' item.id %}?action=increase">
+                            +
+                        </button>
+
+                    </div>
+
+                    <div class="cart-total item-total">
+                        ₹{{ item.total_price }}
+                    </div>
+
+                    <div class="cart-remove">
+                        <a href="#"
+                           class="remove-btn"
+                           data-url="{% url 'remove_from_cart' item.id %}">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <div class="empty-cart">
+                    <h2>Your cart is empty.</h2>
+                </div>
+
+                {% endfor %}
+
             </div>
 
-            <h1 class="page-title">SHOPPING CART</h1>
+            <div class="cart-summary">
 
-            <div class="cart-wrapper">
+                <h2>Order Summary</h2>
 
-                <div class="cart-items">
-                    {% for item in cart.items.all %}
-
-                    <div class="cart-item">
-
-                        <div class="cart-image">
-                            {% if item.variant.images.first %}
-                            <img src="{{ item.variant.images.first.image.url }}"
-                                 alt="{{ item.variant.product.product_name }}">
-                            {% endif %}
-                        </div>
-
-                        <div class="cart-details">
-                            <h3>{{ item.variant.product.product_name }}</h3>
-                            <p>Color : {{ item.variant.color }}</p>
-                            <p>Size : {{ item.variant.size }}</p>
-                        </div>
-
-                        <div class="cart-price">
-                            ₹{{ item.variant.price }}
-                        </div>
-
-                        <div class="cart-quantity">
-
-    {% if item.quantity > 1 %}
-
-        <a href="{% url 'update_cart' item.id %}?action=decrease"
-           class="qty-btn">
-
-            −
-
-        </a>
-
-    {% else %}
-
-        <span class="qty-btn qty-disabled">
-
-            −
-
-        </span>
-
-    {% endif %}
-
-    <input
-        type="text"
-        value="{{ item.quantity }}"
-        readonly>
-
-    {% if item.quantity < 5 and item.quantity < item.variant.stock %}
-
-    <a href="{% url 'update_cart' item.id %}?action=increase"
-       class="qty-btn">
-
-        +
-
-    </a>
-
-{% else %}
-
-    <span class="qty-btn qty-disabled">
-
-        +
-
-    </span>
-
-{% endif %}
-
-</div>
-
-                        <div class="cart-total">
-                            ₹{{ item.total_price }}
-                        </div>
-
-                        <div class="cart-remove">
-                            <a href="#"
-   class="remove-btn"
-   data-url="{% url 'remove_from_cart' item.id %}">
-    <i class="fa-solid fa-trash"></i>
-</a>
-                        </div>
-
-                    </div>
-
-                    {% empty %}
-
-                    <div class="empty-cart">
-                        <h2>Your cart is empty.</h2>
-                    </div>
-
-                    {% endfor %}
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">
+                        ₹{{ subtotal }}
+                    </span>
                 </div>
 
-                <div class="cart-summary">
-
-                    <h2>Order Summary</h2>
-
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>₹{{ subtotal }}</span>
-                    </div>
-
-                    <div class="summary-row">
-                        <span>Discount</span>
-                        <span>₹{{ discount }}</span>
-                    </div>
-
-                    <div class="summary-row">
-                        <span>Shipping</span>
-                        <span>
-                            {% if shipping == 0 %}
-                                FREE
-                            {% else %}
-                                ₹{{ shipping }}
-                            {% endif %}
-                        </span>
-                    </div>
-
-                    <div class="summary-total">
-                        <span>Total</span>
-                        <span>₹{{ total }}</span>
-                    </div>
-
-                    {% if cart and cart.items.exists %}
-                    <button class="checkout-btn">
-                        Proceed to Checkout
-                    </button>
-                    {% else %}
-                    <button class="checkout-btn" disabled>
-                        Cart is Empty
-                    </button>
-                    {% endif %}
-
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span>
+                        ₹{{ discount }}
+                    </span>
                 </div>
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>
+                        {% if shipping == 0 %}
+                            FREE
+                        {% else %}
+                            ₹{{ shipping }}
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span id="cartTotal">
+                        ₹{{ total }}
+                    </span>
+                </div>
+
+                {% if cart and cart.items.exists %}
+
+                <button class="checkout-btn">
+                    Proceed to Checkout
+                </button>
+
+                {% else %}
+
+                <button
+                    class="checkout-btn"
+                    disabled>
+                    Cart is Empty
+                </button>
+
+                {% endif %}
 
             </div>
 
         </div>
-    </section>
 
-<div class="delete-modal" id="deleteModal">
+    </div>
+</section>
+
+<div
+    class="delete-modal"
+    id="deleteModal">
 
     <div class="delete-modal-content">
 
@@ -715,15 +710,22 @@ Cart
 
         <h2>Remove Item?</h2>
 
-        <p>Are you sure you want to remove this product from your cart?</p>
+        <p>
+            Are you sure you want to remove this product from your cart?
+        </p>
 
         <div class="delete-modal-buttons">
 
-            <button id="cancelDelete" class="cancel-btn">
+            <button
+                id="cancelDelete"
+                class="cancel-btn">
                 Cancel
             </button>
 
-            <a href="#" id="confirmDelete" class="delete-btn">
+            <a
+                href="#"
+                id="confirmDelete"
+                class="delete-btn">
                 Remove
             </a>
 
@@ -732,45 +734,113 @@ Cart
     </div>
 
 </div>
+{% endblock %}
 {% block extra_js %}
 <script>
 
 const deleteModal = document.getElementById("deleteModal");
-
 const confirmDelete = document.getElementById("confirmDelete");
-
 const cancelDelete = document.getElementById("cancelDelete");
 
-document.querySelectorAll(".remove-btn").forEach(button => {
+if(deleteModal && confirmDelete && cancelDelete){
 
-    button.addEventListener("click", function(e){
+    document.querySelectorAll(".remove-btn").forEach(function(button){
 
-        e.preventDefault();
+        button.addEventListener("click",function(e){
 
-        confirmDelete.href = this.dataset.url;
+            e.preventDefault();
 
-        deleteModal.classList.add("active");
+            confirmDelete.href=this.dataset.url;
+
+            deleteModal.classList.add("active");
+
+        });
+
+    });
+
+    cancelDelete.addEventListener("click",function(){
+
+        deleteModal.classList.remove("active");
+
+    });
+
+    deleteModal.addEventListener("click",function(e){
+
+        if(e.target===deleteModal){
+
+            deleteModal.classList.remove("active");
+
+        }
+
+    });
+
+}
+
+document.querySelectorAll(".ajax-qty").forEach(function(button){
+
+    button.addEventListener("click",function(){
+
+        fetch(this.dataset.url,{
+
+            headers:{
+
+                "X-Requested-With":"XMLHttpRequest"
+
+            }
+
+        })
+
+        .then(response=>response.json())
+
+        .then(data=>{
+
+            if(!data.success){
+
+                Swal.fire({
+
+                    toast:true,
+                    position:"top-end",
+                    icon:"warning",
+                    title:data.message,
+                    showConfirmButton:false,
+                    timer:1800
+
+                });
+
+                return;
+
+            }
+
+            const item=this.closest(".cart-item");
+
+            item.querySelector(".qty-input").value=data.quantity;
+
+            item.querySelector(".item-total").textContent="₹"+data.item_total;
+
+            document.getElementById("cartSubtotal").textContent="₹"+data.subtotal;
+
+            document.getElementById("cartTotal").textContent="₹"+data.total;
+
+        })
+
+        .catch(function(){
+
+            Swal.fire({
+
+                toast:true,
+                position:"top-end",
+                icon:"error",
+                title:"Something went wrong",
+                showConfirmButton:false,
+                timer:1800
+
+            });
+
+        });
 
     });
 
 });
 
-cancelDelete.addEventListener("click", function(){
-
-    deleteModal.classList.remove("active");
-
-});
-
-deleteModal.addEventListener("click", function(e){
-
-    if(e.target === deleteModal){
-
-        deleteModal.classList.remove("active");
-
-    }
-
-});
-
 </script>
-{% endblock %}
 {% endblock %}

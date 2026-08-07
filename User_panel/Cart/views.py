@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import (Cart,CartItem,Wishlist,WishlistItem,)
 from Admin_panel.product.models import Variant
+from django.http import JsonResponse
 
 @login_required
 def cart(request):
@@ -42,56 +43,101 @@ def add_to_cart(request, variant_id):
         id=variant_id,
         is_active=True,
         is_deleted=False,
+        product__is_active=True,
+        product__is_deleted=False,
+        product__category__is_active=True,
+        product__category__is_deleted=False,
     )
 
-    product = variant.product
-
-    if not product.is_active or product.is_deleted:
-        messages.error(request, "This product is unavailable.")
-        return redirect("product_detail", slug=product.slug)
-
     if variant.stock <= 0:
-        messages.error(request, "Product is out of stock.")
-        return redirect("product_detail", slug=product.slug)
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+
+            return JsonResponse({
+
+                "success": False,
+                "message": "Out of stock."
+
+            })
+
+        messages.error(request,"Out of stock.")
+
+        return redirect("cart")
 
     cart, created = Cart.objects.get_or_create(
         user=request.user
     )
 
-    cart_item, created = CartItem.objects.get_or_create(
+    item, created = CartItem.objects.get_or_create(
         cart=cart,
         variant=variant,
     )
 
     if not created:
 
-        if cart_item.quantity < variant.stock:
+        if item.quantity >= min(5, variant.stock):
 
-            cart_item.quantity += 1
-            cart_item.save()
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
 
-        else:
+                return JsonResponse({
 
-            messages.error(
-                request,
-                "Maximum available stock reached."
-            )
+                    "success": False,
+                    "message": "Maximum quantity reached."
 
-            return redirect(
-                "product_detail",
-                slug=product.slug,
-            )
+                })
 
-    messages.success(
-        request,
-        "Product added to cart."
-    )
+            messages.error(request,"Maximum quantity reached.")
+
+            return redirect("cart")
+
+        item.quantity += 1
+
+        item.save()
+
     WishlistItem.objects.filter(
+
         wishlist__user=request.user,
         variant=variant,
+
     ).delete()
 
-    return redirect("cart",)
+    cart_count = CartItem.objects.filter(
+
+        cart__user=request.user
+
+    ).count()
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+
+        wishlist_count = WishlistItem.objects.filter(
+            wishlist__user=request.user
+        ).count()
+
+        cart_count = CartItem.objects.filter(
+            cart__user=request.user
+        ).count()
+
+        warning = ""
+
+        remaining_stock = variant.stock - item.quantity
+
+        if remaining_stock > 0 and remaining_stock <= 2:
+
+            warning = f"Only {remaining_stock} left in stock."
+
+        return JsonResponse({
+
+            "success": True,
+            "message": "Added to cart.",
+            "cart_count": cart_count,
+            "wishlist_count": wishlist_count,
+            "warning": warning,
+
+        })
+
+    messages.success(request,"Added to cart.")
+
+    return redirect("cart")
 
 def remove_from_cart(request, item_id):
     pass
@@ -109,24 +155,19 @@ def update_cart(request, item_id):
 
     if action == "increase":
 
-        if cart_item.quantity >= 5:
-
-            messages.warning(
-                request,
-                "Maximum quantity allowed is 5.",
-            )
-
-        elif cart_item.quantity >= cart_item.variant.stock:
-
-            messages.error(
-                request,
-                "Maximum stock reached.",
-            )
-
-        else:
+        if cart_item.quantity < min(5, cart_item.variant.stock):
 
             cart_item.quantity += 1
             cart_item.save()
+
+        else:
+
+            return JsonResponse({
+
+                "success": False,
+                "message": "Maximum quantity reached."
+
+            })
 
     elif action == "decrease":
 
@@ -135,14 +176,23 @@ def update_cart(request, item_id):
             cart_item.quantity -= 1
             cart_item.save()
 
-        else:
+    subtotal = sum(
 
-            messages.warning(
-                request,
-                "Minimum quantity is 1.",
-            )
+        item.total_price
 
-    return redirect("cart")
+        for item in cart_item.cart.items.all()
+
+    )
+
+    return JsonResponse({
+
+        "success": True,
+        "quantity": cart_item.quantity,
+        "item_total": float(cart_item.total_price),
+        "subtotal": float(subtotal),
+        "total": float(subtotal),
+
+    })
 @login_required
 def remove_from_cart(request, item_id):
 
@@ -194,6 +244,7 @@ def wishlist(request):
 
 @login_required
 def add_to_wishlist(request, variant_id):
+
     variant = get_object_or_404(
         Variant,
         id=variant_id,
@@ -201,25 +252,70 @@ def add_to_wishlist(request, variant_id):
         is_deleted=False,
     )
 
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-
-    item, created = WishlistItem.objects.get_or_create(
-        wishlist=wishlist,
-        variant=variant,
+    wishlist, created = Wishlist.objects.get_or_create(
+        user=request.user
     )
 
-    if created:
+    item = WishlistItem.objects.filter(
+        wishlist=wishlist,
+        variant=variant,
+    ).first()
 
-        messages.success(request,"Product added to wishlist.",)
-    else:
+    if item:
 
-        messages.info(
+        item.delete()
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+
+            wishlist_count = WishlistItem.objects.filter(
+                wishlist__user=request.user
+            ).count()
+
+            return JsonResponse({
+
+                "success": True,
+                "added": False,
+                "wishlist_count": wishlist_count,
+
+            })
+
+        messages.success(
             request,
-            "Product is already in your wishlist.",
+            "Product removed from wishlist."
         )
 
-    return redirect(request.META.get("HTTP_REFERER", "wishlist"))
+    else:
 
+        WishlistItem.objects.create(
+            wishlist=wishlist,
+            variant=variant,
+        )
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+
+            wishlist_count = WishlistItem.objects.filter(
+                wishlist__user=request.user
+            ).count()
+
+            return JsonResponse({
+
+                "success": True,
+                "added": True,
+                "wishlist_count": wishlist_count,
+
+            })
+
+        messages.success(
+            request,
+            "Product added to wishlist."
+        )
+
+    return redirect(
+        request.META.get(
+            "HTTP_REFERER",
+            "wishlist",
+        )
+    )
 
 @login_required
 def remove_from_wishlist(request, item_id):

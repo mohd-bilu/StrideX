@@ -46,7 +46,7 @@ def category_list(request):
                 products__is_deleted=False,
             ),
         )
-    )
+    ).order_by("-created_at")
 
     if search_query:
         categories = categories.filter(

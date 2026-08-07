@@ -1727,15 +1727,14 @@ main{
 
                 <i class="fa-regular fa-heart"></i>
 
-                {% if wishlist_count %}
+                <span
+                    class="badge"
+                    id="wishlistCount"
+                    {% if not wishlist_count %}style="display:none;"{% endif %}>
 
-                    <span class="badge">
+                    {{ wishlist_count }}
 
-                        {{ wishlist_count }}
-
-                    </span>
-
-                {% endif %}
+                </span>
 
             </a>
 
@@ -1748,15 +1747,14 @@ main{
 
                 <i class="fa-solid fa-bag-shopping"></i>
 
-                {% if cart_count %}
+                <span
+                    class="badge"
+                    id="cartCount"
+                    {% if not cart_count %}style="display:none;"{% endif %}>
 
-                    <span class="badge">
+                    {{ cart_count }}
 
-                        {{ cart_count }}
-
-                    </span>
-
-                {% endif %}
+                </span>
 
             </a>
 
