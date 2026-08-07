@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "User_panel.Authentication.apps.AuthenticationConfig",
     "User_panel.Product",
     "User_panel.Cart",
+    "User_panel.Order",
 ]
 
 

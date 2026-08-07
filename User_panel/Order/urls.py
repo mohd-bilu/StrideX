@@ -1,0 +1,16 @@
+from django.urls import path
+from . import views
+
+app_name = "order"
+
+urlpatterns = [
+    path("checkout/", views.checkout, name="checkout"),
+    path("place-order/", views.place_order, name="place_order"),
+    path("success/<str:order_id>/", views.order_success, name="order_success"),
+
+    path("orders/", views.order_list, name="order_list"),
+    path("orders/<str:order_id>/", views.order_detail, name="order_detail"),
+
+    path("cancel/<int:item_id>/", views.cancel_order_item, name="cancel_order_item"),
+    path("return/<int:item_id>/", views.return_order_item, name="return_order_item"),
+]
