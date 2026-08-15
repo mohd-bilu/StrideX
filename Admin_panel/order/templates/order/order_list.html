@@ -1,0 +1,1145 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% block title %}
+Orders - StrideX Admin
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+.orders-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.orders-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.orders-page-heading {
+    min-width: 0;
+}
+
+.orders-eyebrow {
+    margin-bottom: 6px;
+    color: #8b9ab0;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.orders-page-heading h1 {
+    margin: 0;
+    color: #172033;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+}
+
+.orders-page-heading p {
+    margin-top: 7px;
+    color: #718096;
+    font-size: 12px;
+}
+
+.orders-search-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.orders-top-search {
+    position: relative;
+    width: 205px;
+}
+
+.orders-top-search i {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b98aa;
+    font-size: 11px;
+}
+
+.orders-top-search input {
+    width: 100%;
+    height: 38px;
+    padding: 0 13px 0 34px;
+    border: 1px solid #e4e9ef;
+    border-radius: 20px;
+    background: #fff;
+    color: #333;
+    font-size: 11px;
+    outline: none;
+}
+
+.orders-top-search input:focus {
+    border-color: #a94f00;
+}
+
+.orders-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 18px;
+    background: #fff;
+    border: 1px solid #e8edf2;
+    border-radius: 12px;
+}
+
+.orders-main-search {
+    position: relative;
+    flex: 1;
+}
+
+.orders-main-search i {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8c99aa;
+    font-size: 12px;
+}
+
+.orders-main-search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px 0 35px;
+    border: 1px solid #e4e9ef;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #303846;
+    font-size: 11px;
+    outline: none;
+}
+
+.orders-main-search input:focus {
+    border-color: #a94f00;
+    background: #fff;
+}
+
+.orders-filter {
+    position: relative;
+    width: 135px;
+}
+
+.orders-filter select {
+    width: 100%;
+    height: 40px;
+    padding: 0 30px 0 12px;
+    border: 1px solid #dce3eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #4c5868;
+    font-size: 11px;
+    outline: none;
+    cursor: pointer;
+}
+
+.orders-filter select:focus {
+    border-color: #a94f00;
+}
+
+.orders-sort {
+    width: 135px;
+}
+
+.orders-sort select {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #dce3eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #4c5868;
+    font-size: 11px;
+    outline: none;
+    cursor: pointer;
+}
+
+.orders-sort select:focus {
+    border-color: #a94f00;
+}
+
+.orders-search-button {
+    height: 40px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 8px;
+    background: #171f2f;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.orders-search-button:hover {
+    background: #273247;
+}
+
+.orders-clear {
+    height: 40px;
+    padding: 0 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dce3eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #687587;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.orders-clear:hover {
+    border-color: #a94f00;
+    color: #a94f00;
+}
+
+.orders-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.order-stat-card {
+    min-height: 92px;
+    padding: 17px 18px;
+    background: #fff;
+    border: 1px solid #e7ecf1;
+    border-radius: 11px;
+}
+
+.order-stat-label {
+    color: #8795a7;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.order-stat-value {
+    margin-top: 8px;
+    color: #172033;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.order-stat-footer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.order-stat-footer i {
+    font-size: 8px;
+}
+
+.stat-green {
+    color: #22a866;
+}
+
+.stat-orange {
+    color: #e49a18;
+}
+
+.stat-red {
+    color: #e15c5c;
+}
+
+.stat-blue {
+    color: #6482a8;
+}
+
+.orders-table-card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 12px;
+}
+
+.orders-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.orders-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.orders-table th {
+    height: 44px;
+    padding: 0 15px;
+    background: #fff;
+    border-bottom: 1px solid #edf0f3;
+    color: #8b98aa;
+    text-align: left;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.orders-table td {
+    height: 62px;
+    padding: 9px 15px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #485568;
+    font-size: 10px;
+    vertical-align: middle;
+}
+
+.orders-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.orders-table tbody tr:hover {
+    background: #fbfcfd;
+}
+
+.order-id {
+    color: #1c2637;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.order-date {
+    color: #647286;
+    line-height: 1.45;
+    white-space: nowrap;
+}
+
+.customer-name {
+    color: #1e2939;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.customer-email {
+    margin-top: 3px;
+    color: #97a2b1;
+    font-size: 8px;
+}
+
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 170px;
+}
+
+.product-image {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #edf0f3;
+    border-radius: 6px;
+    background: #f7f8fa;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-image-placeholder {
+    color: #b4bdc8;
+    font-size: 12px;
+}
+
+.product-info {
+    min-width: 0;
+}
+
+.product-name {
+    max-width: 150px;
+    overflow: hidden;
+    color: #283345;
+    font-size: 9px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-meta {
+    margin-top: 3px;
+    color: #98a3b1;
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.order-total {
+    color: #202a3a;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.payment-method {
+    color: #455366;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.payment-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 4px 7px;
+    border-radius: 10px;
+    font-size: 7px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.payment-pending {
+    background: #fff4df;
+    color: #a56800;
+}
+
+.payment-paid {
+    background: #e8f8ee;
+    color: #25824c;
+}
+
+.payment-failed {
+    background: #f0f3f7;
+    color: #68778b;
+}
+
+.order-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 9px;
+    border-radius: 12px;
+    font-size: 7px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.order-status::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-pending {
+    background: #fff3ce;
+    color: #d18a00;
+}
+
+.status-processing {
+    background: #e9f0ff;
+    color: #3d69ad;
+}
+
+.status-shipped {
+    background: #eeeaff;
+    color: #6854b9;
+}
+
+.status-out-for-delivery {
+    background: #fff0e3;
+    color: #b65a14;
+}
+
+.status-delivered {
+    background: #ddf7e8;
+    color: #27a55f;
+}
+
+.status-cancelled {
+    background: #ffe2e2;
+    color: #dc5555;
+}
+
+.status-return-requested {
+    background: #fff0db;
+    color: #b66b12;
+}
+
+.status-returned {
+    background: #e7f0f7;
+    color: #647e98;
+}
+
+.view-order {
+    width: 38px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 6px;
+    background: #171f2f;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.view-order:hover {
+    background: #2c374a;
+    color: #fff;
+}
+
+.orders-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-top: 1px solid #edf0f3;
+}
+
+.orders-count {
+    color: #8a96a6;
+    font-size: 8px;
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination a,
+.pagination span {
+    min-width: 27px;
+    height: 27px;
+    padding: 0 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dfe5eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #5f6c7d;
+    font-size: 9px;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    border-color: #a94f00;
+    color: #a94f00;
+}
+
+.pagination .current {
+    border-color: #171f2f;
+    background: #171f2f;
+    color: #fff;
+}
+
+.empty-orders {
+    padding: 80px 20px;
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.empty-orders i {
+    margin-bottom: 14px;
+    color: #c2cad4;
+    font-size: 34px;
+}
+
+.empty-orders h2 {
+    margin-bottom: 7px;
+    color: #2b3545;
+    font-size: 18px;
+}
+
+.empty-orders p {
+    color: #8995a5;
+    font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+    .orders-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .orders-filter-bar {
+        flex-wrap: wrap;
+    }
+
+    .orders-main-search {
+        width: 100%;
+        flex: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .orders-page-header {
+        align-items: flex-start;
+    }
+
+    .orders-search-top {
+        display: none;
+    }
+
+    .orders-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .orders-filter,
+    .orders-sort {
+        width: 100%;
+    }
+
+    .orders-search-button {
+        width: 100%;
+    }
+
+    .orders-table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pagination {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="orders-page">
+
+    <div class="orders-page-header">
+
+        <div class="orders-page-heading">
+
+            <div class="orders-eyebrow">
+                Management
+            </div>
+
+            <h1>
+                Order Management
+            </h1>
+
+            <p>
+                Tracking customer orders, fulfillment and logistics
+            </p>
+
+        </div>
+
+        <div class="orders-search-top">
+
+            <div class="orders-top-search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    value="{{ search }}"
+                    aria-label="Search orders"
+                >
+
+            </div>
+
+            <i
+                class="fa-regular fa-bell"
+                style="color:#9aa6b5;font-size:14px;"
+            ></i>
+
+        </div>
+
+    </div>
+
+    <form
+        method="GET"
+        action="{% url 'admin_order:order_list' %}"
+        class="orders-filter-bar"
+    >
+
+        <div class="orders-main-search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search }}"
+                placeholder="Search by Order ID, customer, or product..."
+            >
+
+        </div>
+
+        <div class="orders-filter">
+
+            <select name="status">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                {% for value, label in status_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if status == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="orders-sort">
+
+            <select name="sort">
+
+                <option value="newest">
+                    Newest First
+                </option>
+
+                <option value="oldest">
+                    Oldest First
+                </option>
+
+                <option value="highest">
+                    Highest Total
+                </option>
+
+                <option value="lowest">
+                    Lowest Total
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="orders-search-button"
+        >
+            Search
+        </button>
+
+        {% if search or status %}
+
+            <a
+                href="{% url 'admin_order:order_list' %}"
+                class="orders-clear"
+            >
+                Clear
+            </a>
+
+        {% endif %}
+
+    </form>
+
+    <div class="orders-stats">
+
+        <div class="order-stat-card">
+
+            <div class="order-stat-label">
+                Total Orders
+            </div>
+
+            <div class="order-stat-value">
+                {{ page_obj.paginator.count }}
+            </div>
+
+            <div class="order-stat-footer stat-green">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                All time
+            </div>
+
+        </div>
+
+        <div class="order-stat-card">
+
+            <div class="order-stat-label">
+                Pending Shipments
+            </div>
+
+            <div class="order-stat-value">
+                {{ pending_orders|default:"0" }}
+            </div>
+
+            <div class="order-stat-footer stat-orange">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Needs action
+            </div>
+
+        </div>
+
+        <div class="order-stat-card">
+
+            <div class="order-stat-label">
+                Revenue
+            </div>
+
+            <div class="order-stat-value">
+                ₹{{ total_revenue|default:"0.00" }}
+            </div>
+
+            <div class="order-stat-footer stat-green">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                Gross total
+            </div>
+
+        </div>
+
+        <div class="order-stat-card">
+
+            <div class="order-stat-label">
+                Returned / Cancelled
+            </div>
+
+            <div class="order-stat-value">
+                {{ cancelled_returned|default:"0" }}
+            </div>
+
+            <div class="order-stat-footer stat-red">
+                <i class="fa-regular fa-circle-xmark"></i>
+                Needs review
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if orders %}
+
+        <div class="orders-table-card">
+
+            <div class="orders-table-wrapper">
+
+                <table class="orders-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Order ID
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Total Price
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                            <tr>
+
+                                <td>
+
+                                    <span class="order-id">
+                                        {{ order.order_id }}
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="order-date">
+
+                                        {{ order.created_at|date:"M d, Y" }}
+
+                                        <br>
+
+                                        {{ order.created_at|date:"h:i A" }}
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="customer-name">
+                                        {{ order.user.full_name|default:"-" }}
+                                    </div>
+
+                                    <div class="customer-email">
+                                        {{ order.user.email }}
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    {% with item=order.items.first %}
+
+                                        {% if item %}
+
+                                            <div class="product-cell">
+
+                                                {% with image=item.variant.images.first %}
+
+                                                    <div class="product-image">
+
+                                                        {% if image %}
+
+                                                            <img
+                                                                src="{{ image.image.url }}"
+                                                                alt="{{ item.variant.product.product_name }}"
+                                                            >
+
+                                                        {% else %}
+
+                                                            <div class="product-image-placeholder">
+                                                                <i class="fa-solid fa-box"></i>
+                                                            </div>
+
+                                                        {% endif %}
+
+                                                    </div>
+
+                                                {% endwith %}
+
+                                                <div class="product-info">
+
+                                                    <div class="product-name">
+
+                                                        {{ item.variant.product.product_name }}
+
+                                                    </div>
+
+                                                    <div class="product-meta">
+
+                                                        Quantity: {{ item.quantity }}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        {% else %}
+
+                                            <span class="product-meta">
+                                                No products
+                                            </span>
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </td>
+
+                                <td>
+
+                                    <span class="order-total">
+                                        ₹{{ order.total_amount }}
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="order-status
+                                        {% if order.order_status == 'PENDING' %}
+                                            status-pending
+                                        {% elif order.order_status == 'PROCESSING' %}
+                                            status-processing
+                                        {% elif order.order_status == 'SHIPPED' %}
+                                            status-shipped
+                                        {% elif order.order_status == 'OUT_FOR_DELIVERY' %}
+                                            status-out-for-delivery
+                                        {% elif order.order_status == 'DELIVERED' %}
+                                            status-delivered
+                                        {% elif order.order_status == 'CANCELLED' %}
+                                            status-cancelled
+                                        {% elif order.order_status == 'RETURN_REQUESTED' %}
+                                            status-return-requested
+                                        {% elif order.order_status == 'RETURNED' %}
+                                            status-returned
+                                        {% endif %}"
+                                    >
+
+                                        {{ order.get_order_status_display }}
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'admin_order:order_detail' order.order_id %}"
+                                        class="view-order"
+                                        title="View Order"
+                                    >
+                                        <i class="fa-solid fa-eye"></i>
+                                        View
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="orders-table-footer">
+
+                <div class="orders-count">
+
+                    Showing
+                    {{ page_obj.start_index }}
+                    to
+                    {{ page_obj.end_index }}
+                    of
+                    {{ page_obj.paginator.count }}
+                    orders
+
+                </div>
+
+                {% if page_obj.has_other_pages %}
+
+                    <div class="pagination">
+
+                        {% if page_obj.has_previous %}
+
+                            <a
+                                href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                                title="Previous"
+                            >
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </a>
+
+                        {% endif %}
+
+                        {% for number in page_obj.paginator.page_range %}
+
+                            {% if page_obj.number == number %}
+
+                                <span class="current">
+                                    {{ number }}
+                                </span>
+
+                            {% elif number > page_obj.number|add:"-2" and number < page_obj.number|add:"2" %}
+
+                                <a
+                                    href="?page={{ number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                                >
+                                    {{ number }}
+                                </a>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+
+                            <a
+                                href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                                title="Next"
+                            >
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-orders">
+
+            <i class="fa-solid fa-box-open"></i>
+
+            <h2>
+                No Orders Found
+            </h2>
+
+            <p>
+
+                {% if search or status %}
+
+                    No orders match your search or filter.
+
+                {% else %}
+
+                    There are no customer orders yet.
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

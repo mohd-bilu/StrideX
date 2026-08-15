@@ -74,15 +74,10 @@ class Order(models.Model):
         default=0
     )
 
-    tax = models.DecimalField(
+    total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=0
-    )
-
-    total_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
     )
 
     order_status = models.CharField(
@@ -96,11 +91,16 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.order_id:
-            while True:
-                order_id = "ORD" + timezone.now().strftime("%Y%m%d%H%M%S%f")[-18:]
-                if not Order.objects.filter(order_id=order_id).exists():
-                    self.order_id = order_id
-                    break
+            super().save(*args, **kwargs)
+
+            self.order_id = f"ORD{self.id:05d}"
+
+            super().save(
+                update_fields=["order_id"]
+            )
+
+            return
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -117,6 +117,7 @@ class OrderItem(models.Model):
         ("CANCELLED", "Cancelled"),
         ("RETURN_REQUESTED", "Return Requested"),
         ("RETURNED", "Returned"),
+        ("REJECTED", "Rejected"),
     )
 
     order = models.ForeignKey(
@@ -155,6 +156,11 @@ class OrderItem(models.Model):
     )
 
     return_reason = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    rejection_reason = models.TextField(
         blank=True,
         null=True
     )

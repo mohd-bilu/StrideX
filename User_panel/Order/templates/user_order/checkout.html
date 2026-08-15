@@ -1,0 +1,1102 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+Checkout - StrideX
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-page {
+        min-height: 100vh;
+        background: #090909;
+        color: #ffffff;
+        padding: 55px 6% 80px;
+    }
+
+    .checkout-container {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .checkout-heading {
+        margin-bottom: 35px;
+    }
+
+    .checkout-heading h1 {
+        margin: 0 0 10px;
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+    }
+
+    .checkout-heading p {
+        margin: 0;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .checkout-left {
+        min-width: 0;
+    }
+
+    .checkout-right {
+        min-width: 0;
+    }
+
+    .checkout-card {
+        background: #141414;
+        border: 1px solid #242424;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 28px;
+    }
+
+    .checkout-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .checkout-card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .checkout-card-title i {
+        color: #ff7900;
+        font-size: 14px;
+    }
+
+    .checkout-card-title h2 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffffff;
+    }
+
+    .checkout-card-count {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .checkout-items {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .checkout-item {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 4px 0 22px;
+    }
+
+    .checkout-item + .checkout-item {
+        border-top: 1px solid #292929;
+        padding-top: 22px;
+    }
+
+    .checkout-item-image {
+        width: 72px;
+        height: 72px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #1d1d1d;
+        flex-shrink: 0;
+    }
+
+    .checkout-item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .checkout-item-no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        font-size: 11px;
+    }
+
+    .checkout-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .checkout-item-info h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffffff;
+    }
+
+    .checkout-item-info p {
+        margin: 4px 0;
+        color: #777;
+        font-size: 11px;
+    }
+
+    .checkout-item-price {
+        margin-top: 8px !important;
+        color: #ff7900 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+    }
+
+    .shipping-card {
+        padding-bottom: 25px;
+    }
+
+    .shipping-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .shipping-actions a {
+        color: #ff7900;
+        font-size: 11px;
+        text-decoration: none;
+    }
+
+    .shipping-actions a:hover {
+        color: #ff9133;
+    }
+
+    .add-address-link {
+        color: #ff7900;
+        font-size: 11px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .add-address-link:hover {
+        color: #ff9a45;
+    }
+
+    .choose-address-title {
+        margin-bottom: 14px;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .address-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .address-option {
+        position: relative;
+    }
+
+    .address-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .address-label {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        padding: 17px 18px;
+        padding-right: 65px;
+        border: 1px solid #292929;
+        border-radius: 10px;
+        background: #141414;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .address-label:hover {
+        border-color: #444;
+    }
+
+    .address-option input[type="radio"]:checked + .address-label {
+        border-color: #ff7900;
+        background: #181818;
+        box-shadow: 0 0 0 1px rgba(255, 121, 0, 0.12);
+    }
+
+    .address-radio {
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        margin-top: 2px;
+        border: 1px solid #555;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .address-option input[type="radio"]:checked + .address-label .address-radio {
+        border-color: #ff7900;
+    }
+
+    .address-option input[type="radio"]:checked + .address-label .address-radio::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ff7900;
+    }
+
+    .address-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .address-top {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 8px;
+    }
+
+    .address-name {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .default-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 7px;
+        border-radius: 10px;
+        background: #3a230f;
+        color: #ff7900;
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .address-line {
+        margin: 3px 0;
+        color: #777;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .address-phone {
+        margin: 9px 0 0;
+        color: #888;
+        font-size: 11px;
+    }
+
+    .address-phone i {
+        margin-right: 5px;
+        color: #ff7900;
+    }
+
+    .edit-address {
+        position: absolute;
+        top: 17px;
+        right: 18px;
+        z-index: 2;
+        color: #ff7900;
+        font-size: 11px;
+        text-decoration: none;
+    }
+
+    .edit-address:hover {
+        color: #ff9a45;
+    }
+
+    .empty-address {
+        padding: 20px;
+        border: 1px dashed #333;
+        border-radius: 8px;
+        text-align: center;
+        color: #777;
+        font-size: 12px;
+    }
+
+    .empty-address p {
+        margin: 0;
+    }
+
+    .empty-address a {
+        display: inline-block;
+        margin-top: 10px;
+        color: #ff7900;
+        text-decoration: none;
+    }
+
+    .empty-address a:hover {
+        color: #ff9a45;
+    }
+
+    .payment-card {
+        background: #14151a;
+        border: 1px solid #202127;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 28px;
+    }
+
+    .payment-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .payment-title i {
+        color: #ff7900;
+        font-size: 15px;
+    }
+
+    .payment-title h2 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 600;
+        line-height: 1.1;
+    }
+
+    .payment-option {
+        position: relative;
+    }
+
+    .payment-option input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .payment-label {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 16px;
+        border: 1px solid #292929;
+        border-radius: 10px;
+        background: #181818;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .payment-label:hover {
+        border-color: #444;
+    }
+
+    .payment-option input:checked + .payment-label {
+        border-color: #ff7900;
+        box-shadow: 0 0 0 1px rgba(255, 121, 0, 0.15) inset;
+        background: #1b1b1b;
+    }
+
+    .payment-radio {
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        border: 1px solid #555;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .payment-option input:checked + .payment-label .payment-radio {
+        border-color: #ff7900;
+    }
+
+    .payment-option input:checked + .payment-label .payment-radio::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #ff7900;
+        border-radius: 50%;
+    }
+
+    .payment-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #252525;
+        color: #ff7900;
+        font-size: 13px;
+    }
+
+    .payment-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .payment-name {
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .payment-description {
+        color: #777;
+        font-size: 10px;
+    }
+
+    .summary-card {
+        background: #141414;
+        border: 1px solid #242424;
+        border-radius: 12px;
+        padding: 24px;
+        position: sticky;
+        top: 25px;
+    }
+
+    .summary-title {
+        margin: 0 0 24px;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 17px;
+        color: #777;
+        font-size: 12px;
+    }
+
+    .summary-row strong {
+        color: #ddd;
+        font-weight: 500;
+    }
+
+    .summary-discount strong {
+        color: #ff7900;
+    }
+
+    .summary-shipping strong {
+        color: #ff7900;
+        text-transform: uppercase;
+        font-size: 10px;
+    }
+
+    .summary-divider {
+        border: 0;
+        border-top: 1px solid #292929;
+        margin: 20px 0;
+    }
+
+    .coupon-box {
+        display: flex;
+        gap: 7px;
+        margin: 20px 0 14px;
+    }
+
+    .coupon-box input {
+        flex: 1;
+        min-width: 0;
+        height: 38px;
+        padding: 0 11px;
+        border: 1px solid #292929;
+        border-radius: 7px;
+        background: #101010;
+        color: #fff;
+        outline: none;
+        font-size: 11px;
+    }
+
+    .coupon-box input::placeholder {
+        color: #666;
+    }
+
+    .coupon-box input:focus {
+        border-color: #555;
+    }
+
+    .coupon-box button {
+        height: 38px;
+        padding: 0 14px;
+        border: 0;
+        border-radius: 7px;
+        background: #ff7900;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .coupon-box button:hover {
+        background: #ff8b20;
+    }
+
+    .available-coupons {
+        display: block;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #292929;
+        color: #777;
+        text-align: center;
+        font-size: 9px;
+        text-decoration: none;
+        letter-spacing: 0.3px;
+    }
+
+    .available-coupons:hover {
+        color: #ff7900;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .summary-total span {
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .summary-total strong {
+        color: #ff7900;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .place-order-button {
+        width: 100%;
+        height: 48px;
+        margin-top: 20px;
+        border: 0;
+        border-radius: 9px;
+        background: linear-gradient(90deg, #ff6f00, #ff8b1a);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(255, 121, 0, 0.18);
+        transition: all 0.2s ease;
+    }
+
+    .place-order-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(255, 121, 0, 0.25);
+    }
+
+    .place-order-button:active {
+        transform: translateY(0);
+    }
+
+    .checkout-note {
+        margin-top: 13px;
+        color: #555;
+        text-align: center;
+        font-size: 9px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+
+        .checkout-page {
+            padding: 40px 25px 60px;
+        }
+
+        .checkout-layout {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .summary-card {
+            position: static;
+        }
+
+        .payment-card {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .checkout-page {
+            padding: 30px 15px 50px;
+        }
+
+        .checkout-card,
+        .payment-card,
+        .summary-card {
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .checkout-item {
+            gap: 10px;
+        }
+
+        .checkout-item-image {
+            width: 62px;
+            height: 62px;
+        }
+
+        .checkout-card-header {
+            margin-bottom: 18px;
+        }
+
+        .shipping-card .checkout-card-header {
+            align-items: flex-start;
+        }
+
+        .add-address-link {
+            font-size: 10px;
+        }
+
+        .address-label {
+            padding: 15px;
+            padding-right: 55px;
+        }
+
+        .edit-address {
+            top: 15px;
+            right: 15px;
+        }
+
+        .payment-title h2 {
+            font-size: 18px;
+        }
+
+        .payment-label {
+            padding: 14px;
+        }
+
+        .summary-card {
+            padding: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="checkout-page">
+
+    <div class="checkout-container">
+
+        <div class="checkout-heading">
+            <h1>Checkout</h1>
+            <p>Secure your authentic pair with encrypted protection.</p>
+        </div>
+
+        {% if cart_items %}
+
+        <form method="POST" action="{% url 'order:place_order' %}">
+            {% csrf_token %}
+
+            <div class="checkout-layout">
+
+                <div class="checkout-left">
+
+                    <div class="checkout-card">
+
+                        <div class="checkout-card-header">
+
+                            <div class="checkout-card-title">
+                                <i class="fa-solid fa-bag-shopping"></i>
+
+                                <h2>
+                                    Order Items
+                                </h2>
+                            </div>
+
+                            <span class="checkout-card-count">
+                                {{ cart_items|length }} Item{{ cart_items|length|pluralize }}
+                            </span>
+
+                        </div>
+
+                        {% for item in cart_items %}
+
+                            <div class="checkout-item">
+
+                                <div class="checkout-item-image">
+
+                                    {% with image=item.variant.images.first %}
+
+                                        {% if image %}
+
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ item.variant.product.product_name }}"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="checkout-item-no-image">
+                                                No Image
+                                            </div>
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </div>
+
+                                <div class="checkout-item-info">
+
+                                    <h3>
+                                        {{ item.variant.product.product_name }}
+                                    </h3>
+
+                                    <p>
+                                        Size:
+                                        {{ item.variant.size }}
+                                    </p>
+
+                                    {% if item.variant.color %}
+                                        <p>
+                                            Color:
+                                            {{ item.variant.color }}
+                                        </p>
+                                    {% endif %}
+
+                                    <p>
+                                        Quantity:
+                                        {{ item.quantity }}
+                                    </p>
+
+                                    <p class="checkout-item-price">
+                                        ₹{{ item.variant.price }}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="checkout-card shipping-card">
+
+                        <div class="checkout-card-header">
+
+                            <div class="checkout-card-title">
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                <h2>
+                                    Shipping Address
+                                </h2>
+                            </div>
+
+                            <a
+                                href="{% url 'address_list' %}"
+                                class="add-address-link"
+                            >
+                                + Add New Address
+                            </a>
+
+                        </div>
+
+                        {% if addresses %}
+
+                            <div class="choose-address-title">
+                                Choose Address
+                            </div>
+
+                            <div class="address-list">
+
+                                {% for address in addresses %}
+
+                                    <div class="address-option">
+
+                                        <input
+                                            type="radio"
+                                            name="address"
+                                            id="address-{{ address.id }}"
+                                            value="{{ address.id }}"
+                                            {% if default_address and address.id == default_address.id %}
+                                                checked
+                                            {% endif %}
+                                            required
+                                        >
+
+                                        <label
+                                            for="address-{{ address.id }}"
+                                            class="address-label"
+                                        >
+
+                                            <span class="address-radio"></span>
+
+                                            <div class="address-content">
+
+                                                <div class="address-top">
+
+                                                    <span class="address-name">
+                                                        {{ address.full_name }}
+                                                    </span>
+
+                                                    {% if address.is_default %}
+                                                        <span class="default-badge">
+                                                            Default
+                                                        </span>
+                                                    {% endif %}
+
+                                                </div>
+
+                                                <p class="address-line">
+                                                    {{ address.address_line1 }}
+
+                                                    {% if address.address_line2 %}
+                                                        , {{ address.address_line2 }}
+                                                    {% endif %}
+                                                </p>
+
+                                                <p class="address-line">
+                                                    {{ address.city }},
+                                                    {{ address.state }}
+                                                    - {{ address.pincode }}
+                                                </p>
+
+                                                <p class="address-line">
+                                                    {{ address.country }}
+                                                </p>
+
+                                                <p class="address-phone">
+                                                    <i class="fa-solid fa-phone"></i>
+                                                    {{ address.phone_number }}
+                                                </p>
+
+                                            </div>
+
+                                            <a
+                                                href="{% url 'address_list' %}"
+                                                class="edit-address"
+                                                onclick="event.stopPropagation();"
+                                            >
+                                                Edit
+                                            </a>
+
+                                        </label>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="empty-address">
+
+                                <p>
+                                    No saved address found.
+                                </p>
+
+                                <a href="{% url 'address_list' %}">
+                                    + Add New Address
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="checkout-right">
+
+                    <div class="payment-card">
+
+                        <div class="payment-title">
+
+                            <i class="fa-regular fa-credit-card"></i>
+
+                            <h2>
+                                Payment<br>
+                                Method
+                            </h2>
+
+                        </div>
+
+                        <div class="payment-option">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                id="payment-cod"
+                                value="COD"
+                                checked
+                            >
+
+                            <label
+                                for="payment-cod"
+                                class="payment-label"
+                            >
+
+                                <span class="payment-radio"></span>
+
+                                <span class="payment-icon">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                </span>
+
+                                <span class="payment-details">
+
+                                    <span class="payment-name">
+                                        COD
+                                    </span>
+
+                                    <span class="payment-description">
+                                        Pay on delivery
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="summary-card">
+
+                        <h2 class="summary-title">
+                            Price Summary
+                        </h2>
+
+                        <div class="summary-row">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong>
+                                ₹{{ subtotal }}
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-row summary-discount">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong>
+                                -₹{{ discount }}
+                            </strong>
+
+                        </div>
+
+                        <div class="summary-row summary-shipping">
+
+                            <span>
+                                Shipping Estimate
+                            </span>
+
+                            <strong>
+                                {% if shipping == 0 %}
+                                    FREE
+                                {% else %}
+                                    ₹{{ shipping }}
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                        <div class="coupon-box">
+
+                            <input
+                                type="text"
+                                placeholder="Coupon Code"
+                                name="coupon_code"
+                            >
+
+                            <button
+                                type="button"
+                            >
+                                Apply
+                            </button>
+
+                        </div>
+
+                        <a
+                            href="#"
+                            class="available-coupons"
+                        >
+                            VIEW ALL AVAILABLE COUPONS
+                        </a>
+
+                        <div class="summary-total">
+
+                            <span>
+                                Total Amount
+                            </span>
+
+                            <strong>
+                                ₹{{ total }}
+                            </strong>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="place-order-button"
+                        >
+                            Place Order
+                        </button>
+
+                        <p class="checkout-note">
+                            Your order will be placed using Cash on Delivery.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+        {% else %}
+
+            <div class="checkout-card">
+
+                <div class="empty-address">
+
+                    <p>
+                        Your cart is empty.
+                    </p>
+
+                    <a href="{% url 'product:product_list' %}">
+                        Continue Shopping
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

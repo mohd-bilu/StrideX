@@ -184,7 +184,7 @@ def user_management(request):
         "Admin_account/user_management.html",
         context
     )
-
+@never_cache
 @login_required(login_url="admin_login")
 @require_POST
 def toggle_user_status(request, user_id):
@@ -237,7 +237,8 @@ def toggle_user_status(request, user_id):
         )
 
     return redirect("user_management")
-
+@never_cache
+@login_required(login_url="admin_login")
 def admin_forgot_password(request):
     if request.user.is_authenticated and request.user.is_staff:
         return redirect("admin_dashboard")
@@ -455,7 +456,8 @@ def admin_resend_otp(request):
     )
     return redirect("admin_verify_otp")
 
-
+@never_cache
+@login_required(login_url="admin_login")
 def admin_reset_password(request):
     email = request.session.get("admin_reset_email")
     verified = request.session.get(

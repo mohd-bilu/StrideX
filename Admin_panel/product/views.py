@@ -1,5 +1,6 @@
 from datetime import timedelta
-
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, Min, Prefetch, Q
@@ -10,6 +11,8 @@ from Admin_panel.category.models import Category
 from .forms import (ProductForm,VariantForm,)
 from .models import (Product,Variant,VariantImage,)
 
+@never_cache
+@login_required(login_url="admin_login")
 def product_list(request):
     search = request.GET.get("search", "").strip()
     category = request.GET.get("category", "")

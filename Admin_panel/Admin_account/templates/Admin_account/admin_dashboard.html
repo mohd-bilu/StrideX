@@ -1,228 +1,19 @@
+{% extends "Admin_account/base_admin.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-    <title>StrideX | Admin Dashboard</title>
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% block title %}
+Admin Dashboard - StrideX
+{% endblock %}
+{% block extra_css %}
+
 <style>
-/* =================================
-   GLOBAL
-================================= */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
-body {
-    background: #f7f7f7;
-    color: #171717;
-}
-a {
-    text-decoration: none;
-    color: inherit;
-}
-button {
-    font-family: inherit;
-}
-/* =================================
-   LAYOUT
-================================= */
-.layout {
-    display: flex;
-    min-height: 100vh;
-}
-/* =================================
-   SIDEBAR
-================================= */
-.sidebar {
-    width: 230px;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    background: #ffffff;
-    border-right: 1px solid #e5e5e5;
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-}
-.logo-section {
-    height: 105px;
-    padding: 28px 20px;
-    border-bottom: 1px solid #eeeeee;
-}
-.logo {
-    font-size: 30px;
-    font-weight: 800;
-    color: #a94f00;
-    letter-spacing: -2px;
-}
-.logo-subtitle {
-    margin-top: 3px;
-    font-size: 8px;
-    letter-spacing: 1px;
-    color: #777777;
-    font-weight: 600;
-}
-/* =================================
-   NAVIGATION
-================================= */
-.nav-menu {
-    padding-top: 18px;
-    flex: 1;
-}
-.nav-item {
-    height: 46px;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    color: #5e554e;
-    font-size: 13px;
-    border-left: 4px solid transparent;
-    transition: 0.2s;
-}
-.nav-item i {
-    width: 18px;
-    text-align: center;
-    font-size: 14px;
-}
-.nav-item:hover {
-    background: #faf2eb;
-    color: #9a4d0c;
-}
-.nav-item.active {
-    background: #faeee4;
-    color: #9a4d0c;
-    border-left-color: #a6530d;
-    font-weight: 600;
-}
-/* =================================
-   ADMIN PROFILE
-================================= */
-.admin-profile {
-    border-top: 1px solid #eeeeee;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.admin-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #e7d8c9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-}
-.admin-details {
-    flex: 1;
-}
-.admin-name {
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 3px;
-}
-.admin-role {
-    font-size: 9px;
-    color: #999999;
-}
-.logout-form {
-    display: flex;
-}
-.logout-button {
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #666666;
-    font-size: 16px;
-}
-/* =================================
-   MAIN
-================================= */
-.main {
-    margin-left: 230px;
-    width: calc(100% - 230px);
-    min-height: 100vh;
-}
-/* =================================
-   TOP BAR
-================================= */
-.topbar {
-    height: 72px;
-    background: #ffffff;
-    border-bottom: 1px solid #eeeeee;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 35px;
-    gap: 25px;
-}
-.search-box {
-    width: 250px;
-    height: 38px;
-    background: #f7f7f7;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    padding: 0 15px;
-    gap: 10px;
-    color: #999999;
-}
-.search-box input {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 11px;
-}
-.notification {
-    position: relative;
-    font-size: 16px;
-    color: #5c4638;
-}
-.notification-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #c32020;
-    position: absolute;
-    top: -2px;
-    right: -2px;
-}
+
 /* =================================
    CONTENT
 ================================= */
-.content {
-    padding: 35px;
+.dashboard-content {
     max-width: 1250px;
-    margin: auto;
+    margin: 0 auto;
 }
 .page-title {
     font-size: 26px;
@@ -615,34 +406,38 @@ button {
 /* =================================
    RESPONSIVE
 ================================= */
-@media (max-width: 1000px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    .middle-grid {
-        grid-template-columns: 1fr;
-    }
-    .bottom-grid {
-        grid-template-columns: 1fr;
-    }
-}
 @media (max-width: 700px) {
     .sidebar {
         display: none;
     }
+
     .main {
         margin-left: 0;
         width: 100%;
     }
+
     .content {
         padding: 20px;
     }
+
     .topbar {
         padding: 0 20px;
     }
+
     .search-box {
         width: 200px;
     }
+
+    .order-table {
+        min-width: 650px;
+    }
+
+    .panel {
+        overflow-x: auto;
+    }
+}
+@media (max-width: 700px) {
+
     .order-table {
         min-width: 650px;
     }
@@ -651,112 +446,12 @@ button {
     }
 }
 </style>
-</head>
-<body>
-<div class="layout">
-<!-- =================================
-     SIDEBAR
-================================= -->
-<aside class="sidebar">
-    <div class="logo-section">
-        <div class="logo">
-            StrideX
-        </div>
-        <div class="logo-subtitle">
-            PREMIUM MANAGEMENT
-        </div>
-    </div>
-    <nav class="nav-menu">
-        <a
-            href="{% url 'admin_dashboard' %}"
-            class="nav-item active"
-        >
-            <i class="fa-solid fa-table-cells-large"></i>
-            Dashboard
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-arrow-trend-up"></i>
-            Sales
-        </a>
-        <a
-            href="{% url 'user_management' %}"
-            class="nav-item"
-        >
-            <i class="fa-solid fa-users"></i>
-            Users
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-box"></i>
-            Products
-        </a>
-        <a href="{% url 'category_list' %}" class="nav-item">
-    <i class="fa-solid fa-layer-group"></i>
-    Categories
-</a>
-        <a href="#" class="nav-item">
-            <i class="fa-regular fa-star"></i>
-            Reviews
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-tag"></i>
-            Offers
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-ticket"></i>
-            Coupons
-        </a>
-    </nav>
-    <div class="admin-profile">
-        <div class="admin-avatar">
-            {{ request.user.full_name|default:"A"|slice:":1"|upper }}
-        </div>
-        <div class="admin-details">
-            <div class="admin-name">
-                {{ request.user.full_name|default:"Admin" }}
-            </div>
-            <div class="admin-role">
-                Admin Account
-            </div>
-        </div>
-        <form
-    method="POST"
-    action="{% url 'admin_logout' %}"
-    id="logoutForm"
->
-    {% csrf_token %}
-    <button
-        type="button"
-        class="logout-btn"
-        id="logoutBtn"
-        title="Logout"
-    >
-        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-    </button>
-</form>
-    </div>
-</aside>
-<!-- =================================
-     MAIN
-================================= -->
-<main class="main">
-    <!-- TOP BAR -->
-    <header class="topbar">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input
-                type="text"
-                placeholder="Search orders, stock..."
-            >
-        </div>
-        <div class="notification">
-            <i class="fa-solid fa-bell"></i>
-            <span class="notification-dot"></span>
-        </div>
-    </header>
-    <!-- =================================
-         CONTENT
-    ================================= -->
-    <div class="content">
+
+{% endblock %}
+
+{% block content %}
+    <div class="dashboard-content">
+
         <h1 class="page-title">
             Admin Dashboard
         </h1>
@@ -1091,55 +786,6 @@ button {
             </div>
         </section>
     </div>
-</main>
-</div>
-<!-- =================================
-     DJANGO TOAST MESSAGES
-================================= -->
-{% if messages %}
-<script>
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-        {% for message in messages %}
-        Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon:
-            "{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
-            title:
-            "{{ message|escapejs }}",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-        {% endfor %}
-    }
-);
-</script>
-{% endif %}
-<script>
-    const logoutBtn = document.getElementById("logoutBtn");
-    const logoutForm = document.getElementById("logoutForm");
-    logoutBtn.addEventListener("click", function() {
-        Swal.fire({
-            title: "Logout?",
-            text: "Are you sure you want to logout?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes, Logout",
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-            confirmButtonColor: "#a44a0c"
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                logoutForm.submit();
-            }
-        });
-    });
-</script>
-<script>
-window.history.forward();
-</script>
-</body>
-</html>
+
+{% endblock %}
+

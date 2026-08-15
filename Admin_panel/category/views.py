@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from urllib3 import request
 
 from .forms import CategoryForm
@@ -33,7 +35,8 @@ def add_category(request):
         },
     )
 
-
+@never_cache
+@login_required(login_url="admin_login")
 def category_list(request):
     search_query = request.GET.get("search", "").strip()
 

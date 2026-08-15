@@ -265,6 +265,10 @@ Cart
     font-weight:700;
     cursor:pointer;
     transition:.3s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
 }
 
 .checkout-btn:hover{
@@ -554,7 +558,7 @@ Cart
 </style>
 {% endblock %}
 
-{{% block content %}
+{% block content %}
 <section class="cart-section">
     <div class="container">
 
@@ -679,19 +683,22 @@ Cart
 
                 {% if cart and cart.items.exists %}
 
-                <button class="checkout-btn">
-                    Proceed to Checkout
-                </button>
+                    <a
+                        href="{% url 'order:checkout' %}"
+                        class="checkout-btn">
+                        Proceed to Checkout
+                    </a>
 
-                {% else %}
+                    {% else %}
 
-                <button
-                    class="checkout-btn"
-                    disabled>
-                    Cart is Empty
-                </button>
+                    <button
+                        type="button"
+                        class="checkout-btn"
+                        disabled>
+                        Cart is Empty
+                    </button>
 
-                {% endif %}
+                    {% endif %}
 
             </div>
 

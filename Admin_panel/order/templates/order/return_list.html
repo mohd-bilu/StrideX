@@ -1,0 +1,1328 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% block title %}
+Return Management - StrideX Admin
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+.return-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.return-header {
+    margin-bottom: 28px;
+}
+
+.return-label {
+    color: #8190a7;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+.return-title {
+    color: #172033;
+    font-size: 25px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.return-subtitle {
+    margin-top: 42px;
+    color: #8998ad;
+    font-size: 10px;
+}
+
+.return-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 27px;
+}
+
+.return-stat-card {
+    min-height: 100px;
+    padding: 22px 21px;
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 13px;
+    position: relative;
+}
+
+.return-stat-label {
+    color: #91a0b3;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.return-stat-value {
+    color: #172033;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.return-stat-icon {
+    position: absolute;
+    top: 17px;
+    right: 18px;
+    width: 29px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #f0f4f8;
+    color: #718096;
+    font-size: 10px;
+}
+
+.return-stat-card.pending .return-stat-icon {
+    background: #fff5df;
+    color: #f0a000;
+}
+
+.return-stat-card.pending .return-stat-value {
+    color: #f0a000;
+}
+
+.return-stat-card.approved .return-stat-icon {
+    background: #e0f8eb;
+    color: #27a96b;
+}
+
+.return-stat-card.approved .return-stat-value {
+    color: #279b66;
+}
+
+.return-stat-card.rejected .return-stat-icon {
+    background: #ffebeb;
+    color: #ed5555;
+}
+
+.return-stat-card.rejected .return-stat-value {
+    color: #ed5555;
+}
+
+.return-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 13px;
+}
+
+.return-search-form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.return-search-input-wrap {
+    flex: 1;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    border: 1px solid #e3e8ef;
+    border-radius: 8px;
+    background: #fafbfd;
+}
+
+.return-search-input-wrap i {
+    color: #9ba7b6;
+    font-size: 10px;
+}
+
+.return-search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #344054;
+    font-size: 9px;
+}
+
+.return-search-input::placeholder {
+    color: #9ba7b6;
+}
+
+.return-status-select {
+    width: 150px;
+    height: 35px;
+    padding: 0 10px;
+    border: 1px solid #dfe5ec;
+    border-radius: 8px;
+    background: #fff;
+    color: #475467;
+    font-size: 9px;
+    font-weight: 600;
+    outline: none;
+}
+
+.return-search-button {
+    height: 35px;
+    padding: 0 17px;
+    border: none;
+    border-radius: 8px;
+    background: #05070b;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.return-search-button:hover {
+    background: #1d2532;
+}
+
+.return-card {
+    background: #fff;
+    border: 1px solid #e5eaf0;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.return-card-header {
+    min-height: 57px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.return-card-icon {
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+    background: #f1f4f7;
+    color: #65758a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.return-card-title {
+    color: #263144;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.return-total-badge {
+    margin-left: auto;
+    padding: 5px 10px;
+    border-radius: 14px;
+    background: #f1f4f8;
+    color: #8997a9;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.return-table {
+    width: 100%;
+}
+
+.return-table-header {
+    display: grid;
+    grid-template-columns:
+        70px
+        105px
+        minmax(220px, 1.7fr)
+        minmax(150px, 1fr)
+        minmax(150px, 1fr)
+        100px
+        100px
+        130px;
+    gap: 10px;
+    padding: 13px 20px;
+    background: #fafbfd;
+    border-bottom: 1px solid #edf0f4;
+    color: #8b9ab0;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+
+.return-row {
+    display: grid;
+    grid-template-columns:
+        70px
+        105px
+        minmax(220px, 1.7fr)
+        minmax(150px, 1fr)
+        minmax(150px, 1fr)
+        100px
+        100px
+        130px;
+    gap: 10px;
+    align-items: center;
+    min-height: 78px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.return-row:last-child {
+    border-bottom: none;
+}
+
+.return-row:last-child {
+    border-bottom: none;
+}
+
+.return-id {
+    display: inline-flex;
+    width: max-content;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: #f1f4f8;
+    color: #65758a;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.return-order {
+    color: #364152;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.return-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.return-product-image {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    flex: 0 0 42px;
+    border-radius: 8px;
+    background: #f6f7f9;
+    border: 1px solid #edf0f4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.return-product-image img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+}
+
+.return-product-placeholder {
+    color: #aab4c1;
+    font-size: 14px;
+}
+
+.return-product-info {
+    min-width: 0;
+}
+
+.return-product-name {
+    color: #293548;
+    font-size: 9px;
+    font-weight: 750;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.return-product-variant {
+    margin-top: 4px;
+    color: #8d99a8;
+    font-size: 7px;
+    text-transform: uppercase;
+}
+
+.return-product-sku {
+    margin-top: 3px;
+    color: #9ca7b4;
+    font-size: 6px;
+}
+
+.return-customer-name {
+    color: #293548;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.return-customer-email {
+    margin-top: 4px;
+    color: #8e9aaa;
+    font-size: 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.return-reason {
+    color: #58677b;
+    font-size: 8px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.return-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: max-content;
+    padding: 5px 8px;
+    border-radius: 12px;
+    font-size: 7px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.return-status::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.return-status.requested {
+    color: #e28b00;
+    background: #fff2d5;
+}
+
+.return-status.returned {
+    color: #249a63;
+    background: #dcf7e8;
+}
+.return-action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.return-action-form {
+    margin: 0;
+}
+
+.approve-return-btn,
+.reject-return-btn {
+    min-width: 78px;
+    height: 26px;
+    padding: 0 9px;
+    border: none;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 7px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.approve-return-btn {
+    background: #dcf7e8;
+    color: #249a63;
+}
+
+.approve-return-btn:hover {
+    background: #c9f1dc;
+}
+
+.reject-return-btn {
+    background: #ffebeb;
+    color: #ed5555;
+}
+
+.reject-return-btn:hover {
+    background: #ffdede;
+}
+
+.approved-action {
+    color: #249a63;
+}
+
+.rejected-action {
+    color: #ed5555;
+}
+
+.return-date {
+    color: #279b66;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.return-date span {
+    display: block;
+    color: #9ba6b4;
+    font-size: 7px;
+    font-weight: 500;
+}
+
+.return-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: none;
+    background: transparent;
+    color: #279b66;
+    font-size: 7px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.return-action:hover {
+    color: #168653;
+}
+
+.return-action i {
+    font-size: 8px;
+}
+
+.return-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: #94a0af;
+    font-size: 10px;
+}
+.return-admin-reason {
+    margin-top: 5px;
+    color: #ed5555;
+    font-size: 7px;
+    line-height: 1.5;
+}
+.status-rejected {
+    color: #ed5555;
+    background: #ffebeb;
+}
+.return-status.returned {
+    color: #249a63;
+    background: #dcf7e8;
+}
+.return-status.rejected {
+    color: #ed5555;
+    background: #ffebeb;
+}   
+
+.return-action-form {
+    margin: 0;
+}
+
+
+
+.approve-return-btn {
+    background: #dcf7e8;
+    color: #249a63;
+}
+
+.approve-return-btn:hover {
+    background: #c8f0da;
+}
+
+.return-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 18px;
+    border-top: 1px solid #edf0f4;
+}
+
+.return-page-link {
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e1e6ec;
+    border-radius: 7px;
+    background: #fff;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 8px;
+    font-weight: 600;
+}
+
+.return-page-link:hover {
+    border-color: #a94f00;
+    color: #a94f00;
+}
+
+.return-page-link.active {
+    background: #080c14;
+    border-color: #080c14;
+    color: #fff;
+}
+
+@media (max-width: 1200px) {
+    .return-table {
+        overflow-x: auto;
+    }
+
+    .return-table-header,
+    .return-row {
+        min-width: 1100px;
+    }
+
+    .return-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .return-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .return-search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .return-search-input-wrap,
+    .return-status-select,
+    .return-search-button {
+        width: 100%;
+    }
+}
+.reject-return-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.reject-return-modal.show {
+    display: flex;
+}
+
+.reject-return-modal-content {
+    width: 100%;
+    max-width: 430px;
+    padding: 26px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    position: relative;
+}
+
+.reject-return-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 7px;
+    background: #f3f5f7;
+    color: #7b8797;
+    cursor: pointer;
+}
+
+.reject-return-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffebeb;
+    color: #ed5555;
+}
+
+.reject-return-modal-content h3 {
+    margin: 0;
+    color: #172033;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.reject-return-modal-content p {
+    margin: 8px 0 20px;
+    color: #8a96a6;
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.reject-return-modal-content label {
+    display: block;
+    margin-bottom: 7px;
+    color: #344054;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+#rejectionReason {
+    width: 100%;
+    min-height: 100px;
+    padding: 11px;
+    resize: vertical;
+    border: 1px solid #dfe5ec;
+    border-radius: 9px;
+    outline: none;
+    background: #fafbfd;
+    color: #344054;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+}
+
+#rejectionReason:focus {
+    border-color: #ed5555;
+    background: #fff;
+}
+
+#rejectionReason::placeholder {
+    color: #a1aab7;
+}
+
+.reject-return-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.reject-cancel-btn,
+.reject-confirm-btn {
+    height: 34px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.reject-cancel-btn {
+    background: #f1f4f7;
+    color: #65758a;
+}
+
+.reject-confirm-btn {
+    background: #ed5555;
+    color: #fff;
+}
+
+.reject-confirm-btn:hover {
+    background: #d94444;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="return-page">
+
+    <div class="return-header">
+
+        <div class="return-label">
+            Management
+        </div>
+
+        <h1 class="return-title">
+            Return Management
+        </h1>
+
+        <div class="return-subtitle">
+            Oversee and resolve customer product return requests.
+        </div>
+
+    </div>
+
+    <div class="return-stats">
+
+        <div class="return-stat-card">
+
+            <div class="return-stat-label">
+                Total Returns
+            </div>
+
+            <div class="return-stat-value">
+                {{ total_returns }}
+            </div>
+
+            <div class="return-stat-icon">
+                <i class="fa-solid fa-box-archive"></i>
+            </div>
+
+        </div>
+
+        <div class="return-stat-card pending">
+
+            <div class="return-stat-label">
+                Pending
+            </div>
+
+            <div class="return-stat-value">
+                {{ pending_returns }}
+            </div>
+
+            <div class="return-stat-icon">
+                <i class="fa-regular fa-clock"></i>
+            </div>
+
+        </div>
+
+        <div class="return-stat-card approved">
+
+            <div class="return-stat-label">
+                Approved
+            </div>
+
+            <div class="return-stat-value">
+                {{ approved_returns }}
+            </div>
+
+            <div class="return-stat-icon">
+                <i class="fa-regular fa-circle-check"></i>
+            </div>
+
+        </div>
+
+        <div class="return-stat-card rejected">
+
+            <div class="return-stat-label">
+                Rejected
+            </div>
+
+            <div class="return-stat-value">
+                {{ rejected_returns }}
+            </div>
+
+            <div class="return-stat-icon">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="return-search-box">
+
+        <form
+            method="GET"
+            action="{% url 'admin_order:return_list' %}"
+            class="return-search-form"
+        >
+
+            <div class="return-search-input-wrap">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    class="return-search-input"
+                    placeholder="Search by order ID, product, customer..."
+                >
+
+            </div>
+
+            <select
+                name="status"
+                class="return-status-select"
+            >
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                <option
+                    value="RETURN_REQUESTED"
+                    {% if status == "RETURN_REQUESTED" %}
+                        selected
+                    {% endif %}
+                >
+                    Return Requested
+                </option>
+
+                <option
+                    value="RETURNED"
+                    {% if status == "RETURNED" %}
+                        selected
+                    {% endif %}
+                >
+                    Returned
+                </option>
+
+                <option
+                    value="REJECTED"
+                    {% if status == "REJECTED" %}
+                        selected
+                    {% endif %}
+                >
+                    Rejected
+                </option>
+
+            </select>
+
+            <button
+                type="submit"
+                class="return-search-button"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                SEARCH
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="return-card">
+
+        <div class="return-card-header">
+
+            <div class="return-card-icon">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+            </div>
+
+            <div class="return-card-title">
+                Return Requests
+            </div>
+
+            <div class="return-total-badge">
+                {{ total_returns }} total
+            </div>
+
+        </div>
+
+        <div class="return-table">
+
+            <div class="return-table-header">
+                <div>RETURN ID</div>
+                <div>ORDER</div>
+                <div>PRODUCT</div>
+                <div>CUSTOMER</div>
+                <div>REASON</div>
+                <div>STATUS</div>
+                <div>DATE</div>
+                <div>ACTIONS</div>
+            </div>
+
+            {% for item in return_items %}
+
+                <div class="return-row">
+
+                    <div>
+                        <span class="return-id">
+                            #{{ item.id }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <div class="return-order">
+                            #{{ item.order.order_id }}
+                        </div>
+                    </div>
+
+                    <div>
+
+                        <div class="return-product">
+
+                            <div class="return-product-image">
+
+                                {% with image=item.variant.images.first %}
+
+                                    {% if image %}
+
+                                        <img
+                                            src="{{ image.image.url }}"
+                                            alt="{{ item.variant.product.product_name }}"
+                                        >
+
+                                    {% else %}
+
+                                        <div class="return-product-placeholder">
+                                            <i class="fa-solid fa-box"></i>
+                                        </div>
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            </div>
+
+                            <div class="return-product-info">
+
+                                <div class="return-product-name">
+                                    {{ item.variant.product.product_name }}
+                                </div>
+
+                                <div class="return-product-variant">
+                                    {{ item.variant }}
+                                </div>
+
+                                <div class="return-product-sku">
+                                    SKU: {{ item.variant.sku|default:"-" }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <div class="return-customer-name">
+                            {{ item.order.user.full_name }}
+                        </div>
+
+                        <div class="return-customer-email">
+                            {{ item.order.user.email }}
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <div class="return-reason">
+
+                            <div>
+                                <strong>Customer:</strong>
+                                {{ item.return_reason|default:"No reason provided" }}
+                            </div>
+
+                            {% if item.status == "REJECTED" and item.rejection_reason %}
+
+                                <div class="return-admin-reason">
+                                    <strong>Admin:</strong>
+                                    {{ item.rejection_reason }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        {% if item.status == "RETURN_REQUESTED" %}
+
+                            <span class="return-status requested">
+                                Pending
+                            </span>
+
+                        {% elif item.status == "RETURNED" %}
+
+                            <span class="return-status returned">
+                                Approved
+                            </span>
+
+                        {% elif item.status == "REJECTED" %}
+
+                            <span class="return-status rejected">
+                                Rejected
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <div class="return-date">
+
+                            {{ item.created_at|date:"M d, Y" }}
+
+                            <span>
+                                {% if item.status == "RETURN_REQUESTED" %}
+                                    Return Requested
+                                {% elif item.status == "RETURNED" %}
+                                    Approved
+                                {% elif item.status == "REJECTED" %}
+                                    Rejected
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        {% if item.status == "RETURN_REQUESTED" %}
+
+                            <div class="return-action-buttons">
+
+                                <form
+                                    method="POST"
+                                    action="{% url 'admin_order:update_return_status' item.id %}"
+                                    class="return-action-form"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="hidden"
+                                        name="return_status"
+                                        value="RETURNED"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="approve-return-btn"
+                                    >
+                                        <i class="fa-solid fa-check"></i>
+                                        APPROVE
+                                    </button>
+
+                                </form>
+
+                                <button
+                                    type="button"
+                                    class="reject-return-btn"
+                                    onclick="openRejectModal({{ item.id }})"
+                                >
+                                    <i class="fa-solid fa-xmark"></i>
+                                    REJECT
+                                </button>
+
+                            </div>
+
+                        {% elif item.status == "RETURNED" %}
+
+                            <span class="return-action approved-action">
+                                <i class="fa-regular fa-circle-check"></i>
+                                APPROVED
+                            </span>
+
+                        {% elif item.status == "REJECTED" %}
+
+                            <span class="return-action rejected-action">
+                                <i class="fa-regular fa-circle-xmark"></i>
+                                REJECTED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="return-empty">
+                    No return requests found.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+
+            <div class="return-pagination">
+
+                {% if page_obj.has_previous %}
+
+                    <a
+                        href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}"
+                        class="return-page-link"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+
+                    {% if page_obj.number == num %}
+
+                        <span class="return-page-link active">
+                            {{ num }}
+                        </span>
+
+                    {% else %}
+
+                        <a
+                            href="?page={{ num }}&search={{ search }}&status={{ status }}"
+                            class="return-page-link"
+                        >
+                            {{ num }}
+                        </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+
+                    <a
+                        href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}"
+                        class="return-page-link"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+<div id="rejectReturnModal" class="reject-return-modal">
+
+    <div class="reject-return-modal-content">
+
+        <button
+            type="button"
+            class="reject-return-close"
+            onclick="closeRejectModal()"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="reject-return-icon">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+        </div>
+
+        <h3>Reject Return</h3>
+
+        <p>
+            Please provide a reason for rejecting this return request.
+        </p>
+
+        <form
+            id="rejectReturnForm"
+            method="POST"
+        >
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="return_status"
+                value="REJECTED"
+            >
+
+            <label for="rejectionReason">
+                Rejection Reason
+            </label>
+
+            <textarea
+                id="rejectionReason"
+                name="rejection_reason"
+                placeholder="Enter the reason for rejecting this return..."
+                required
+            ></textarea>
+
+            <div class="reject-return-modal-actions">
+
+                <button
+                    type="button"
+                    class="reject-cancel-btn"
+                    onclick="closeRejectModal()"
+                >
+                    CANCEL
+                </button>
+
+                <button
+                    type="submit"
+                    class="reject-confirm-btn"
+                >
+                    REJECT RETURN
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function openRejectModal(itemId) {
+    const modal = document.getElementById("rejectReturnModal");
+    const form = document.getElementById("rejectReturnForm");
+    const reason = document.getElementById("rejectionReason");
+
+    form.action = "{% url 'admin_order:update_return_status' 0 %}".replace(
+        "/0/",
+        "/" + itemId + "/"
+    );
+
+    reason.value = "";
+    modal.classList.add("show");
+
+    setTimeout(function () {
+        reason.focus();
+    }, 100);
+}
+
+function closeRejectModal() {
+    const modal = document.getElementById("rejectReturnModal");
+    const reason = document.getElementById("rejectionReason");
+
+    reason.value = "";
+    modal.classList.remove("show");
+}
+
+document.addEventListener("click", function(event) {
+    const modal = document.getElementById("rejectReturnModal");
+
+    if (event.target === modal) {
+        closeRejectModal();
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        closeRejectModal();
+    }
+});
+</script>
+{% endblock %}

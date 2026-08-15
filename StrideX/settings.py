@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "Admin_panel.Admin_account",
     "Admin_panel.category",
     "Admin_panel.product",
+    "Admin_panel.order",
 
     "User_panel.Authentication.apps.AuthenticationConfig",
     "User_panel.Product",
@@ -71,7 +72,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
+    "StrideX.middleware.AdminUserSideRestrictionMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 
     "django.contrib.messages.middleware.MessageMiddleware",

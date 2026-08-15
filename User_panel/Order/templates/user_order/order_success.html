@@ -1,0 +1,282 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}
+Order Successful - StrideX
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.order-success-section{
+    min-height:calc(100vh - 100px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:80px 20px;
+    background:#050505;
+}
+
+.order-success-card{
+    width:100%;
+    max-width:720px;
+    background:#111111;
+    border:1px solid #252525;
+    border-radius:24px;
+    padding:60px 50px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+.success-icon{
+    width:100px;
+    height:100px;
+    margin:0 auto 30px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ff7a00;
+    color:#ffffff;
+    font-size:46px;
+    box-shadow:0 15px 40px rgba(255,122,0,.3);
+}
+
+.order-success-card h1{
+    color:#ffffff;
+    font-size:38px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.success-message{
+    color:#a5a5a5;
+    font-size:16px;
+    line-height:1.7;
+    margin-bottom:35px;
+}
+
+.order-number-box{
+    background:#181818;
+    border:1px solid #292929;
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:35px;
+}
+
+.order-number-label{
+    display:block;
+    color:#777777;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+}
+
+.order-number{
+    color:#ff7a00;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.order-summary{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:18px 0;
+    border-top:1px solid #252525;
+    border-bottom:1px solid #252525;
+    margin-bottom:35px;
+}
+
+.order-summary-item{
+    flex:1;
+}
+
+.order-summary-item span{
+    display:block;
+}
+
+.summary-label{
+    color:#777777;
+    font-size:12px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.summary-value{
+    color:#ffffff;
+    font-size:17px;
+    font-weight:700;
+}
+
+.cod-value{
+    color:#ff7a00;
+}
+
+.success-buttons{
+    display:flex;
+    gap:15px;
+}
+
+.success-button{
+    flex:1;
+    height:54px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.view-order-button{
+    background:#ff7a00;
+    color:#ffffff;
+}
+
+.view-order-button:hover{
+    background:#ff922b;
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px rgba(255,122,0,.3);
+}
+
+.continue-button{
+    background:#1c1c1c;
+    color:#ffffff;
+    border:1px solid #333333;
+}
+
+.continue-button:hover{
+    border-color:#ff7a00;
+    color:#ff7a00;
+    transform:translateY(-2px);
+}
+
+@media(max-width:600px){
+
+    .order-success-card{
+        padding:45px 25px;
+    }
+
+    .order-success-card h1{
+        font-size:30px;
+    }
+
+    .order-summary{
+        flex-direction:column;
+    }
+
+    .success-buttons{
+        flex-direction:column;
+    }
+
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="order-success-section">
+
+    <div class="order-success-card">
+
+        <div class="success-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h1>
+            Thank You!
+        </h1>
+
+        <p class="success-message">
+            Your order has been placed successfully.
+            We have received your order and will begin processing it shortly.
+        </p>
+
+        <div class="order-number-box">
+
+            <span class="order-number-label">
+                Order ID
+            </span>
+
+            <span class="order-number">
+                {{ order.order_id }}
+            </span>
+
+        </div>
+
+        <div class="order-summary">
+
+            <div class="order-summary-item">
+
+                <span class="summary-label">
+                    Payment
+                </span>
+
+                <span class="summary-value cod-value">
+                    Cash on Delivery
+                </span>
+
+            </div>
+
+            <div class="order-summary-item">
+
+                <span class="summary-label">
+                    Total
+                </span>
+
+                <span class="summary-value">
+                    ₹{{ order.total_amount }}
+                </span>
+
+            </div>
+
+            <div class="order-summary-item">
+
+                <span class="summary-label">
+                    Status
+                </span>
+
+                <span class="summary-value">
+                    {{ order.get_order_status_display }}
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="success-buttons">
+
+            <a
+                href="{% url 'order:order_detail' order.order_id %}"
+                class="success-button view-order-button">
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                View Order
+
+            </a>
+
+            <a
+                href="{% url 'product:product_list' %}"
+                class="success-button continue-button">
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                Continue Shopping
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

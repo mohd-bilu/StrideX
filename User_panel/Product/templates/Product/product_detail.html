@@ -1220,14 +1220,14 @@ button{
 
                     </button> 
 
-                    <a
+                    <button
+                        type="button"
                         id="addToCartBtn"
                         class="cart-button ajax-cart"
                         data-url="{% url 'add_to_cart' variant.id %}">
                         <i class="fa-solid fa-cart-shopping"></i>
                         ADD TO CART
-
-                    </a>
+                    </button>
                     <button type="button" class="buy-button">
                         BUY NOW
                     </button>
@@ -1890,6 +1890,129 @@ document.addEventListener("DOMContentLoaded", function () {
                     showConfirmButton:false,
                     timer:1800
 
+                });
+
+            });
+
+        });
+        
+
+    }
+        // ==========================
+    // Add To Cart AJAX
+    // ==========================
+
+    if (addToCartBtn) {
+
+        addToCartBtn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            if (this.classList.contains("disabled")) {
+                return;
+            }
+
+            const url = this.dataset.url;
+
+            if (!url) {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please select a valid variant",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                return;
+            }
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                return response.json();
+            })
+            .then(data => {
+
+                if (!data.success) {
+
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "error",
+                        title: data.message || "Unable to add product",
+                        showConfirmButton: false,
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
+
+                    return;
+                }
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "success",
+                    title: data.message || "Added to cart",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                const cartCount = document.getElementById("cartCount");
+
+                if (cartCount && data.cart_count !== undefined) {
+
+                    if (data.cart_count > 0) {
+                        cartCount.style.display = "flex";
+                        cartCount.textContent = data.cart_count;
+                    } else {
+                        cartCount.style.display = "none";
+                    }
+
+                }
+
+                if (data.warning) {
+
+                    setTimeout(function () {
+
+                        Swal.fire({
+                            toast: true,
+                            position: "top-end",
+                            icon: "warning",
+                            title: data.warning,
+                            showConfirmButton: false,
+                            timer: 2500,
+                            timerProgressBar: true
+                        });
+
+                    }, 300);
+
+                }
+
+            })
+            .catch(function (error) {
+
+                console.error("Add to cart error:", error);
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Something went wrong",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
                 });
 
             });
