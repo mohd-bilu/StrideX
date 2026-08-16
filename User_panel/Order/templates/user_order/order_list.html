@@ -7,226 +7,504 @@ My Orders - StrideX
 
 {% block extra_css %}
 <style>
-.orders-section{
-    min-height:calc(100vh - 100px);
-    padding:60px 6%;
+.orders-page{
+    min-height:calc(100vh - 80px);
     background:#050505;
+    padding:58px 24px 80px;
 }
 
 .orders-container{
-    max-width:1200px;
+    width:100%;
+    max-width:760px;
     margin:0 auto;
 }
 
-.orders-header{
+.orders-heading-top{
     display:flex;
-    align-items:center;
+    align-items:flex-end;
     justify-content:space-between;
     gap:20px;
-    margin-bottom:35px;
+    margin-bottom:30px;
 }
 
-.orders-header h1{
-    color:#ffffff;
-    font-size:34px;
-    font-weight:800;
-    margin:0;
-}
-
-.order-search{
+.orders-heading-left{
     display:flex;
-    gap:10px;
+    flex-direction:column;
+    gap:8px;
 }
 
-.order-search input{
-    width:280px;
-    height:46px;
-    padding:0 15px;
-    border:1px solid #333333;
-    border-radius:10px;
-    outline:none;
-    background:#151515;
-    color:#ffffff;
-}
-
-.order-search input:focus{
-    border-color:#ff7a00;
-}
-
-.order-search button{
-    height:46px;
-    padding:0 20px;
-    border:none;
-    border-radius:10px;
-    background:#ff7a00;
-    color:#ffffff;
+.account-label{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#777777;
+    font-size:9px;
     font-weight:700;
+    letter-spacing:3px;
+    text-transform:uppercase;
+}
+
+.account-label::before{
+    content:"";
+    width:20px;
+    height:1px;
+    background:#777777;
+}
+
+.orders-heading h1{
+    margin:0;
+    color:#ffffff;
+    font-size:36px;
+    line-height:1;
+    font-weight:800;
+    letter-spacing:-1.5px;
+}
+
+.orders-heading p{
+    margin:0;
+    color:#777777;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.orders-count{
+    min-width:86px;
+    height:34px;
+    padding:0 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:18px;
+    background:#ffffff;
+    color:#050505;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.orders-tools{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+}
+
+.orders-search{
+    flex:1;
+    position:relative;
+}
+
+.orders-search i{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#777777;
+    font-size:12px;
+    pointer-events:none;
+}
+
+.orders-search input{
+    width:100%;
+    height:42px;
+    box-sizing:border-box;
+    padding:0 16px 0 38px;
+    border:1px solid #2b2b2b;
+    border-radius:11px;
+    outline:none;
+    background:#111111;
+    color:#ffffff;
+    font-size:11px;
+    transition:.2s;
+}
+
+.orders-search input::placeholder{
+    color:#666666;
+}
+
+.orders-search input:focus{
+    border-color:#ff7a00;
+    box-shadow:0 0 0 3px rgba(255,122,0,.08);
+}
+
+.status-filter{
+    position:relative;
+}
+
+.status-filter select{
+    width:145px;
+    height:42px;
+    padding:0 30px 0 13px;
+    border:1px solid #2b2b2b;
+    border-radius:11px;
+    outline:none;
+    background:#111111;
+    color:#cccccc;
+    font-size:10px;
+    font-weight:600;
     cursor:pointer;
 }
 
-.order-search button:hover{
+.status-filter select:focus{
+    border-color:#ff7a00;
+}
+
+.status-filter select option{
+    background:#111111;
+    color:#ffffff;
+}
+
+.search-button{
+    height:42px;
+    padding:0 17px;
+    border:0;
+    border-radius:11px;
+    background:#ff7a00;
+    color:#ffffff;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.search-button:hover{
     background:#ff922b;
+}
+
+.clear-button{
+    height:42px;
+    padding:0 17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    border:1px solid #2b2b2b;
+    border-radius:11px;
+    background:#111111;
+    color:#777777;
+    text-decoration:none;
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition:.2s;
+}
+
+.clear-button:hover{
+    border-color:#444444;
+    color:#ffffff;
 }
 
 .orders-list{
     display:flex;
     flex-direction:column;
-    gap:15px;
+    gap:14px;
 }
 
 .order-card{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:17px;
+    width:100%;
+    min-height:98px;
+    box-sizing:border-box;
     background:#111111;
     border:1px solid #252525;
-    border-radius:16px;
-    padding:24px;
-    transition:.3s;
+    border-radius:18px;
+    padding:20px 18px 20px 22px;
+    overflow:hidden;
+    transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+
+.order-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+    background:#333333;
 }
 
 .order-card:hover{
-    border-color:#3a3a3a;
     transform:translateY(-2px);
+    border-color:#3a3a3a;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
 
-.order-card-top{
+.order-icon{
+    width:46px;
+    height:46px;
+    flex:0 0 46px;
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    gap:20px;
-    margin-bottom:22px;
+    justify-content:center;
+    border:1px solid #333333;
+    border-radius:14px;
+    background:#151515;
+    color:#777777;
+    font-size:16px;
+}
+
+.order-main{
+    min-width:0;
+    flex:1;
+}
+
+.order-top-line{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:8px;
 }
 
 .order-id{
-    color:#ff7a00;
-    font-size:18px;
-    font-weight:800;
-}
-
-.order-date{
-    color:#888888;
-    font-size:13px;
-}
-
-.order-card-details{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-    margin-bottom:22px;
-}
-
-.order-detail-label{
-    display:block;
-    color:#777777;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    margin-bottom:7px;
-}
-
-.order-detail-value{
     color:#ffffff;
-    font-size:16px;
-    font-weight:700;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.2px;
 }
 
 .order-status{
     display:inline-flex;
-    padding:7px 12px;
-    border-radius:20px;
-    background:#241b12;
-    color:#ff9a3c;
-    font-size:12px;
-    font-weight:700;
+    align-items:center;
+    gap:5px;
+    min-height:17px;
+    padding:4px 9px;
+    border-radius:10px;
+    font-size:7px;
+    font-weight:800;
+    letter-spacing:1.1px;
+    text-transform:uppercase;
+    white-space:nowrap;
 }
 
-.order-card-bottom{
+.order-status::before{
+    content:"";
+    width:5px;
+    height:5px;
+    flex:0 0 5px;
+    border-radius:50%;
+    background:currentColor;
+}
+
+.badge-pending{
+    background:#3a2a12;
+    color:#ffad42;
+}
+
+.badge-processing{
+    background:#252525;
+    color:#999999;
+}
+
+.badge-shipped{
+    background:#17263d;
+    color:#5b9cff;
+}
+
+.badge-out-for-delivery{
+    background:#17263d;
+    color:#5b9cff;
+}
+
+.badge-delivered{
+    background:#123522;
+    color:#35c987;
+}
+
+.badge-cancelled{
+    background:#3a1718;
+    color:#ff5b5f;
+}
+
+.badge-return-requested{
+    background:#3a2a12;
+    color:#ffad42;
+}
+
+.badge-returned{
+    background:#2d1942;
+    color:#b96cff;
+}
+
+.order-meta{
     display:flex;
-    justify-content:flex-end;
-    padding-top:18px;
-    border-top:1px solid #252525;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    color:#777777;
+    font-size:9px;
+}
+
+.order-meta-item{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.order-meta-item i{
+    font-size:8px;
+    color:#666666;
+}
+
+.order-meta-separator{
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:#444444;
+}
+
+.payment-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:3px 8px;
+    border-radius:8px;
+    background:#1b1b1b;
+    color:#888888;
+    border:1px solid #292929;
+    font-size:7px;
+    font-weight:800;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.payment-badge i{
+    font-size:7px;
+}
+
+.order-right{
+    display:flex;
+    align-items:center;
+    gap:17px;
+    flex:0 0 auto;
+}
+
+.order-amount{
+    color:#ffffff;
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:-.5px;
+    white-space:nowrap;
+}
+
+.order-amount span{
+    color:#777777;
+    font-size:9px;
+    font-weight:600;
+    vertical-align:top;
+    margin-right:2px;
 }
 
 .view-order{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:11px 18px;
-    border-radius:9px;
-    background:#ff7a00;
-    color:#ffffff;
-    text-decoration:none;
-    font-size:13px;
-    font-weight:700;
-    transition:.3s;
-}
-
-.view-order:hover{
-    background:#ff922b;
-    transform:translateY(-1px);
-}
-
-.empty-orders{
-    text-align:center;
-    background:#111111;
-    border:1px solid #252525;
-    border-radius:18px;
-    padding:70px 30px;
-}
-
-.empty-orders i{
-    color:#555555;
-    font-size:55px;
-    margin-bottom:20px;
-}
-
-.empty-orders h2{
-    color:#ffffff;
-    margin-bottom:10px;
-}
-
-.empty-orders p{
-    color:#777777;
-    margin-bottom:25px;
-}
-
-.shop-button{
+    min-width:84px;
+    height:34px;
+    padding:0 13px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    height:48px;
-    padding:0 25px;
-    border-radius:10px;
+    gap:8px;
+    border-radius:18px;
+    background:#ffffff;
+    color:#050505;
+    text-decoration:none;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    transition:.2s;
+}
+
+.view-order i{
+    font-size:7px;
+}
+
+.view-order:hover{
+    background:#ff7a00;
+    color:#ffffff;
+    transform:translateX(1px);
+}
+
+.empty-orders{
+    padding:70px 30px;
+    text-align:center;
+    background:#111111;
+    border:1px solid #252525;
+    border-radius:17px;
+}
+
+.empty-orders i{
+    margin-bottom:20px;
+    color:#555555;
+    font-size:44px;
+}
+
+.empty-orders h2{
+    margin:0 0 9px;
+    color:#ffffff;
+    font-size:21px;
+    font-weight:800;
+}
+
+.empty-orders p{
+    margin:0 0 24px;
+    color:#777777;
+    font-size:12px;
+}
+
+.shop-button{
+    height:42px;
+    padding:0 21px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
     background:#ff7a00;
     color:#ffffff;
     text-decoration:none;
+    font-size:9px;
     font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition:.2s;
+}
+
+.shop-button:hover{
+    background:#ff922b;
 }
 
 .pagination{
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:8px;
-    margin-top:35px;
+    gap:6px;
+    margin-top:30px;
 }
 
 .pagination a,
 .pagination span{
-    min-width:40px;
-    height:40px;
-    padding:0 12px;
+    min-width:34px;
+    height:34px;
+    padding:0 10px;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-radius:8px;
+    border-radius:9px;
     text-decoration:none;
-    font-size:13px;
+    font-size:9px;
     font-weight:700;
 }
 
 .pagination a{
-    background:#171717;
     border:1px solid #2b2b2b;
-    color:#ffffff;
+    background:#111111;
+    color:#777777;
 }
 
 .pagination a:hover{
@@ -239,234 +517,543 @@ My Orders - StrideX
     color:#ffffff;
 }
 
-@media(max-width:768px){
-
-    .orders-section{
-        padding:40px 20px;
+@media(max-width:800px){
+    .orders-page{
+        padding:42px 18px 60px;
     }
 
-    .orders-header{
-        flex-direction:column;
-        align-items:stretch;
+    .orders-container{
+        max-width:100%;
     }
 
-    .order-search{
-        width:100%;
-    }
-
-    .order-search input{
-        flex:1;
-        width:auto;
-    }
-
-    .order-card-details{
-        grid-template-columns:1fr;
-        gap:15px;
-    }
-
-    .order-card-top{
-        flex-direction:column;
+    .orders-heading-top{
         align-items:flex-start;
     }
 
+    .orders-heading h1{
+        font-size:31px;
+    }
+
+    .orders-tools{
+        flex-wrap:wrap;
+    }
+
+    .orders-search{
+        flex:1 1 100%;
+    }
+
+    .status-filter{
+        flex:1;
+    }
+
+    .status-filter select{
+        width:100%;
+    }
+
+    .search-button,
+    .clear-button{
+        flex:0 0 auto;
+    }
+
+    .order-card{
+        padding:17px;
+    }
+
+    .order-right{
+        gap:10px;
+    }
+
+    .order-amount{
+        font-size:16px;
+    }
+
+    .view-order{
+        min-width:70px;
+        padding:0 10px;
+    }
+}
+
+@media(max-width:560px){
+    .orders-heading-top{
+        flex-direction:column;
+        gap:18px;
+    }
+
+    .orders-count{
+        align-self:flex-start;
+    }
+
+    .orders-tools{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+    }
+
+    .orders-search{
+        grid-column:1 / -1;
+    }
+
+    .status-filter{
+        width:100%;
+    }
+
+    .search-button,
+    .clear-button{
+        width:100%;
+    }
+
+    .order-card{
+        align-items:center;
+        padding:16px;
+    }
+
+    .order-icon{
+        width:40px;
+        height:40px;
+        flex-basis:40px;
+    }
+
+    .order-top-line{
+        gap:6px;
+    }
+
+    .order-id{
+        font-size:10px;
+    }
+
+    .order-right{
+        flex-direction:column;
+        align-items:flex-end;
+        justify-content:center;
+    }
+
+    .order-amount{
+        font-size:15px;
+    }
+
+    .view-order{
+        height:30px;
+        min-width:64px;
+        font-size:7px;
+    }
+
+    .order-meta{
+        gap:7px;
+    }
+}
+
+@media(max-width:420px){
+    .order-card{
+        display:grid;
+        grid-template-columns:40px minmax(0,1fr);
+        gap:12px;
+    }
+
+    .order-main{
+        width:100%;
+    }
+
+    .order-right{
+        grid-column:2;
+        width:100%;
+        flex-direction:row;
+        align-items:center;
+        justify-content:space-between;
+        margin-top:4px;
+    }
+
+    .order-amount{
+        font-size:16px;
+    }
+
+    .view-order{
+        min-width:76px;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="orders-container">
+<div class="orders-page">
+    <div class="orders-container">
 
-```
-<div class="orders-header">
+        <div class="orders-heading">
+            <div class="orders-heading-top">
 
-    <h1>
-        My Orders
-    </h1>
+                <div class="orders-heading-left">
 
-    <form
-        method="GET"
-        action="{% url 'order:order_list' %}"
-        class="order-search">
-
-        <input
-            type="text"
-            name="search"
-            value="{{ search }}"
-            placeholder="Search Order ID">
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-</div>
-
-{% if orders %}
-
-    <div class="orders-list">
-
-        {% for order in orders %}
-
-            <div class="order-card">
-
-                <div class="order-card-top">
-
-                    <div class="order-id">
-                        {{ order.order_id }}
+                    <div class="account-label">
+                        Account
                     </div>
 
-                    <div class="order-date">
-                        {{ order.created_at|date:"d M Y, h:i A" }}
-                    </div>
+                    <h1>
+                        My Orders
+                    </h1>
+
+                    <p>
+                        Track and manage your recent purchases
+                    </p>
 
                 </div>
 
-                <div class="order-card-details">
-
-                    <div>
-                        <span class="order-detail-label">
-                            Total Amount
-                        </span>
-
-                        <span class="order-detail-value">
-                            ₹{{ order.total_amount }}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span class="order-detail-label">
-                            Payment
-                        </span>
-
-                        <span class="order-detail-value">
-                            {{ order.get_payment_method_display }}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span class="order-detail-label">
-                            Status
-                        </span>
-
-                        <span class="order-status">
-                            {{ order.get_order_status_display }}
-                        </span>
-                    </div>
-
-                </div>
-
-                <div class="order-card-bottom">
-
-                    <a
-                        href="{% url 'order:order_detail' order.order_id %}"
-                        class="view-order">
-
-                        <i class="fa-solid fa-eye"></i>
-
-                        View Details
-
-                    </a>
-
+                <div class="orders-count">
+                    {{ page_obj.paginator.count }} Orders
                 </div>
 
             </div>
-
-        {% endfor %}
-
-    </div>
-
-    {% if page_obj.has_other_pages %}
-
-        <div class="pagination">
-
-            {% if page_obj.has_previous %}
-
-                <a
-                    href="?page=1{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    First
-                </a>
-
-                <a
-                    href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-
-            {% endif %}
-
-            {% for number in page_obj.paginator.page_range %}
-
-                {% if page_obj.number == number %}
-
-                    <span class="current">
-                        {{ number }}
-                    </span>
-
-                {% elif number > page_obj.number|add:"-2" and number < page_obj.number|add:"2" %}
-
-                    <a
-                        href="?page={{ number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                        {{ number }}
-                    </a>
-
-                {% endif %}
-
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-
-                <a
-                    href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-
-                <a
-                    href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search|urlencode }}{% endif %}">
-                    Last
-                </a>
-
-            {% endif %}
-
         </div>
 
-    {% endif %}
+        <form
+            method="GET"
+            action="{% url 'order:order_list' %}"
+            class="orders-tools"
+        >
 
-{% else %}
+            <div class="orders-search">
 
-    <div class="empty-orders">
+                <i class="fa-solid fa-magnifying-glass"></i>
 
-        <i class="fa-solid fa-box-open"></i>
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search order ID..."
+                    autocomplete="off"
+                >
 
-        <h2>
-            {% if search %}
-                No Orders Found
-            {% else %}
-                No Orders Yet
+            </div>
+
+            <div class="status-filter">
+
+                <select name="status">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option
+                        value="PENDING"
+                        {% if status == "PENDING" %}selected{% endif %}
+                    >
+                        Pending
+                    </option>
+
+                    <option
+                        value="PROCESSING"
+                        {% if status == "PROCESSING" %}selected{% endif %}
+                    >
+                        Processing
+                    </option>
+
+                    <option
+                        value="SHIPPED"
+                        {% if status == "SHIPPED" %}selected{% endif %}
+                    >
+                        Shipped
+                    </option>
+
+                    <option
+                        value="OUT_FOR_DELIVERY"
+                        {% if status == "OUT_FOR_DELIVERY" %}selected{% endif %}
+                    >
+                        Out for Delivery
+                    </option>
+
+                    <option
+                        value="DELIVERED"
+                        {% if status == "DELIVERED" %}selected{% endif %}
+                    >
+                        Delivered
+                    </option>
+
+                    <option
+                        value="CANCELLED"
+                        {% if status == "CANCELLED" %}selected{% endif %}
+                    >
+                        Cancelled
+                    </option>
+
+                    <option
+                        value="RETURN_REQUESTED"
+                        {% if status == "RETURN_REQUESTED" %}selected{% endif %}
+                    >
+                        Return Requested
+                    </option>
+
+                    <option
+                        value="RETURNED"
+                        {% if status == "RETURNED" %}selected{% endif %}
+                    >
+                        Returned
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="search-button"
+            >
+                Search
+            </button>
+
+            {% if search or status %}
+
+                <a
+                    href="{% url 'order:order_list' %}"
+                    class="clear-button"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                    Clear
+                </a>
+
             {% endif %}
-        </h2>
 
-        <p>
-            {% if search %}
-                We couldn't find an order matching your search.
-            {% else %}
-                Your orders will appear here after you place an order.
+        </form>
+
+        {% if orders %}
+
+            <div class="orders-list">
+
+                {% for order in orders %}
+
+                    <div class="order-card
+                        {% if order.order_status == 'PENDING' %}
+                            card-status-pending
+                        {% elif order.order_status == 'PROCESSING' %}
+                            card-status-processing
+                        {% elif order.order_status == 'SHIPPED' %}
+                            card-status-shipped
+                        {% elif order.order_status == 'OUT_FOR_DELIVERY' %}
+                            card-status-out-for-delivery
+                        {% elif order.order_status == 'DELIVERED' %}
+                            card-status-delivered
+                        {% elif order.order_status == 'CANCELLED' %}
+                            card-status-cancelled
+                        {% elif order.order_status == 'RETURN_REQUESTED' %}
+                            card-status-return-requested
+                        {% elif order.order_status == 'RETURNED' %}
+                            card-status-returned
+                        {% endif %}
+                    ">
+
+                        <div class="order-icon">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+
+                        <div class="order-main">
+
+                            <div class="order-top-line">
+
+                                <div class="order-id">
+                                    #{{ order.order_id }}
+                                </div>
+
+                                <div class="order-status
+                                    {% if order.order_status == 'PENDING' %}
+                                        badge-pending
+                                    {% elif order.order_status == 'PROCESSING' %}
+                                        badge-processing
+                                    {% elif order.order_status == 'SHIPPED' %}
+                                        badge-shipped
+                                    {% elif order.order_status == 'OUT_FOR_DELIVERY' %}
+                                        badge-out-for-delivery
+                                    {% elif order.order_status == 'DELIVERED' %}
+                                        badge-delivered
+                                    {% elif order.order_status == 'CANCELLED' %}
+                                        badge-cancelled
+                                    {% elif order.order_status == 'RETURN_REQUESTED' %}
+                                        badge-return-requested
+                                    {% elif order.order_status == 'RETURNED' %}
+                                        badge-returned
+                                    {% endif %}
+                                ">
+
+                                    {% if order.order_status == "DELIVERED" %}
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                    {% elif order.order_status == "RETURNED" %}
+
+                                        <i class="fa-solid fa-rotate-left"></i>
+
+                                    {% elif order.order_status == "CANCELLED" %}
+
+                                        <i class="fa-solid fa-xmark"></i>
+
+                                    {% elif order.order_status == "PENDING" %}
+
+                                        <i class="fa-solid fa-clock"></i>
+
+                                    {% elif order.order_status == "PROCESSING" %}
+
+                                        <i class="fa-solid fa-box"></i>
+
+                                    {% elif order.order_status == "SHIPPED" %}
+
+                                        <i class="fa-solid fa-truck"></i>
+
+                                    {% elif order.order_status == "OUT_FOR_DELIVERY" %}
+
+                                        <i class="fa-solid fa-truck-fast"></i>
+
+                                    {% elif order.order_status == "RETURN_REQUESTED" %}
+
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+
+                                    {% endif %}
+
+                                    {{ order.get_order_status_display }}
+
+                                </div>
+
+                            </div>
+
+                            <div class="order-meta">
+
+                                <div class="order-meta-item">
+
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    {{ order.created_at|date:"d M Y" }}
+
+                                </div>
+
+                                <span class="order-meta-separator"></span>
+
+                                <div class="payment-badge">
+
+                                    <i class="fa-solid fa-credit-card"></i>
+
+                                    {{ order.get_payment_method_display }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="order-right">
+
+                            <div class="order-amount">
+                                <span>₹</span>{{ order.total_amount|floatformat:0 }}
+                            </div>
+
+                            <a
+                                href="{% url 'order:order_detail' order.order_id %}"
+                                class="view-order"
+                            >
+                                Details
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% if page_obj.has_other_pages %}
+
+                <div class="pagination">
+
+                    {% if page_obj.has_previous %}
+
+                        <a
+                            href="?page=1{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                        >
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+
+                        <a
+                            href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                        >
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+
+                    {% endif %}
+
+                    {% for number in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == number %}
+
+                            <span class="current">
+                                {{ number }}
+                            </span>
+
+                        {% elif number > page_obj.number|add:"-2" and number < page_obj.number|add:"2" %}
+
+                            <a
+                                href="?page={{ number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                            >
+                                {{ number }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+
+                        <a
+                            href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                        >
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+
+                        <a
+                            href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status|urlencode }}{% endif %}"
+                        >
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
             {% endif %}
-        </p>
 
-        <a
-            href="{% url 'product:product_list' %}"
-            class="shop-button">
+        {% else %}
 
-            Continue Shopping
+            <div class="empty-orders">
 
-        </a>
+                <i class="fa-solid fa-box-open"></i>
+
+                <h2>
+
+                    {% if search or status %}
+                        No Orders Found
+                    {% else %}
+                        No Orders Yet
+                    {% endif %}
+
+                </h2>
+
+                <p>
+
+                    {% if search or status %}
+                        We couldn't find an order matching your selected filters.
+                    {% else %}
+                        Your orders will appear here after you place an order.
+                    {% endif %}
+
+                </p>
+
+                <a
+                    href="{% url 'product:product_list' %}"
+                    class="shop-button"
+                >
+                    Continue Shopping
+                </a>
+
+            </div>
+
+        {% endif %}
 
     </div>
-
-{% endif %}
-```
-
 </div>
 
 {% endblock %}

@@ -1228,7 +1228,10 @@ button{
                         <i class="fa-solid fa-cart-shopping"></i>
                         ADD TO CART
                     </button>
-                    <button type="button" class="buy-button">
+                    <button
+                        type="button"
+                        id="buyNowBtn"
+                        class="buy-button">
                         BUY NOW
                     </button>
 
@@ -1535,6 +1538,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sku = document.getElementById("productSku");
     const addToCartBtn = document.getElementById("addToCartBtn");
     const wishlistBtn = document.getElementById("wishlistBtn");
+    const buyNowBtn = document.getElementById("buyNowBtn");
 
     thumbnails.forEach(function (item) {
 
@@ -2014,6 +2018,127 @@ document.addEventListener("DOMContentLoaded", function () {
                     timer: 1800,
                     timerProgressBar: true
                 });
+
+            });
+
+        });
+
+    }
+    if (buyNowBtn) {
+
+        buyNowBtn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            const activeVariant = document.querySelector(".size-btn.active");
+
+            if (!activeVariant) {
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please select a size",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                return;
+            }
+
+            const stock = parseInt(
+                activeVariant.dataset.stock
+            );
+
+            if (stock <= 0) {
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Product is out of stock",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                return;
+            }
+
+            const variantId =
+                activeVariant.dataset.variantId;
+
+            if (!variantId) {
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Please select a valid variant",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                return;
+            }
+
+            const url = `/cart/add/${variantId}/`;
+
+            buyNowBtn.disabled = true;
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                return response.json();
+            })
+            .then(data => {
+
+                if (!data.success) {
+
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "error",
+                        title: data.message || "Unable to buy this product",
+                        showConfirmButton: false,
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
+
+                    buyNowBtn.disabled = false;
+
+                    return;
+                }
+
+                window.location.href = "{% url 'order:checkout' %}";
+
+            })
+            .catch(function (error) {
+
+                console.error("Buy Now error:", error);
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Something went wrong",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true
+                });
+
+                buyNowBtn.disabled = false;
 
             });
 

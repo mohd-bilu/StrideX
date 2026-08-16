@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 25px 30px 30px 30px;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #111111;
+            font-size: 9px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            width: 100%;
+        }
+
+        .header {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .header-left {
+            width: 55%;
+            vertical-align: top;
+        }
+
+        .header-right {
+            width: 45%;
+            vertical-align: top;
+            text-align: right;
+        }
+
+        .brand {
+            font-size: 31px;
+            font-weight: bold;
+            letter-spacing: -1px;
+            line-height: 32px;
+        }
+
+        .brand-subtitle {
+            font-size: 8px;
+            letter-spacing: 1.4px;
+            color: #777777;
+            margin-top: 2px;
+        }
+
+        .invoice-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .invoice-number {
+            font-size: 10px;
+            color: #555555;
+            margin-bottom: 7px;
+        }
+
+        .invoice-date {
+            font-size: 9px;
+            color: #555555;
+        }
+
+        .customer-section {
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 42px;
+        }
+
+        .customer-column {
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .customer-name {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .customer-line {
+            font-size: 9px;
+            color: #333333;
+            line-height: 14px;
+        }
+
+        .order-items-title {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .items-header {
+            background-color: #000000;
+            color: #ffffff;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .items-header td {
+            padding: 12px 7px;
+            vertical-align: middle;
+        }
+
+        .product-header {
+            width: 47%;
+        }
+
+        .qty-header {
+            width: 10%;
+            text-align: center;
+        }
+
+        .price-header {
+            width: 14%;
+            text-align: center;
+        }
+
+        .amount-header {
+            width: 14%;
+            text-align: center;
+        }
+
+        .status-header {
+            width: 15%;
+            text-align: center;
+        }
+
+        .item-row td {
+            border-left: 1px solid #dddddd;
+            border-right: 1px solid #dddddd;
+            border-bottom: 1px solid #dddddd;
+            padding: 12px 8px;
+            vertical-align: top;
+            height: 75px;
+        }
+
+        .product-name {
+            font-size: 9px;
+            font-weight: bold;
+            margin-bottom: 26px;
+        }
+
+        .product-variant {
+            font-size: 7.5px;
+            color: #777777;
+        }
+
+        .qty {
+            text-align: center;
+            vertical-align: middle !important;
+            font-size: 9px;
+        }
+
+        .price {
+            text-align: center;
+            vertical-align: middle !important;
+            font-size: 9px;
+            line-height: 14px;
+        }
+
+        .amount {
+            text-align: center;
+            vertical-align: middle !important;
+            font-size: 9px;
+            line-height: 14px;
+        }
+
+        .status {
+            text-align: center;
+            vertical-align: middle !important;
+            font-size: 8px;
+            word-wrap: break-word;
+        }
+
+        .summary {
+            width: 100%;
+            margin-top: 38px;
+        }
+
+        .summary-row {
+            width: 100%;
+            margin-bottom: 17px;
+        }
+
+        .summary-label {
+            width: 70%;
+            font-size: 9px;
+            vertical-align: middle;
+        }
+
+        .summary-value {
+            width: 30%;
+            text-align: right;
+            font-size: 9px;
+            vertical-align: middle;
+        }
+
+        .total-line {
+            border-top: 2px solid #000000;
+            padding-top: 9px;
+            margin-top: 5px;
+        }
+
+        .total-label {
+            width: 70%;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .total-value {
+            width: 30%;
+            text-align: right;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            color: #999999;
+            font-size: 7.5px;
+            margin-top: 68px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <table class="header">
+        <tr>
+            <td class="header-left">
+                <div class="brand">StrideX</div>
+                <div class="brand-subtitle">PREMIUM STORE</div>
+            </td>
+
+            <td class="header-right">
+                <div class="invoice-title">INVOICE</div>
+                <div class="invoice-number">
+                    #{{ order.order_id }}
+                </div>
+                <div class="invoice-date">
+                    DATE:
+                    {{ order.created_at|date:"d M Y H:i" }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="customer-section">
+        <tr>
+            <td class="customer-column">
+                <div class="section-title">BILL TO:</div>
+
+                <div class="customer-name">
+                    {{ order.user.full_name }}
+                </div>
+
+                <div class="customer-line">
+                    {{ order.user.email }}
+                </div>
+
+                {% if order.user.phone_number %}
+                <div class="customer-line">
+                    {{ order.user.phone_number }}
+                </div>
+                {% endif %}
+            </td>
+
+            <td class="customer-column">
+                <div class="section-title">SHIP TO:</div>
+
+                <div class="customer-name">
+                    {{ order.address.full_name }}
+                </div>
+
+                {% if order.address.address_line1 %}
+                <div class="customer-line">
+                    {{ order.address.address_line1 }}
+                </div>
+                {% endif %}
+
+                {% if order.address.address_line2 %}
+                <div class="customer-line">
+                    {{ order.address.address_line2 }}
+                </div>
+                {% endif %}
+
+                <div class="customer-line">
+                    {{ order.address.city }},
+                    {{ order.address.state }}
+                    -
+                    {{ order.address.pincode }}
+                </div>
+
+                <div class="customer-line">
+                    {{ order.address.country }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="order-items-title">
+        ORDER ITEMS
+    </div>
+
+    <table class="items-table">
+
+        <tr class="items-header">
+            <td class="product-header">
+                PRODUCT
+            </td>
+
+            <td class="qty-header">
+                QTY
+            </td>
+
+            <td class="price-header">
+                UNIT<br>
+                PRICE
+            </td>
+
+            <td class="amount-header">
+                AMOUNT
+            </td>
+
+            <td class="status-header">
+                STATUS
+            </td>
+        </tr>
+
+        {% for item in invoice_items %}
+
+        <tr class="item-row">
+
+            <td>
+                <div class="product-name">
+                    {{ item.variant.product.product_name }}
+                </div>
+
+                <div class="product-variant">
+                    {{ item.variant }}
+                </div>
+            </td>
+
+            <td class="qty">
+                {{ item.quantity }}
+            </td>
+
+            <td class="price">
+                INR<br>
+                {{ item.price|floatformat:2 }}
+            </td>
+
+            <td class="amount">
+                INR<br>
+                {{ item.total_price|floatformat:2 }}
+            </td>
+
+            <td class="status">
+                {{ item.get_status_display }}
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr class="item-row">
+            <td colspan="5" style="text-align:center;">
+                No invoice items available.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <table class="summary">
+
+        <tr class="summary-row">
+            <td class="summary-label">
+                SUBTOTAL
+            </td>
+
+            <td class="summary-value">
+                INR {{ order.subtotal|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr class="summary-row">
+            <td class="summary-label">
+                DISCOUNT
+            </td>
+
+            <td class="summary-value">
+                - INR {{ order.discount|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr class="summary-row">
+            <td class="summary-label">
+                SHIPPING
+            </td>
+
+            <td class="summary-value">
+                + INR {{ order.shipping_charge|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="total-line"></td>
+        </tr>
+
+        <tr>
+            <td class="total-label">
+                TOTAL AMOUNT
+            </td>
+
+            <td class="total-value">
+                INR {{ order.total_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+    </table>
+
+    <div class="footer">
+        Thank you for shopping with VERSE.
+        If you have any questions about this invoice,
+        please contact our support team.
+    </div>
+
+</div>
+
+</body>
+</html>
