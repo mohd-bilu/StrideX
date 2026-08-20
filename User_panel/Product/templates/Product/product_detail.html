@@ -1,21 +1,12 @@
+{% extends "user_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>{{ product.product_name }}</title>
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+{% block title %}
+{{ product.product_name }} - StrideX
+{% endblock %}
+{% block extra_css %}
 <style>
+
     /* ==========================================================
    GLOBAL
 ========================================================== */
@@ -494,35 +485,49 @@ button{
 /* ==========================================================
    WISHLIST
 ========================================================== */
-
-.wishlist-btn{
+.wishlist-button{
     width:60px;
     height:60px;
+    flex:0 0 60px;
     display:flex;
     align-items:center;
     justify-content:center;
     border-radius:50%;
-    background:#141414;
-    border:1px solid #2f2f2f;
+    background:#111111;
+    border:1.5px solid #ffffff;
     color:#ffffff;
-    transition:.35s ease;
-    font-size:20px;
+    cursor:pointer;
+    transition:.3s ease;
+    font-size:22px;
+    padding:0;
 }
 
-.wishlist-btn:hover{
-    background:#ff7a00;
+.wishlist-button i{
+    transition:.3s ease;
+}
+
+.wishlist-button:hover{
     border-color:#ff7a00;
-    color:#fff;
+    color:#ff7a00;
     transform:translateY(-3px);
-    box-shadow:0 12px 30px rgba(255,122,0,.35);
+    box-shadow:0 10px 25px rgba(255,122,0,.25);
 }
 
-.wishlist-btn.active{
+.wishlist-button.active{
     background:#ff7a00;
     border-color:#ff7a00;
+    color:#ffffff;
+    box-shadow:0 10px 25px rgba(255,122,0,.30);
 }
 
+.wishlist-button.active i{
+    color:#ffffff;
+}
 
+.wishlist-button:focus-visible{
+    outline:2px solid #ff7a00;
+    outline-offset:3px;
+}
 
 /* ==========================================================
    ADD TO CART
@@ -940,7 +945,12 @@ button{
         flex-direction:column;
     }
 
-    .wishlist-button,
+    .wishlist-button{
+        width:60px;
+        height:60px;
+        flex:0 0 60px;
+    }
+
     .cart-button,
     .buy-button{
         width:100%;
@@ -1001,10 +1011,8 @@ button{
 
 }
 </style>
-
-</head>
-
-<body>
+{% endblock %}
+{% block content %}
 
 
 <section class="product-detail-section">
@@ -1018,8 +1026,8 @@ button{
 
             <span>/</span>
 
-            <a href="{% url 'product:product_list' %}">
-                Products
+            <a href="{% url 'product:category_list' %}">
+                Categories
             </a>
 
             <span>/</span>
@@ -1143,12 +1151,7 @@ button{
                         </span>
                     </div>
 
-                    <div class="sku-row">
-                        SKU :
-                        <span id="productSku">
-                            {{ selected_variant.sku }}
-                        </span>
-                    </div>
+                    
 
                 {% endwith %}
 
@@ -1204,21 +1207,17 @@ button{
                         type="button"
                         id="wishlistBtn"
                         class="wishlist-button ajax-wishlist {% if variant.id in wishlist_variant_ids %}active{% endif %}"
-                        data-url="{% url 'add_to_wishlist' variant.id %}">
+                        data-url="{% url 'add_to_wishlist' variant.id %}"
+                        aria-label="Add to wishlist"
+                        title="Add to wishlist">
 
                         {% if variant.id in wishlist_variant_ids %}
-
                             <i class="fa-solid fa-heart"></i>
-
                         {% else %}
-
                             <i class="fa-regular fa-heart"></i>
-
                         {% endif %}
 
-                        WISHLIST
-
-                    </button> 
+                    </button>
 
                     <button
                         type="button"
@@ -1522,7 +1521,10 @@ button{
     </div>
 
 </section>
+
 {{ variant_data|json_script:"variant-data" }}
+{% endblock %}
+{% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -2148,6 +2150,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-</body>
-
-</html>
+{% endblock %}

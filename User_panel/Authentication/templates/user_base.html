@@ -1655,28 +1655,27 @@ main{
         </a>
 
 
-        <!-- ===========================
-                NAVIGATION
-        ============================ -->
+<!-- ===========================
+        NAVIGATION
+============================ -->
 
-        <nav class="nav-links">
+    <nav class="nav-links">
 
-    <a href="{% url 'home' %}"
-       class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
-        Home
-    </a>
+        <a href="{% url 'home' %}"
+        class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            Home
+        </a>
 
-    <a href="{% url 'product:product_list' %}"
-       class="{% if request.resolver_match.url_name == 'product:product_list' %}active{% endif %}">
-        Categories
-    </a>
+        <a href="{% url 'product:category_list' %}"
+        class="{% if request.resolver_match.url_name == 'category_list' %}active{% endif %}">
+            Categories
+        </a>
 
-    <a href="#">
-        About
-    </a>
+        <a href="#">
+            About
+        </a>
 
-</nav>
-
+    </nav>
         <!-- ===========================
                 RIGHT SECTION
         ============================ -->

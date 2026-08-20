@@ -500,6 +500,39 @@ Order Details - StrideX
     font-weight: 600;
 }
 
+.stride-item-action {
+    margin-top: 10px;
+}
+
+.stride-cancel-item-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 11px;
+    border: 1px solid rgba(255, 92, 80, .3);
+    border-radius: 7px;
+    background: rgba(255, 92, 80, .08);
+    color: #ff6658;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.stride-cancel-item-button:hover {
+    background: #ff6658;
+    border-color: #ff6658;
+    color: #fff;
+}
+
+.stride-cancel-item-button i {
+    font-size: 8px;
+}
+
 /* ADDRESS */
 
 .stride-address-content {
@@ -730,7 +763,7 @@ Order Details - StrideX
     color: #666;
 }
 
-/* CANCEL */
+/* CANCEL ORDER */
 
 .stride-cancel-area {
     display: flex;
@@ -785,6 +818,9 @@ Order Details - StrideX
 .stride-cancel-button:hover {
     background: #b63827;
 }
+
+/* RETURN */
+
 .stride-return-card {
     overflow: hidden;
 }
@@ -850,6 +886,8 @@ Order Details - StrideX
     border-color: #a94f00;
     color: #fff;
 }
+
+/* RETURN MODAL */
 
 .stride-return-modal-overlay {
     position: fixed;
@@ -1094,33 +1132,169 @@ Order Details - StrideX
     background: #a94f00;
 }
 
-@media (max-width: 600px) {
-    .stride-return-box {
-        align-items: flex-start;
-        flex-wrap: wrap;
-    }
+/* CANCEL ITEM MODAL */
+.stride-cancel-reason-group {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
 
-    .stride-return-content {
-        width: calc(100% - 55px);
-    }
+.stride-cancel-reason-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
 
-    .stride-return-open-button {
-        width: 100%;
-        margin-top: 5px;
-    }
+.stride-cancel-reason-label span {
+    color: #666;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    text-transform: none;
+}
 
-    .stride-return-modal {
-        padding: 20px;
-    }
+.stride-cancel-reason-input {
+    width: 100%;
+    min-height: 82px;
+    padding: 11px 12px;
+    border: 1px solid #303030;
+    border-radius: 9px;
+    background: #0d0d0d;
+    color: #fff;
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 10px;
+    line-height: 1.5;
+    transition: .2s ease;
+}
 
-    .stride-return-modal-actions {
-        flex-direction: column-reverse;
-    }
+.stride-cancel-reason-input::placeholder {
+    color: #555;
+}
 
-    .stride-return-cancel-button,
-    .stride-return-submit-button {
-        width: 100%;
-    }
+.stride-cancel-reason-input:hover {
+    border-color: #444;
+}
+
+.stride-cancel-reason-input:focus {
+    border-color: #ff6658;
+    background: #101010;
+    box-shadow: 0 0 0 2px rgba(255,102,88,.08);
+}
+.stride-cancel-item-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .72);
+    backdrop-filter: blur(5px);
+}
+
+.stride-cancel-item-modal-overlay.active {
+    display: flex;
+}
+
+.stride-cancel-item-modal {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    border: 1px solid #292929;
+    border-radius: 17px;
+    background: #111;
+    text-align: center;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
+}
+
+.stride-cancel-item-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #292929;
+    border-radius: 50%;
+    background: #191919;
+    color: #777;
+    cursor: pointer;
+}
+
+.stride-cancel-item-modal-close:hover {
+    background: #292929;
+    color: #fff;
+}
+
+.stride-cancel-item-modal-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 92, 80, .1);
+    border: 1px solid rgba(255, 92, 80, .25);
+    color: #ff6658;
+    font-size: 18px;
+}
+
+.stride-cancel-item-modal h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.stride-cancel-item-modal p {
+    margin: 10px 0 25px;
+    color: #777;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.stride-cancel-item-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.stride-cancel-item-no,
+.stride-cancel-item-yes {
+    flex: 1;
+    height: 42px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.stride-cancel-item-no {
+    border: 1px solid #303030;
+    background: #191919;
+    color: #aaa;
+}
+
+.stride-cancel-item-no:hover {
+    border-color: #555;
+    color: #fff;
+}
+
+.stride-cancel-item-yes {
+    border: 1px solid #a32f25;
+    background: #8f2d20;
+    color: #fff;
+}
+
+.stride-cancel-item-yes:hover {
+    background: #b63827;
+    border-color: #b63827;
 }
 
 /* EMPTY */
@@ -1134,7 +1308,6 @@ Order Details - StrideX
 /* RESPONSIVE */
 
 @media(max-width:950px) {
-
     .stride-order-grid {
         grid-template-columns: 1fr;
     }
@@ -1155,7 +1328,6 @@ Order Details - StrideX
 }
 
 @media(max-width:700px) {
-
     .stride-order-detail {
         padding: 30px 16px 60px;
     }
@@ -1245,8 +1417,36 @@ Order Details - StrideX
     }
 }
 
-@media(max-width:480px) {
+@media(max-width:600px) {
+    .stride-return-box {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
 
+    .stride-return-content {
+        width: calc(100% - 55px);
+    }
+
+    .stride-return-open-button {
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .stride-return-modal {
+        padding: 20px;
+    }
+
+    .stride-return-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .stride-return-cancel-button,
+    .stride-return-submit-button {
+        width: 100%;
+    }
+}
+
+@media(max-width:480px) {
     .stride-order-detail {
         padding: 25px 12px 50px;
     }
@@ -1266,6 +1466,19 @@ Order Details - StrideX
 
     .stride-order-grid {
         overflow: hidden;
+    }
+
+    .stride-cancel-item-modal {
+        padding: 25px 20px;
+    }
+
+    .stride-cancel-item-modal-actions {
+        flex-direction: column;
+    }
+
+    .stride-cancel-item-no,
+    .stride-cancel-item-yes {
+        width: 100%;
     }
 }
 </style>
@@ -1358,7 +1571,6 @@ Order Details - StrideX
 
     </div>
 
-
     <!-- RETURNED ORDER -->
 
     {% if order.order_status == "RETURNED" %}
@@ -1366,9 +1578,7 @@ Order Details - StrideX
         <div class="stride-returned-banner" style="margin-top:25px;">
 
             <div class="stride-returned-icon">
-
                 <i class="fa-solid fa-arrow-left"></i>
-
             </div>
 
             <div>
@@ -1394,15 +1604,40 @@ Order Details - StrideX
             <div class="stride-status-line"></div>
 
             {% if order.order_status == "PENDING" %}
-                <div class="stride-status-line-active" style="width:0%;"></div>
+
+                <div
+                    class="stride-status-line-active"
+                    style="width:0%;"
+                ></div>
+
             {% elif order.order_status == "PROCESSING" %}
-                <div class="stride-status-line-active" style="width:20%;"></div>
+
+                <div
+                    class="stride-status-line-active"
+                    style="width:20%;"
+                ></div>
+
             {% elif order.order_status == "SHIPPED" %}
-                <div class="stride-status-line-active" style="width:40%;"></div>
+
+                <div
+                    class="stride-status-line-active"
+                    style="width:40%;"
+                ></div>
+
             {% elif order.order_status == "OUT_FOR_DELIVERY" %}
-                <div class="stride-status-line-active" style="width:60%;"></div>
+
+                <div
+                    class="stride-status-line-active"
+                    style="width:60%;"
+                ></div>
+
             {% elif order.order_status == "DELIVERED" %}
-                <div class="stride-status-line-active" style="width:82%;"></div>
+
+                <div
+                    class="stride-status-line-active"
+                    style="width:82%;"
+                ></div>
+
             {% endif %}
 
             <div class="stride-timeline-step completed">
@@ -1441,11 +1676,17 @@ Order Details - StrideX
                 <div class="stride-timeline-date">
 
                     {% if order.order_status == "PROCESSING" %}
+
                         In Progress
+
                     {% elif order.order_status == "SHIPPED" or order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
+
                         Completed
+
                     {% else %}
+
                         Pending
+
                     {% endif %}
 
                 </div>
@@ -1472,9 +1713,13 @@ Order Details - StrideX
                 <div class="stride-timeline-date">
 
                     {% if order.order_status == "SHIPPED" or order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
+
                         Completed
+
                     {% else %}
+
                         Pending
+
                     {% endif %}
 
                 </div>
@@ -1501,9 +1746,13 @@ Order Details - StrideX
                 <div class="stride-timeline-date">
 
                     {% if order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
+
                         Completed
+
                     {% else %}
+
                         Pending
+
                     {% endif %}
 
                 </div>
@@ -1530,9 +1779,13 @@ Order Details - StrideX
                 <div class="stride-timeline-date">
 
                     {% if order.order_status == "DELIVERED" %}
+
                         Completed
+
                     {% else %}
+
                         Pending
+
                     {% endif %}
 
                 </div>
@@ -1543,7 +1796,6 @@ Order Details - StrideX
 
     {% endif %}
 
-
     <!-- MAIN -->
 
     <div class="stride-order-grid">
@@ -1551,7 +1803,6 @@ Order Details - StrideX
         <!-- LEFT -->
 
         <div class="stride-main-column">
-
 
             <!-- ORDER ITEMS -->
 
@@ -1657,45 +1908,8 @@ Order Details - StrideX
 
                                 {% elif item.status == "DELIVERED" %}
 
-                                <span class="stride-item-status status-delivered">
-                                    Delivered
-                                </span>
-
-                            {% elif item.status == "RETURN_REQUESTED" %}
-
-                                <span class="stride-item-status status-return-requested">
-                                    Return Requested
-                                </span>
-
-                                <div class="stride-item-return-message">
-                                    Return requested:
-                                    {{ item.return_reason|default:"No reason provided." }}
-                                </div>
-
-                            {% elif item.status == "RETURNED" %}
-
-                                <span class="stride-item-status status-returned">
-                                    Returned
-                                </span>
-
-                                <div class="stride-item-returned-message">
-                                    Return approved and refund processed.
-                                </div>
-
-                            {% elif item.status == "REJECTED" %}
-
-                                <span class="stride-item-status status-rejected">
-                                    Return Rejected
-                                </span>
-
-                                <div class="stride-item-rejected-message">
-                                    {{ item.rejection_reason|default:"Return request rejected." }}
-                                </div>
-
-                                {% elif item.status == "CANCELLED" %}
-
-                                    <span class="stride-item-status status-cancelled">
-                                        Cancelled
+                                    <span class="stride-item-status status-delivered">
+                                        Delivered
                                     </span>
 
                                 {% elif item.status == "RETURN_REQUESTED" %}
@@ -1729,6 +1943,29 @@ Order Details - StrideX
                                         {{ item.rejection_reason|default:"Return request rejected." }}
                                     </div>
 
+                                {% elif item.status == "CANCELLED" %}
+
+                                    <span class="stride-item-status status-cancelled">
+                                        Cancelled
+                                    </span>
+
+                                {% endif %}
+
+                                {% if item.status == "PENDING" or item.status == "PROCESSING" %}
+
+                                    <div class="stride-item-action">
+
+                                        <button
+                                            type="button"
+                                            class="stride-cancel-item-button"
+                                            onclick="openCancelItemModal('{% url "order:cancel_order_item" order.order_id item.id %}')"
+                                        >
+                                            <i class="fa-solid fa-xmark"></i>
+                                            Cancel Item
+                                        </button>
+
+                                    </div>
+
                                 {% endif %}
 
                             </div>
@@ -1755,7 +1992,6 @@ Order Details - StrideX
 
             </div>
 
-
             <!-- SHIPPING ADDRESS -->
 
             <div class="stride-card">
@@ -1773,9 +2009,7 @@ Order Details - StrideX
                 <div class="stride-address-content">
 
                     <div class="stride-address-icon">
-
                         <i class="fa-solid fa-location-dot"></i>
-
                     </div>
 
                     <div>
@@ -1816,7 +2050,6 @@ Order Details - StrideX
                 </div>
 
             </div>
-
 
             <!-- PAYMENT -->
 
@@ -1872,7 +2105,6 @@ Order Details - StrideX
 
             </div>
 
-
             <!-- CANCEL ORDER -->
 
             {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
@@ -1922,11 +2154,9 @@ Order Details - StrideX
 
         </div>
 
-
         <!-- RIGHT -->
 
         <div class="stride-side-column">
-
 
             <!-- PRICE SUMMARY -->
 
@@ -1965,11 +2195,15 @@ Order Details - StrideX
                         <span class="stride-summary-value">
 
                             {% if order.shipping_charge == 0 %}
+
                                 <span style="color:#54d889;">
                                     FREE
                                 </span>
+
                             {% else %}
+
                                 ₹{{ order.shipping_charge }}
+
                             {% endif %}
 
                         </span>
@@ -2025,42 +2259,44 @@ Order Details - StrideX
                 </div>
 
             </div>
+
+            <!-- RETURN ORDER -->
+
             {% if has_returnable_items %}
 
-            <div class="stride-card stride-return-card">
+                <div class="stride-card stride-return-card">
 
-                <div class="stride-return-box">
+                    <div class="stride-return-box">
 
-                    <div class="stride-return-icon">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </div>
+                        <div class="stride-return-icon">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </div>
 
-                    <div class="stride-return-content">
+                        <div class="stride-return-content">
 
-                        <div class="stride-return-title">
+                            <div class="stride-return-title">
+                                Return Order
+                            </div>
+
+                            <div class="stride-return-description">
+                                Request a return for a delivered item.
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="stride-return-open-button"
+                            onclick="openReturnModal()"
+                        >
                             Return Order
-                        </div>
-
-                        <div class="stride-return-description">
-                            Request a return for a delivered item.
-                        </div>
+                        </button>
 
                     </div>
-
-                    <button
-                        type="button"
-                        class="stride-return-open-button"
-                        onclick="openReturnModal()"
-                    >
-                        Return Order
-                    </button>
 
                 </div>
 
-            </div>
-
             {% endif %}
-
 
             <!-- INVOICE -->
 
@@ -2074,11 +2310,8 @@ Order Details - StrideX
                             href="{% url 'order:download_invoice' order.order_id %}"
                             class="stride-invoice-button"
                         >
-
                             <i class="fa-solid fa-download"></i>
-
                             Download Invoice
-
                         </a>
 
                     </div>
@@ -2087,7 +2320,6 @@ Order Details - StrideX
 
             {% endif %}
 
-
             <!-- HELP -->
 
             <div class="stride-card">
@@ -2095,9 +2327,7 @@ Order Details - StrideX
                 <div class="stride-help-card">
 
                     <div class="stride-help-icon">
-
                         <i class="fa-regular fa-comment-dots"></i>
-
                     </div>
 
                     <div class="stride-help-info">
@@ -2113,9 +2343,7 @@ Order Details - StrideX
                     </div>
 
                     <div class="stride-help-arrow">
-
                         <i class="fa-solid fa-chevron-right"></i>
-
                     </div>
 
                 </div>
@@ -2127,6 +2355,9 @@ Order Details - StrideX
     </div>
 
 </div>
+
+<!-- RETURN ORDER MODAL -->
+
 <div
     id="returnOrderModal"
     class="stride-return-modal-overlay"
@@ -2166,7 +2397,6 @@ Order Details - StrideX
 
         </div>
 
-
         <form
             method="POST"
             action="{% url 'order:request_return' order.order_id %}"
@@ -2175,75 +2405,71 @@ Order Details - StrideX
 
             {% csrf_token %}
 
-
             <div class="stride-return-form-section">
 
                 <label class="stride-return-form-label">
                     SELECT PRODUCT
                 </label>
 
-
                 {% for item in order_items %}
 
                     {% if item.status == "DELIVERED" %}
 
-                    <label class="stride-return-item">
+                        <label class="stride-return-item">
 
-                        <input
-                            type="radio"
-                            name="item_id"
-                            value="{{ item.id }}"
-                            {% if forloop.first %}checked{% endif %}
-                            required
-                        >
+                            <input
+                                type="radio"
+                                name="item_id"
+                                value="{{ item.id }}"
+                                required
+                            >
 
-                        <span class="stride-return-item-image">
+                            <span class="stride-return-item-image">
 
-                            {% with image=item.variant.images.first %}
+                                {% with image=item.variant.images.first %}
 
-                                {% if image %}
+                                    {% if image %}
 
-                                    <img
-                                        src="{{ image.image.url }}"
-                                        alt="{{ item.variant.product.product_name }}"
-                                    >
+                                        <img
+                                            src="{{ image.image.url }}"
+                                            alt="{{ item.variant.product.product_name }}"
+                                        >
 
-                                {% else %}
+                                    {% else %}
 
-                                    <i class="fa-solid fa-box"></i>
+                                        <i class="fa-solid fa-box"></i>
 
-                                {% endif %}
+                                    {% endif %}
 
-                            {% endwith %}
+                                {% endwith %}
 
-                        </span>
+                            </span>
 
-                        <span class="stride-return-item-info">
+                            <span class="stride-return-item-info">
 
-                            <strong>
-                                {{ item.variant.product.product_name }}
-                            </strong>
+                                <strong>
+                                    {{ item.variant.product.product_name }}
+                                </strong>
 
-                            <small>
-                                {{ item.variant }}
-                            </small>
+                                <small>
+                                    {{ item.variant }}
+                                </small>
 
-                            <small>
-                                Qty: {{ item.quantity }}
-                            </small>
+                                <small>
+                                    Qty: {{ item.quantity }}
+                                </small>
 
-                        </span>
+                            </span>
 
-                        <span class="stride-return-radio"></span>
+                            <span class="stride-return-radio"></span>
 
-                    </label>
+                        </label>
 
                     {% endif %}
 
                 {% endfor %}
 
             </div>
-
 
             <div class="stride-return-form-section">
 
@@ -2263,7 +2489,6 @@ Order Details - StrideX
                 ></textarea>
 
             </div>
-
 
             <div class="stride-return-modal-actions">
 
@@ -2291,7 +2516,96 @@ Order Details - StrideX
 
 </div>
 
+<!-- CANCEL ITEM MODAL -->
+
+<!-- CANCEL ITEM MODAL -->
+
+<div
+    id="cancelItemModal"
+    class="stride-cancel-item-modal-overlay"
+    onclick="closeCancelItemModal(event)"
+>
+
+    <div
+        class="stride-cancel-item-modal"
+        onclick="event.stopPropagation()"
+    >
+
+        <button
+            type="button"
+            class="stride-cancel-item-modal-close"
+            onclick="closeCancelItemModal()"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="stride-cancel-item-modal-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h3>
+            Cancel This Item?
+        </h3>
+
+        <p>
+            Are you sure you want to cancel this product?
+            The quantity will be added back to stock.
+        </p>
+
+        <form
+            method="POST"
+            id="cancelItemForm"
+        >
+
+            {% csrf_token %}
+
+            <div class="stride-cancel-reason-group">
+
+                <label
+                    for="cancelItemReason"
+                    class="stride-cancel-reason-label"
+                >
+                    Cancellation Reason
+                    <span>(Optional)</span>
+                </label>
+
+                <textarea
+                    id="cancelItemReason"
+                    name="cancel_reason"
+                    class="stride-cancel-reason-input"
+                    placeholder="Enter your reason for cancelling this item..."
+                    rows="3"
+                ></textarea>
+
+            </div>
+
+            <div class="stride-cancel-item-modal-actions">
+
+                <button
+                    type="button"
+                    class="stride-cancel-item-no"
+                    onclick="closeCancelItemModal()"
+                >
+                    Keep Item
+                </button>
+
+                <button
+                    type="submit"
+                    class="stride-cancel-item-yes"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel Item
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 {% endblock %}
+
 {% block extra_js %}
 <script>
 function openReturnModal() {
@@ -2324,9 +2638,43 @@ function closeReturnModal(event) {
     document.body.style.overflow = "";
 }
 
+function openCancelItemModal(cancelUrl) {
+    const modal = document.getElementById("cancelItemModal");
+    const form = document.getElementById("cancelItemForm");
+
+    if (!modal || !form) {
+        return;
+    }
+
+    form.action = cancelUrl;
+
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeCancelItemModal(event) {
+    if (
+        event &&
+        event.target &&
+        event.target.id !== "cancelItemModal"
+    ) {
+        return;
+    }
+
+    const modal = document.getElementById("cancelItemModal");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+}
+
 document.addEventListener("keydown", function(event) {
     if (event.key === "Escape") {
         closeReturnModal();
+        closeCancelItemModal();
     }
 });
 </script>

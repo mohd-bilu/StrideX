@@ -27,35 +27,59 @@ def checkout(request):
         )
         .first()
     )
+
     addresses = Address.objects.filter(
         user=request.user
     )
+
     default_address = addresses.filter(
         is_default=True
     ).first()
+
+    selected_address_id = request.GET.get("address")
+
+    selected_address = None
+
+    if selected_address_id:
+        selected_address = addresses.filter(
+            id=selected_address_id
+        ).first()
+
+    if not selected_address:
+        selected_address = default_address
+
     cart_items = []
     subtotal = Decimal("0.00")
     discount = Decimal("0.00")
     shipping = Decimal("0.00")
     total = Decimal("0.00")
+
     if cart:
         cart_items = list(cart.items.all())
+
         for item in cart_items:
-            item_total = item.variant.price * item.quantity
+            item_total = (
+                item.variant.price * item.quantity
+            )
+
             item.item_total = item_total
             subtotal += item_total
+
     total = subtotal - discount + shipping
+
     context = {
         "cart": cart,
         "cart_items": cart_items,
         "addresses": addresses,
         "default_address": default_address,
+        "selected_address": selected_address,
         "subtotal": subtotal,
         "discount": discount,
         "shipping": shipping,
         "total": total,
         "payment_method": "COD",
     }
+
     return render(
         request,
         "user_order/checkout.html",
@@ -446,6 +470,7 @@ def cancel_order(request, order_id):
     )
 @never_cache
 @login_required(login_url="login")
+@transaction.atomic
 def cancel_order_item(request, order_id, item_id):
     if request.method != "POST":
         return redirect(
@@ -454,15 +479,16 @@ def cancel_order_item(request, order_id, item_id):
         )
 
     order = get_object_or_404(
-        Order.objects.prefetch_related(
-            "items__variant",
-        ),
+        Order,
         order_id=order_id,
         user=request.user,
     )
 
     item = get_object_or_404(
-        OrderItem,
+        OrderItem.objects.select_related(
+            "variant",
+            "variant__product",
+        ),
         id=item_id,
         order=order,
     )
@@ -473,23 +499,29 @@ def cancel_order_item(request, order_id, item_id):
     ]:
         messages.error(
             request,
-            "This product cannot be cancelled.",
+            "This product cannot be cancelled at this stage.",
         )
         return redirect(
             "order:order_detail",
             order_id=order.order_id,
         )
 
-    item.status = "CANCELLED"
-
-    item.variant.stock += item.quantity
-
-    item.variant.save(
-        update_fields=["stock"]
+    variant = (
+        Variant.objects
+        .select_for_update()
+        .get(id=item.variant_id)
     )
+
+    item.status = "CANCELLED"
 
     item.save(
         update_fields=["status"]
+    )
+
+    variant.stock += item.quantity
+
+    variant.save(
+        update_fields=["stock"]
     )
 
     remaining_items = order.items.exclude(
@@ -508,7 +540,8 @@ def cancel_order_item(request, order_id, item_id):
 
     messages.success(
         request,
-        "Product cancelled successfully.",
+        f"{item.variant.product.product_name} "
+        "has been cancelled successfully.",
     )
 
     return redirect(

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "Admin_panel.category",
     "Admin_panel.product",
     "Admin_panel.order",
+    "Admin_panel.coupon_offer",
 
     "User_panel.Authentication.apps.AuthenticationConfig",
     "User_panel.Product",

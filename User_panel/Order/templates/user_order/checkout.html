@@ -805,14 +805,11 @@ Checkout - StrideX
                                 </h2>
                             </div>
 
-                            <a
-                                href="{% url 'address_list' %}"
-                                class="add-address-link"
-                            >
-                                + Add New Address
-                            </a>
+                                <a href="{% url 'add_address' %}?next={% url 'order:checkout' %}">
+                                    Add Address
+                                </a>
 
-                        </div>
+                            </div>
 
                         {% if addresses %}
 
@@ -831,7 +828,7 @@ Checkout - StrideX
                                             name="address"
                                             id="address-{{ address.id }}"
                                             value="{{ address.id }}"
-                                            {% if default_address and address.id == default_address.id %}
+                                            {% if selected_address and address.id == selected_address.id %}
                                                 checked
                                             {% endif %}
                                             required
@@ -886,7 +883,7 @@ Checkout - StrideX
                                             </div>
 
                                             <a
-                                                href="{% url 'address_list' %}"
+                                                href="{% url 'edit_address' address.id %}?next={% url 'order:checkout' %}"
                                                 class="edit-address"
                                                 onclick="event.stopPropagation();"
                                             >

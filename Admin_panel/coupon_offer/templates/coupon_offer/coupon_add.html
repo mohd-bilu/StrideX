@@ -1,0 +1,675 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% block title %}
+Add Coupon - StrideX Admin
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .coupon-form-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 18px;
+        color: #8b98aa;
+        font-size: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .back-link:hover {
+        color: #a94f00;
+    }
+
+    .back-link i {
+        font-size: 9px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -.5px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #7c899b;
+        font-size: 11px;
+    }
+
+    .coupon-form-card {
+        background: #fff;
+        border: 1px solid #e9edf2;
+        border-radius: 16px;
+        box-shadow: 0 3px 15px rgba(15, 23, 42, .035);
+    }
+
+    .form-section {
+        padding: 28px 30px;
+        border-bottom: 1px solid #edf0f4;
+    }
+
+    .form-section:last-child {
+        border-bottom: 0;
+    }
+
+    .section-heading {
+        margin-bottom: 24px;
+    }
+
+    .section-heading h2 {
+        margin: 0 0 6px;
+        color: #202c3d;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .section-heading p {
+        margin: 0;
+        color: #95a0af;
+        font-size: 9px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px 25px;
+    }
+
+    .form-group {
+        min-width: 0;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #435167;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .35px;
+        text-transform: uppercase;
+    }
+
+    .required {
+        color: #d95c5c;
+    }
+
+    .form-control {
+        width: 100%;
+        height: 42px;
+        padding: 0 13px;
+        border: 1px solid #dfe5ec;
+        border-radius: 8px;
+        outline: none;
+        background: #fbfcfd;
+        color: #263449;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        transition: .2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #b9c3d0;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(169, 79, 0, .05);
+    }
+
+    .form-control::placeholder {
+        color: #b0bac7;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    input[type="datetime-local"].form-control {
+        color: #59677a;
+    }
+
+    .field-help {
+        margin-top: 6px;
+        color: #9aa5b3;
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+    .field-error {
+        display: block;
+        margin-top: 6px;
+        color: #d95353;
+        font-size: 9px;
+        font-weight: 500;
+    }
+
+    .form-control.error {
+        border-color: #e59a9a;
+        background: #fffafa;
+    }
+
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 15px 16px;
+        border: 1px solid #e2e7ed;
+        border-radius: 9px;
+        background: #fbfcfd;
+    }
+
+    .checkbox-content {
+        min-width: 0;
+    }
+
+    .checkbox-title {
+        margin-bottom: 4px;
+        color: #344256;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .checkbox-description {
+        color: #9aa5b3;
+        font-size: 8px;
+        line-height: 1.4;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 23px;
+        flex-shrink: 0;
+    }
+
+    .switch input {
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    .switch-slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        background: #d7dde5;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .switch-slider:before {
+        content: "";
+        position: absolute;
+        width: 17px;
+        height: 17px;
+        left: 3px;
+        top: 3px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,.18);
+        transition: .2s ease;
+    }
+
+    .switch input:checked + .switch-slider {
+        background: #111;
+    }
+
+    .switch input:checked + .switch-slider:before {
+        transform: translateX(19px);
+    }
+
+    .discount-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        margin-top: 20px;
+        padding: 12px 14px;
+        border: 1px solid #edf0f4;
+        border-radius: 8px;
+        background: #fafbfc;
+    }
+
+    .discount-note i {
+        margin-top: 1px;
+        color: #8fa0b6;
+        font-size: 10px;
+    }
+
+    .discount-note p {
+        margin: 0;
+        color: #8793a3;
+        font-size: 8px;
+        line-height: 1.6;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 22px 30px;
+        background: #fcfcfd;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .cancel-btn,
+    .submit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 105px;
+        height: 38px;
+        padding: 0 17px;
+        border-radius: 7px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        text-decoration: none;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+    .cancel-btn {
+        border: 1px solid #dfe4ea;
+        background: #fff;
+        color: #69778a;
+    }
+
+    .cancel-btn:hover {
+        background: #f5f6f8;
+    }
+
+    .submit-btn {
+        border: 1px solid #050505;
+        background: #050505;
+        color: #fff;
+    }
+
+    .submit-btn:hover {
+        background: #292929;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 700px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+            grid-column: auto;
+        }
+
+        .form-section {
+            padding: 22px 18px;
+        }
+
+        .form-actions {
+            padding: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="coupon-form-page">
+
+    <div class="page-header">
+
+        <a
+            href="{% url 'coupon_offer:coupon_list' %}"
+            class="back-link"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Coupons
+        </a>
+
+        <h1>
+            Add Coupon
+        </h1>
+
+        <p>
+            Create a discount coupon that customers can use during checkout.
+        </p>
+
+    </div>
+
+    <form
+        method="POST"
+        class="coupon-form-card"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Coupon Information
+                </h2>
+
+                <p>
+                    Configure the coupon code and discount details.
+                </p>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.code.id_for_label }}"
+                        class="form-label"
+                    >
+                        Coupon Code
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.code }}
+
+                    {% if form.code.errors %}
+                        {% for error in form.code.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="field-help">
+                        Use a unique code such as SAVE20 or STRIDE500.
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.discount_type.id_for_label }}"
+                        class="form-label"
+                    >
+                        Discount Type
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.discount_type }}
+
+                    {% if form.discount_type.errors %}
+                        {% for error in form.discount_type.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.discount_value.id_for_label }}"
+                        class="form-label"
+                    >
+                        Discount Value
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.discount_value }}
+
+                    {% if form.discount_value.errors %}
+                        {% for error in form.discount_value.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="field-help">
+                        Percentage discounts must be between 1 and 100.
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.minimum_purchase.id_for_label }}"
+                        class="form-label"
+                    >
+                        Minimum Order Amount
+                    </label>
+
+                    {{ form.minimum_purchase }}
+
+                    {% if form.minimum_purchase.errors %}
+                        {% for error in form.minimum_purchase.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.maximum_discount.id_for_label }}"
+                        class="form-label"
+                    >
+                        Maximum Discount Amount
+                    </label>
+
+                    {{ form.maximum_discount }}
+
+                    {% if form.maximum_discount.errors %}
+                        {% for error in form.maximum_discount.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="field-help">
+                        Optional limit for percentage discounts.
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.usage_limit.id_for_label }}"
+                        class="form-label"
+                    >
+                        Usage Limit
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.usage_limit }}
+
+                    {% if form.usage_limit.errors %}
+                        {% for error in form.usage_limit.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Validity Period
+                </h2>
+
+                <p>
+                    Choose when customers can use this coupon.
+                </p>
+
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.start_date.id_for_label }}"
+                        class="form-label"
+                    >
+                        Valid From
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.start_date }}
+
+                    {% if form.start_date.errors %}
+                        {% for error in form.start_date.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="{{ form.expiry_date.id_for_label }}"
+                        class="form-label"
+                    >
+                        Valid To
+                        <span class="required">*</span>
+                    </label>
+
+                    {{ form.expiry_date }}
+
+                    {% if form.expiry_date.errors %}
+                        {% for error in form.expiry_date.errors %}
+                            <span class="field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="discount-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                    Customers will only be able to apply this coupon during
+                    the selected validity period. Expired coupons will
+                    automatically become unavailable at checkout.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Coupon Status
+                </h2>
+
+                <p>
+                    Control whether this coupon can currently be used.
+                </p>
+
+            </div>
+
+            <div class="checkbox-row">
+
+                <div class="checkbox-content">
+
+                    <div class="checkbox-title">
+                        Active Coupon
+                    </div>
+
+                    <div class="checkbox-description">
+                        Allow customers to use this coupon when it is within
+                        its validity period.
+                    </div>
+
+                </div>
+
+                <label class="switch">
+
+                    {{ form.is_active }}
+
+                    <span class="switch-slider"></span>
+
+                </label>
+
+            </div>
+
+            {% if form.non_field_errors %}
+
+                {% for error in form.non_field_errors %}
+
+                    <span class="field-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+
+        <div class="form-actions">
+
+            <a
+                href="{% url 'coupon_offer:coupon_list' %}"
+                class="cancel-btn"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+                Create Coupon
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

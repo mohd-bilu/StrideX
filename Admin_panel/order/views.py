@@ -246,6 +246,7 @@ def order_detail(request, order_id):
 @never_cache
 @login_required(login_url="admin_login")
 @staff_member_required
+@transaction.atomic
 def update_order_status(request, order_id):
     if request.method != "POST":
         return redirect(
@@ -337,14 +338,27 @@ def update_order_status(request, order_id):
     order.save()
 
     if new_status == "CANCELLED":
-        order.items.filter(
+        cancellable_items = order.items.filter(
             status__in=[
                 "PENDING",
                 "PROCESSING",
             ]
-        ).update(
-            status="CANCELLED"
-        )
+        ).select_related("variant")
+
+        for item in cancellable_items:
+            item.variant.stock += item.quantity
+            item.variant.save(
+                update_fields=[
+                    "stock",
+                ]
+            )
+
+            item.status = "CANCELLED"
+            item.save(
+                update_fields=[
+                    "status",
+                ]
+            )
 
     else:
         order.items.filter(

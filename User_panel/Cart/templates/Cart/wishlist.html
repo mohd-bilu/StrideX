@@ -280,6 +280,11 @@ Wishlist
     cursor:not-allowed;
     box-shadow:none;
 }
+.move-cart.unavailable{
+    background:#2a1818;
+    border:1px solid rgba(220,38,38,.35);
+    color:#ef7777;
+}
 
 .move-cart.disabled:hover{
     transform:none;
@@ -716,8 +721,8 @@ Wishlist
 
                 <p>
 
-                    {{ wishlist.items.count }}
-                    SAVED ITEM{{ wishlist.items.count|pluralize }}
+                    {{ items|length }}
+                    SAVED ITEM{{ items|length|pluralize }}
                     — MANAGE YOUR SAVED PICKS BELOW
 
                 </p>
@@ -734,31 +739,33 @@ Wishlist
 
         </div>
 
-        {% if wishlist.items.exists %}
+        {% if items %}
 
         <div class="wishlist-grid">
 
-            {% for item in wishlist.items.all %}
+            {% for item in items %}
 
             <div class="wishlist-card">
 
                 <div class="wishlist-image">
 
-                    {% if item.variant.stock > 0 %}
+                    {% if not item.variant.is_active or item.variant.is_deleted or not item.variant.product.is_active or item.variant.product.is_deleted or not item.variant.product.category.is_active or item.variant.product.category.is_deleted %}
 
-                    <span class="stock">
+                        <span class="stock out">
+                            UNAVAILABLE
+                        </span>
 
-                        IN STOCK
+                    {% elif item.variant.stock > 0 %}
 
-                    </span>
+                        <span class="stock">
+                            IN STOCK
+                        </span>
 
                     {% else %}
 
-                    <span class="stock out">
-
-                        OUT OF STOCK
-
-                    </span>
+                        <span class="stock out">
+                            OUT OF STOCK
+                        </span>
 
                     {% endif %}
 
@@ -814,37 +821,60 @@ Wishlist
 
                     </h2>
 
-                    {% if item.variant.stock > 0 %}
+                    {% if item.variant.is_active and item.variant.is_deleted == False and item.variant.product.is_active and item.variant.product.is_deleted == False and item.variant.product.category.is_active and item.variant.product.category.is_deleted == False %}
 
-                    <a href="{% url 'add_to_cart' item.variant.id %}"
+                        {% if item.variant.stock > 0 %}
 
-                       class="move-cart">
+                            <a
+                                href="{% url 'add_to_cart' item.variant.id %}"
+                                class="move-cart"
+                            >
 
-                        <i class="fa-solid fa-bag-shopping"></i>
+                                <i class="fa-solid fa-bag-shopping"></i>
 
-                        MOVE TO CART
+                                MOVE TO CART
 
-                    </a>
+                            </a>
+
+                        {% else %}
+
+                            <button
+                                type="button"
+                                class="move-cart disabled"
+                            >
+
+                                <i class="fa-solid fa-box-open"></i>
+
+                                OUT OF STOCK
+
+                            </button>
+
+                        {% endif %}
 
                     {% else %}
 
-                    <button class="move-cart disabled">
+                        <button
+                            type="button"
+                            class="move-cart disabled unavailable"
+                        >
 
-                        OUT OF STOCK
+                            <i class="fa-solid fa-ban"></i>
 
-                    </button>
+                            UNAVAILABLE
+
+                        </button>
 
                     {% endif %}
                 <button
-    type="button"
-    class="remove-wishlist-btn"
-    data-url="{% url 'remove_from_wishlist' item.id %}">
+                    type="button"
+                    class="remove-wishlist-btn"
+                    data-url="{% url 'remove_from_wishlist' item.id %}">
 
-    <i class="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-trash"></i>
 
-    Remove
+                    Remove
 
-</button>
+                </button>
 
                 </div>
 

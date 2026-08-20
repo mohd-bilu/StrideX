@@ -1,0 +1,379 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block title %}
+Categories - StrideX
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.category-section{
+    min-height:calc(100vh - 100px);
+    padding:70px 6%;
+    background:#100c0a;
+}
+
+.category-container{
+    max-width:1200px;
+    margin:0 auto;
+}
+
+.category-header{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.category-label{
+    color:#ff7a00;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:2px;
+    margin-bottom:10px;
+}
+
+.category-title{
+    color:#ffffff;
+    font-size:42px;
+    font-weight:800;
+    margin:0 0 12px;
+}
+
+.category-description{
+    color:#999;
+    font-size:15px;
+    margin:0 auto;
+    max-width:600px;
+    line-height:1.7;
+}
+
+.category-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+}
+
+.category-card{
+    position:relative;
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    background:#1b1310;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    overflow:hidden;
+    text-decoration:none;
+    transition:.35s;
+}
+
+.category-card:hover{
+    transform:translateY(-7px);
+    border-color:rgba(255,122,0,.45);
+    box-shadow:0 18px 35px rgba(0,0,0,.35);
+}
+
+.category-thumbnail{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.45s;
+}
+
+.category-card:hover .category-thumbnail{
+    transform:scale(1.06);
+}
+
+.category-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.05) 20%,
+        rgba(0,0,0,.25) 45%,
+        rgba(0,0,0,.92) 100%
+    );
+}
+
+.category-icon{
+    position:absolute;
+    top:25px;
+    right:25px;
+    z-index:3;
+    width:50px;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:rgba(16,12,10,.85);
+    border:1px solid rgba(255,122,0,.35);
+    color:#ff7a00;
+    font-size:21px;
+}
+
+.category-content{
+    position:relative;
+    z-index:3;
+    padding:25px;
+}
+
+.category-name{
+    color:#ffffff;
+    font-size:25px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.category-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#ff7a00;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.category-card:hover .category-link{
+    gap:12px;
+}
+
+.category-placeholder{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#241810;
+    color:#ff7a00;
+    font-size:70px;
+}
+
+.category-name{
+    color:#ffffff;
+    font-size:25px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.category-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#ff7a00;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.empty-categories{
+    text-align:center;
+    padding:70px 30px;
+    background:#1b1310;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    color:#888;
+}
+
+.pagination{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-top:45px;
+}
+
+.pagination a,
+.pagination span{
+    min-width:42px;
+    height:42px;
+    padding:0 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:9px;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:700;
+    box-sizing:border-box;
+}
+
+.pagination a{
+    background:#1b1310;
+    border:1px solid rgba(255,255,255,.1);
+    color:#ffffff;
+    transition:.3s;
+}
+
+.pagination a:hover{
+    border-color:#ff7a00;
+    color:#ff7a00;
+    transform:translateY(-2px);
+}
+
+.pagination .current{
+    background:#ff7a00;
+    border:1px solid #ff7a00;
+    color:#ffffff;
+}
+
+@media(max-width:900px){
+    .category-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+    .category-section{
+        padding:50px 20px;
+    }
+
+    .category-title{
+        font-size:32px;
+    }
+
+    .category-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="category-section">
+
+    <div class="category-container">
+
+        <div class="category-header">
+
+            <div class="category-label">
+                EXPLORE STRIDEX
+            </div>
+
+            <h1 class="category-title">
+                Shop By Category
+            </h1>
+
+            <p class="category-description">
+                Find the perfect pair from our collection of carefully selected footwear categories.
+            </p>
+
+        </div>
+
+        {% if categories %}
+
+            <div class="category-grid">
+
+                {% for category in categories %}
+
+                    <a
+                        href="{% url 'product:product_list' %}?category={{ category.id }}"
+                        class="category-card"
+                    >
+
+                        {% if category.image %}
+
+                            <img
+                                src="{{ category.image.url }}"
+                                alt="{{ category.category_name }}"
+                                class="category-thumbnail"
+                            >
+
+                        {% else %}
+
+                            <div class="category-placeholder">
+                                <i class="fa-solid fa-shoe-prints"></i>
+                            </div>
+
+                        {% endif %}
+
+                        <div class="category-overlay"></div>
+
+                        <div class="category-icon">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+
+                        <div class="category-content">
+
+                            <div class="category-name">
+                                {{ category.category_name }}
+                            </div>
+
+                            <div class="category-link">
+                                VIEW PRODUCTS
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+            {% if page_obj.has_other_pages %}
+
+                <div class="pagination">
+
+                    {% if page_obj.has_previous %}
+
+                        <a href="?page=1">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+
+                        <a href="?page={{ page_obj.previous_page_number }}">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+
+                    {% endif %}
+
+                    {% for number in page_obj.paginator.page_range %}
+
+                        {% if page_obj.number == number %}
+
+                            <span class="current">
+                                {{ number }}
+                            </span>
+
+                        {% elif number > page_obj.number|add:"-2" and number < page_obj.number|add:"2" %}
+
+                            <a href="?page={{ number }}">
+                                {{ number }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+
+                        <a href="?page={{ page_obj.next_page_number }}">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+
+                        <a href="?page={{ page_obj.paginator.num_pages }}">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="empty-categories">
+                No categories available.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

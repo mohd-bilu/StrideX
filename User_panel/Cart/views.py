@@ -139,9 +139,6 @@ def add_to_cart(request, variant_id):
 
     return redirect("cart")
 
-def remove_from_cart(request, item_id):
-    pass
-
 @login_required
 def update_cart(request, item_id):
 
@@ -213,7 +210,6 @@ def remove_from_cart(request, item_id):
 
 @login_required
 def wishlist(request):
-
     search = request.GET.get("search", "").strip()
 
     wishlist = (

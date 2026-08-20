@@ -6,6 +6,31 @@ from django.db.models import Q, Min
 from django.core.paginator import Paginator
 from User_panel.Cart.models import WishlistItem
 
+def category_list(request):
+    categories = Category.objects.filter(
+        is_active=True,
+        is_deleted=False,
+    ).order_by("category_name")
+
+    paginator = Paginator(
+        categories,
+        6
+    )
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(
+        page_number
+    )
+
+    return render(
+        request,
+        "Product/category_list.html",
+        {
+            "categories": page_obj,
+            "page_obj": page_obj,
+        },
+    )
 def product_list(request):
     search = request.GET.get("search", "").strip()
     category = request.GET.get("category", "")

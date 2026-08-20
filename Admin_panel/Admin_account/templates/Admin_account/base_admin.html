@@ -57,8 +57,17 @@ href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
 <a href="{% url 'category_list' %}" class="nav-item"><i class="fa-solid fa-layer-group"></i>&nbsp;Categories</a>
 <a href="{% url 'product_list' %}" class="nav-item"><i class="fa-solid fa-box"></i>&nbsp;Products</a>
 <a href="{% url 'admin_order:order_list' %}" class="nav-item"><i class="fa-solid fa-cart-shopping"></i>&nbsp;Orders</a>
-<a href="{% url 'admin_order:return_list' %}" class="nav-item"><i class="fa-solid fa-arrow-rotate-left"></i>Returns</a>
-<a href="#" class="nav-item"><i class="fa-solid fa-tag"></i>&nbsp;Offers</a>
+<a href="{% url 'admin_order:return_list' %}" class="nav-item">
+    <i class="fa-solid fa-arrow-rotate-left"></i>&nbsp;Returns
+</a>
+
+<a href="{% url 'coupon_offer:coupon_list' %}" class="nav-item">
+    <i class="fa-solid fa-ticket"></i>&nbsp;Coupons
+</a>
+
+<a href="#" class="nav-item">
+    <i class="fa-solid fa-tag"></i>&nbsp;Offers
+</a>
 
 </nav>
 

@@ -127,11 +127,7 @@ max-width:1450px;
 margin:0 auto;
 padding:35px 32px 70px;
 }
-.sidebar{
-width:260px;
-flex-shrink:0;
-padding:15px 30px 0 0;
-}
+
 .account-title{
 font-size:13px;
 font-weight:500;
@@ -145,11 +141,7 @@ font-size:11px;
 color:#a6a6a6;
 word-break:break-word;
 }
-.sidebar-menu{
-display:flex;
-flex-direction:column;
-gap:5px;
-}
+
 .menu-item{
 position:relative;
 height:47px;
@@ -362,11 +354,7 @@ margin-bottom:35px;
 .account-email{
 display:none;
 }
-.sidebar-menu{
-flex-direction:row;
-overflow-x:auto;
-gap:8px;
-}
+
 .menu-item{
 min-width:max-content;
 padding:0 15px;
@@ -488,6 +476,12 @@ grid-template-columns:1fr;
 <form method="POST" id="addressForm">
 {% csrf_token %}
 
+<input
+    type="hidden"
+    name="next"
+    value="{{ next_url }}"
+>
+
 <div class="form-group">
 <label class="form-label" for="full_name">Full Name</label>
 <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Enter your full name" required>
@@ -554,8 +548,12 @@ grid-template-columns:1fr;
 
 <div class="button-row">
 <button type="submit" class="save-btn">SAVE ADDRESS</button>
-<a href="{% url 'address_list' %}" class="cancel-btn">CANCEL</a>
-</div>
+<a
+    href="{% if next_url %}{{ next_url }}{% else %}{% url 'address_list' %}{% endif %}"
+    class="cancel-btn"
+>
+    CANCEL
+</a></div>
 </form>
 </div>
 </main>

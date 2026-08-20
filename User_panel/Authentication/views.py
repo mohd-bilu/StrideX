@@ -775,6 +775,7 @@ def address_list(request):
 @login_required(login_url="login")
 def add_address(request):
     user = request.user
+    next_url = request.GET.get("next") or request.POST.get("next")
 
     if request.method == "POST":
         pincode = request.POST.get("pincode", "").strip()
@@ -795,7 +796,7 @@ def add_address(request):
                 is_default=False
             )
 
-        Address.objects.create(
+        address = Address.objects.create(
             user=user,
             full_name=request.POST.get("full_name"),
             phone_number=request.POST.get("phone_number"),
@@ -813,13 +814,23 @@ def add_address(request):
             request,
             "Address Added Successfully."
         )
+
+        if next_url:
+            separator = "&" if "?" in next_url else "?"
+
+            return redirect(
+                f"{next_url}{separator}address={address.id}"
+            )
+
         return redirect("address_list")
 
     return render(
         request,
-        "Authentication/add_address.html"
+        "Authentication/add_address.html",
+        {
+            "next_url": next_url,
+        }
     )
-
 
 @login_required(login_url="login")
 def edit_address(request, id):
@@ -829,6 +840,8 @@ def edit_address(request, id):
         user=request.user
     )
 
+    next_url = request.GET.get("next") or request.POST.get("next")
+
     if request.method == "POST":
         pincode = request.POST.get("pincode", "").strip()
 
@@ -837,21 +850,32 @@ def edit_address(request, id):
                 request,
                 "Pincode must contain only numbers."
             )
-            return redirect("edit_address", id=id)
 
-        if len(pincode) < 6:
+            if next_url:
+                return redirect(
+                    f"{next_url}&address={address.id}"
+                )
+
+            return redirect(
+                "edit_address",
+                id=id
+            )
+
+        if len(pincode) != 6:
             messages.error(
                 request,
-                "Pincode cannot be less than 6 digits."
+                "Pincode must contain exactly 6 digits."
             )
-            return redirect("edit_address", id=id)
 
-        if len(pincode) > 6:
-            messages.error(
-                request,
-                "Pincode cannot be more than 6 digits."
+            if next_url:
+                return redirect(
+                    f"{next_url}&address={address.id}"
+                )
+
+            return redirect(
+                "edit_address",
+                id=id
             )
-            return redirect("edit_address", id=id)
 
         address.full_name = request.POST.get("full_name")
         address.phone_number = request.POST.get("phone_number")
@@ -880,12 +904,23 @@ def edit_address(request, id):
             request,
             "Address Updated Successfully."
         )
+
+        if next_url:
+            separator = "&" if "?" in next_url else "?"
+
+            return redirect(
+                f"{next_url}{separator}address={address.id}"
+            )
+
         return redirect("address_list")
 
     return render(
         request,
         "Authentication/edit_address.html",
-        {"address": address}
+        {
+            "address": address,
+            "next_url": next_url,
+        }
     )
 
 
