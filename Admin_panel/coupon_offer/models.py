@@ -126,3 +126,80 @@ class CouponUsage(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.coupon.code}"
+
+class Offer(models.Model):
+    DISCOUNT_TYPE_CHOICES = (
+        ("PERCENTAGE", "Percentage"),
+        ("FIXED", "Fixed Amount"),
+    )
+
+    OFFER_TYPE_CHOICES = (
+        ("PRODUCT", "Product"),
+        ("CATEGORY", "Category"),
+    )
+
+    name = models.CharField(
+        max_length=150,
+    )
+
+    offer_type = models.CharField(
+        max_length=20,
+        choices=OFFER_TYPE_CHOICES,
+    )
+
+    product = models.ForeignKey(
+        "product.Product",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="offers",
+    )
+
+    category = models.ForeignKey(
+        "category.Category",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="offers",
+    )
+
+    discount_type = models.CharField(
+        max_length=20,
+        choices=DISCOUNT_TYPE_CHOICES,
+        default="PERCENTAGE",
+    )
+
+    discount_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[
+            MinValueValidator(0),
+        ],
+    )
+
+    start_date = models.DateTimeField()
+
+    expiry_date = models.DateTimeField()
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        db_table = "offers"
+        ordering = [
+            "-created_at",
+        ]
+        verbose_name = "Offer"
+        verbose_name_plural = "Offers"
+
+    def __str__(self):
+        return self.name

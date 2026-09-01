@@ -11,6 +11,7 @@ urlpatterns = [
     path("products/", include(("User_panel.Product.urls", "product"), namespace="product")),
     path("cart/",include("User_panel.Cart.urls")),
     path("order/", include("User_panel.Order.urls")),
+    path("wallet/", include("User_panel.Wallet.urls")),
 
     path("accounts/", include("allauth.urls")),
 

@@ -507,7 +507,7 @@ Checkout - StrideX
     .coupon-box {
         display: flex;
         gap: 7px;
-        margin: 20px 0 14px;
+        margin: 20px 0 8px;
     }
 
     .coupon-box input {
@@ -521,18 +521,26 @@ Checkout - StrideX
         color: #fff;
         outline: none;
         font-size: 11px;
+        text-transform: uppercase;
     }
 
     .coupon-box input::placeholder {
         color: #666;
+        text-transform: none;
     }
 
     .coupon-box input:focus {
         border-color: #555;
     }
 
+    .coupon-box input:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
     .coupon-box button {
         height: 38px;
+        min-width: 62px;
         padding: 0 14px;
         border: 0;
         border-radius: 7px;
@@ -546,6 +554,82 @@ Checkout - StrideX
 
     .coupon-box button:hover {
         background: #ff8b20;
+    }
+
+    .coupon-box button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .coupon-message {
+        min-height: 17px;
+        margin: 0 0 7px;
+        font-size: 9px;
+        line-height: 1.5;
+    }
+
+    .coupon-message.success {
+        color: #59c878;
+    }
+
+    .coupon-message.error {
+        color: #e66b6b;
+    }
+
+    .coupon-applied {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 8px 0 14px;
+        padding: 10px 11px;
+        border: 1px solid rgba(255, 121, 0, 0.28);
+        border-radius: 7px;
+        background: rgba(255, 121, 0, 0.06);
+    }
+
+    .coupon-applied.active {
+        display: flex;
+    }
+
+    .coupon-applied-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .coupon-applied-info i {
+        color: #ff7900;
+        font-size: 10px;
+    }
+
+    .coupon-applied-code {
+        overflow: hidden;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 600;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .coupon-applied-label {
+        color: #777;
+        font-size: 8px;
+    }
+
+    .remove-coupon-button {
+        flex-shrink: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #999;
+        font-size: 9px;
+        cursor: pointer;
+    }
+
+    .remove-coupon-button:hover {
+        color: #ff7900;
     }
 
     .available-coupons {
@@ -615,7 +699,6 @@ Checkout - StrideX
     }
 
     @media (max-width: 900px) {
-
         .checkout-page {
             padding: 40px 25px 60px;
         }
@@ -635,7 +718,6 @@ Checkout - StrideX
     }
 
     @media (max-width: 600px) {
-
         .checkout-page {
             padding: 30px 15px 50px;
         }
@@ -706,7 +788,8 @@ Checkout - StrideX
 
         {% if cart_items %}
 
-        <form method="POST" action="{% url 'order:place_order' %}">
+        <form method="POST" action="{% url 'order:place_order' %}" id="place-order-form">
+
             {% csrf_token %}
 
             <div class="checkout-layout">
@@ -731,65 +814,71 @@ Checkout - StrideX
 
                         </div>
 
-                        {% for item in cart_items %}
+                        <div class="checkout-items">
 
-                            <div class="checkout-item">
+                            {% for item in cart_items %}
 
-                                <div class="checkout-item-image">
+                                <div class="checkout-item">
 
-                                    {% with image=item.variant.images.first %}
+                                    <div class="checkout-item-image">
 
-                                        {% if image %}
+                                        {% with image=item.variant.images.first %}
 
-                                            <img
-                                                src="{{ image.image.url }}"
-                                                alt="{{ item.variant.product.product_name }}"
-                                            >
+                                            {% if image %}
 
-                                        {% else %}
+                                                <img
+                                                    src="{{ image.image.url }}"
+                                                    alt="{{ item.variant.product.product_name }}"
+                                                >
 
-                                            <div class="checkout-item-no-image">
-                                                No Image
-                                            </div>
+                                            {% else %}
+
+                                                <div class="checkout-item-no-image">
+                                                    No Image
+                                                </div>
+
+                                            {% endif %}
+
+                                        {% endwith %}
+
+                                    </div>
+
+                                    <div class="checkout-item-info">
+
+                                        <h3>
+                                            {{ item.variant.product.product_name }}
+                                        </h3>
+
+                                        <p>
+                                            Size:
+                                            {{ item.variant.size }}
+                                        </p>
+
+                                        {% if item.variant.color %}
+
+                                            <p>
+                                                Color:
+                                                {{ item.variant.color }}
+                                            </p>
 
                                         {% endif %}
 
-                                    {% endwith %}
-
-                                </div>
-
-                                <div class="checkout-item-info">
-
-                                    <h3>
-                                        {{ item.variant.product.product_name }}
-                                    </h3>
-
-                                    <p>
-                                        Size:
-                                        {{ item.variant.size }}
-                                    </p>
-
-                                    {% if item.variant.color %}
                                         <p>
-                                            Color:
-                                            {{ item.variant.color }}
+                                            Quantity:
+                                            {{ item.quantity }}
                                         </p>
-                                    {% endif %}
 
-                                    <p>
-                                        Quantity:
-                                        {{ item.quantity }}
-                                    </p>
+                                        <p class="checkout-item-price">
+                                            ₹{{ item.variant.price }}
+                                        </p>
 
-                                    <p class="checkout-item-price">
-                                        ₹{{ item.variant.price }}
-                                    </p>
+                                    </div>
 
                                 </div>
 
-                            </div>
+                            {% endfor %}
 
-                        {% endfor %}
+                        </div>
 
                     </div>
 
@@ -798,18 +887,23 @@ Checkout - StrideX
                         <div class="checkout-card-header">
 
                             <div class="checkout-card-title">
+
                                 <i class="fa-solid fa-location-dot"></i>
 
                                 <h2>
                                     Shipping Address
                                 </h2>
-                            </div>
-
-                                <a href="{% url 'add_address' %}?next={% url 'order:checkout' %}">
-                                    Add Address
-                                </a>
 
                             </div>
+
+                            <a
+                                href="{% url 'add_address' %}?next={% url 'order:checkout' %}"
+                                class="add-address-link"
+                            >
+                                Add Address
+                            </a>
+
+                        </div>
 
                         {% if addresses %}
 
@@ -850,25 +944,31 @@ Checkout - StrideX
                                                     </span>
 
                                                     {% if address.is_default %}
+
                                                         <span class="default-badge">
                                                             Default
                                                         </span>
+
                                                     {% endif %}
 
                                                 </div>
 
                                                 <p class="address-line">
+
                                                     {{ address.address_line1 }}
 
                                                     {% if address.address_line2 %}
                                                         , {{ address.address_line2 }}
                                                     {% endif %}
+
                                                 </p>
 
                                                 <p class="address-line">
+
                                                     {{ address.city }},
                                                     {{ address.state }}
                                                     - {{ address.pincode }}
+
                                                 </p>
 
                                                 <p class="address-line">
@@ -876,8 +976,11 @@ Checkout - StrideX
                                                 </p>
 
                                                 <p class="address-phone">
+
                                                     <i class="fa-solid fa-phone"></i>
+
                                                     {{ address.phone_number }}
+
                                                 </p>
 
                                             </div>
@@ -984,23 +1087,69 @@ Checkout - StrideX
                                 Subtotal
                             </span>
 
-                            <strong>
+                            <strong id="checkout-subtotal">
                                 ₹{{ subtotal }}
                             </strong>
 
                         </div>
 
-                        <div class="summary-row summary-discount">
-
+                        {% if offer_discount > 0 %}
+                        <div
+                            class="summary-row summary-discount"
+                            id="checkout-offer-discount-row"
+                        >
                             <span>
-                                Discount
+                                Offer Discount
                             </span>
 
-                            <strong>
-                                -₹{{ discount }}
+                            <strong id="checkout-offer-discount">
+                                -₹{{ offer_discount|floatformat:2 }}
                             </strong>
-
                         </div>
+                        {% else %}
+                        <div
+                            class="summary-row summary-discount"
+                            id="checkout-offer-discount-row"
+                            style="display: none;"
+                        >
+                            <span>
+                                Offer Discount
+                            </span>
+
+                            <strong id="checkout-offer-discount">
+                                -₹0.00
+                            </strong>
+                        </div>
+                        {% endif %}
+
+                        {% if coupon_discount > 0 %}
+                        <div
+                            class="summary-row summary-discount"
+                            id="checkout-coupon-discount-row"
+                        >
+                            <span>
+                                Coupon Discount
+                            </span>
+
+                            <strong id="checkout-coupon-discount">
+                                -₹{{ coupon_discount|floatformat:2 }}
+                            </strong>
+                        </div>
+                        {% else %}
+                        <div
+                            class="summary-row summary-discount"
+                            id="checkout-coupon-discount-row"
+                            style="display: none;"
+                        >
+                            <span>
+                                Coupon Discount
+                            </span>
+
+                            <strong id="checkout-coupon-discount">
+                                -₹0.00
+                            </strong>
+                        </div>
+                        {% endif %}
 
                         <div class="summary-row summary-shipping">
 
@@ -1008,12 +1157,14 @@ Checkout - StrideX
                                 Shipping Estimate
                             </span>
 
-                            <strong>
+                            <strong id="checkout-shipping">
+
                                 {% if shipping == 0 %}
                                     FREE
                                 {% else %}
                                     ₹{{ shipping }}
                                 {% endif %}
+
                             </strong>
 
                         </div>
@@ -1022,20 +1173,73 @@ Checkout - StrideX
 
                             <input
                                 type="text"
-                                placeholder="Coupon Code"
+                                id="coupon-code"
                                 name="coupon_code"
+                                placeholder="Coupon Code"
+                                value="{% if coupon %}{{ coupon.code }}{% endif %}"
+                                autocomplete="off"
+                                {% if coupon %}disabled{% endif %}
                             >
 
                             <button
                                 type="button"
+                                id="coupon-action-button"
                             >
-                                Apply
+                                {% if coupon %}
+                                    Applied
+                                {% else %}
+                                    Apply
+                                {% endif %}
+                            </button>
+
+                        </div>
+
+                        <div
+                            id="coupon-message"
+                            class="coupon-message"
+                            aria-live="polite"
+                        ></div>
+
+                        <div
+                            id="coupon-applied"
+                            class="coupon-applied {% if coupon %}active{% endif %}"
+                        >
+
+                            <div class="coupon-applied-info">
+
+                                <i class="fa-solid fa-ticket"></i>
+
+                                <div>
+
+                                    <div
+                                        class="coupon-applied-code"
+                                        id="coupon-applied-code"
+                                    >
+                                        {% if coupon %}
+                                            {{ coupon.code }}
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="coupon-applied-label">
+                                        Coupon applied
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                class="remove-coupon-button"
+                                id="remove-coupon-button"
+                            >
+                                Remove
                             </button>
 
                         </div>
 
                         <a
-                            href="#"
+                            href="{% url 'order:available_coupons' %}"
                             class="available-coupons"
                         >
                             VIEW ALL AVAILABLE COUPONS
@@ -1047,7 +1251,7 @@ Checkout - StrideX
                                 Total Amount
                             </span>
 
-                            <strong>
+                            <strong id="checkout-total">
                                 ₹{{ total }}
                             </strong>
 
@@ -1096,4 +1300,296 @@ Checkout - StrideX
 
 </div>
 
+{% endblock %}
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const couponInput = document.getElementById("coupon-code");
+        const couponButton = document.getElementById("coupon-action-button");
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCoupon =urlParams.get("coupon");
+        if (selectedCoupon && couponInput) {
+            couponInput.value =
+                selectedCoupon.toUpperCase();
+        }
+        const removeCouponButton = document.getElementById("remove-coupon-button");
+        const couponMessage = document.getElementById("coupon-message");
+        const couponApplied = document.getElementById("coupon-applied");
+        const couponAppliedCode = document.getElementById("coupon-applied-code");
+        const subtotalElement = document.getElementById("checkout-subtotal");
+        const offerDiscountElement = document.getElementById("checkout-offer-discount");
+        const couponDiscountElement = document.getElementById("checkout-coupon-discount");
+        const offerDiscountRow = document.getElementById("checkout-offer-discount-row");
+        const couponDiscountRow = document.getElementById("checkout-coupon-discount-row");
+        const shippingElement = document.getElementById("checkout-shipping");
+        const totalElement = document.getElementById("checkout-total");
+
+        if (!couponInput || !couponButton) {
+            return;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie("csrftoken");
+
+        function formatCurrency(value) {
+            const number = Number(value);
+
+            if (Number.isNaN(number)) {
+                return "₹0.00";
+            }
+
+            return "₹" + number.toFixed(2);
+        }
+
+        function setMessage(message, type) {
+            if (!couponMessage) {
+                return;
+            }
+
+            couponMessage.textContent = message || "";
+            couponMessage.className = "coupon-message";
+
+            if (type) {
+                couponMessage.classList.add(type);
+            }
+        }
+
+        function updateSummary(data) {
+            if (subtotalElement && data.subtotal !== undefined) {
+                subtotalElement.textContent = formatCurrency(data.subtotal);
+            }
+
+            const offerDiscount = Number(data.offer_discount || 0);
+            const couponDiscount = Number(data.coupon_discount || 0);
+
+            if (offerDiscountElement) {
+                offerDiscountElement.textContent = "-" + formatCurrency(offerDiscount);
+            }
+
+            if (couponDiscountElement) {
+                couponDiscountElement.textContent = "-" + formatCurrency(couponDiscount);
+            }
+
+            if (offerDiscountRow) {
+                if (offerDiscount > 0) {
+                    offerDiscountRow.style.display = "flex";
+                } else {
+                    offerDiscountRow.style.display = "none";
+                }
+            }
+
+            if (couponDiscountRow) {
+                if (couponDiscount > 0) {
+                    couponDiscountRow.style.display = "flex";
+                } else {
+                    couponDiscountRow.style.display = "none";
+                }
+            }
+
+            if (shippingElement && data.shipping !== undefined) {
+                const shipping = Number(data.shipping || 0);
+
+                if (shipping === 0) {
+                    shippingElement.textContent = "FREE";
+                } else {
+                    shippingElement.textContent = formatCurrency(shipping);
+                }
+            }
+
+            if (totalElement && data.total !== undefined) {
+                totalElement.textContent = formatCurrency(data.total);
+            }
+        }
+
+        function setLoading(button, loadingText) {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = true;
+            button.dataset.originalText = button.textContent;
+            button.textContent = loadingText;
+        }
+
+        function restoreButton(button) {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = false;
+
+            if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+            }
+        }
+
+        function showAppliedCoupon(code) {
+            couponInput.value = code || "";
+            couponInput.disabled = true;
+            couponButton.textContent = "Applied";
+            couponButton.disabled = true;
+
+            if (couponAppliedCode) {
+                couponAppliedCode.textContent = code || "";
+            }
+
+            if (couponApplied) {
+                couponApplied.classList.add("active");
+            }
+        }
+
+        function showCouponInput() {
+            couponInput.disabled = false;
+            couponInput.value = "";
+            couponButton.disabled = false;
+            couponButton.textContent = "Apply";
+
+            if (couponApplied) {
+                couponApplied.classList.remove("active");
+            }
+
+            if (couponAppliedCode) {
+                couponAppliedCode.textContent = "";
+            }
+        }
+
+        couponButton.addEventListener("click", function () {
+            const couponCode = couponInput.value.trim().toUpperCase();
+
+            if (!couponCode) {
+                setMessage("Please enter a coupon code.", "error");
+                couponInput.focus();
+                return;
+            }
+
+            setLoading(couponButton, "Applying...");
+            setMessage("", "");
+
+            const formData = new FormData();
+            formData.append("coupon_code", couponCode);
+
+            fetch("{% url 'order:apply_coupon' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            })
+                .then(function (response) {
+                    return response.json().then(function (data) {
+                        return {
+                            ok: response.ok,
+                            status: response.status,
+                            data: data
+                        };
+                    });
+                })
+                .then(function (result) {
+                    const data = result.data;
+
+                    if (!data.success) {
+                        couponButton.disabled = false;
+                        couponButton.textContent = "Apply";
+                        setMessage(
+                            data.message || "Unable to apply coupon.",
+                            "error"
+                        );
+                        return;
+                    }
+
+                    updateSummary(data);
+                    showAppliedCoupon(data.coupon_code);
+                    setMessage(
+                        data.message || "Coupon applied successfully.",
+                        "success"
+                    );
+                })
+                .catch(function (error) {
+                    console.error("Apply coupon error:", error);
+                    couponButton.disabled = false;
+                    couponButton.textContent = "Apply";
+                    setMessage(
+                        "Something went wrong. Please try again.",
+                        "error"
+                    );
+                });
+        });
+
+        if (removeCouponButton) {
+            removeCouponButton.addEventListener("click", function () {
+                setLoading(removeCouponButton, "Removing...");
+                setMessage("", "");
+
+                fetch("{% url 'order:remove_coupon' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                    .then(function (response) {
+                        return response.json().then(function (data) {
+                            return {
+                                ok: response.ok,
+                                status: response.status,
+                                data: data
+                            };
+                        });
+                    })
+                    .then(function (result) {
+                        const data = result.data;
+
+                        if (!data.success) {
+                            restoreButton(removeCouponButton);
+                            setMessage(
+                                data.message || "Unable to remove coupon.",
+                                "error"
+                            );
+                            return;
+                        }
+
+                        updateSummary(data);
+                        showCouponInput();
+                        setMessage(
+                            data.message || "Coupon removed successfully.",
+                            "success"
+                        );
+                    })
+                    .catch(function (error) {
+                        console.error("Remove coupon error:", error);
+                        restoreButton(removeCouponButton);
+                        setMessage(
+                            "Something went wrong. Please try again.",
+                            "error"
+                        );
+                    });
+            });
+        }
+
+        const existingCoupon = couponInput.value.trim();
+
+        if (existingCoupon && couponInput.disabled) {
+            showAppliedCoupon(existingCoupon);
+        }
+    });
+</script>
 {% endblock %}

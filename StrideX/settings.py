@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "User_panel.Product",
     "User_panel.Cart",
     "User_panel.Order",
+    "User_panel.Wallet",
 ]
 
 
