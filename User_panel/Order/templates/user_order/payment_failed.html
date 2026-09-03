@@ -1,0 +1,150 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+Payment Failed - StrideX
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-result-page {
+        min-height: 100vh;
+        background: #090909;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .payment-result-card {
+        width: 100%;
+        max-width: 520px;
+        padding: 45px 35px;
+        background: #141414;
+        border: 1px solid #292929;
+        border-radius: 14px;
+        text-align: center;
+    }
+
+    .payment-result-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 24px;
+        border-radius: 50%;
+        background: rgba(217, 83, 83, 0.12);
+        color: #d95353;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .payment-result-card h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .payment-result-card p {
+        margin: 0 auto 28px;
+        max-width: 400px;
+        color: #777;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .payment-result-amount {
+        margin-bottom: 28px;
+        color: #aaa;
+        font-size: 12px;
+    }
+
+    .payment-result-amount strong {
+        color: #ff7900;
+        font-size: 16px;
+    }
+
+    .payment-result-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .payment-result-actions a {
+        min-width: 150px;
+        padding: 13px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .retry-button {
+        background: #ff7900;
+        color: #fff;
+    }
+
+    .retry-button:hover {
+        background: #ff8b20;
+    }
+
+    .shopping-button {
+        border: 1px solid #333;
+        color: #ccc;
+        background: #1a1a1a;
+    }
+
+    .shopping-button:hover {
+        border-color: #555;
+        color: #fff;
+    }
+
+    @media (max-width: 600px) {
+        .payment-result-card {
+            padding: 35px 20px;
+        }
+
+        .payment-result-actions {
+            flex-direction: column;
+        }
+
+        .payment-result-actions a {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-result-page">
+    <div class="payment-result-card">
+        <div class="payment-result-icon">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+
+        <h1>Payment Failed</h1>
+
+        <p>
+            Your Razorpay payment could not be completed.
+            No amount has been added to your order.
+            Please try again.
+        </p>
+
+        <div class="payment-result-amount">
+            Amount:
+            <strong>₹{{ amount }}</strong>
+        </div>
+
+        <div class="payment-result-actions">
+            <a href="{% url 'order:checkout' %}" class="retry-btn">
+                Retry Payment
+            </a>
+
+            <a href="{% url 'order:checkout' %}" class="back-btn">
+                Go Back to Checkout
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

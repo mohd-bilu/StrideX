@@ -478,6 +478,10 @@ Orders - StrideX Admin
     background: #ffe2e2;
     color: #dc5555;
 }
+.status-payment-failed {
+    background: #f0f3f7;
+    color: #68778b;
+}
 
 .status-return-requested {
     background: #fff0db;
@@ -993,32 +997,43 @@ Orders - StrideX Admin
                                 </td>
 
                                 <td>
-
-                                    <span
-                                        class="order-status
-                                        {% if order.order_status == 'PENDING' %}
-                                            status-pending
-                                        {% elif order.order_status == 'PROCESSING' %}
-                                            status-processing
-                                        {% elif order.order_status == 'SHIPPED' %}
-                                            status-shipped
-                                        {% elif order.order_status == 'OUT_FOR_DELIVERY' %}
-                                            status-out-for-delivery
-                                        {% elif order.order_status == 'DELIVERED' %}
-                                            status-delivered
-                                        {% elif order.order_status == 'CANCELLED' %}
-                                            status-cancelled
-                                        {% elif order.order_status == 'RETURN_REQUESTED' %}
-                                            status-return-requested
-                                        {% elif order.order_status == 'RETURNED' %}
-                                            status-returned
-                                        {% endif %}"
-                                    >
-
-                                        {{ order.get_order_status_display }}
-
-                                    </span>
-
+                                    {% if order.payment_status == "FAILED" %}
+                                        <span class="order-status status-payment-failed">
+                                            PAYMENT FAILED
+                                        </span>
+                                    {% elif order.order_status == "PENDING" %}
+                                        <span class="order-status status-pending">
+                                            PENDING
+                                        </span>
+                                    {% elif order.order_status == "PROCESSING" %}
+                                        <span class="order-status status-processing">
+                                            PROCESSING
+                                        </span>
+                                    {% elif order.order_status == "SHIPPED" %}
+                                        <span class="order-status status-shipped">
+                                            SHIPPED
+                                        </span>
+                                    {% elif order.order_status == "OUT_FOR_DELIVERY" %}
+                                        <span class="order-status status-out-for-delivery">
+                                            OUT FOR DELIVERY
+                                        </span>
+                                    {% elif order.order_status == "DELIVERED" %}
+                                        <span class="order-status status-delivered">
+                                            DELIVERED
+                                        </span>
+                                    {% elif order.order_status == "RETURN_REQUESTED" %}
+                                        <span class="order-status status-return-requested">
+                                            RETURN REQUESTED
+                                        </span>
+                                    {% elif order.order_status == "RETURNED" %}
+                                        <span class="order-status status-returned">
+                                            RETURNED
+                                        </span>
+                                    {% elif order.order_status == "CANCELLED" %}
+                                        <span class="order-status status-cancelled">
+                                            CANCELLED
+                                        </span>
+                                    {% endif %}
                                 </td>
 
                                 <td>

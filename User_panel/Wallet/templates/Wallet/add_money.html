@@ -1,0 +1,394 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+Add Money
+{% endblock %}
+
+{% block content %}
+
+<style>
+.add-money-page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 55px 24px 100px;
+    color: #111;
+}
+
+.add-money-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 36px;
+    color: #999;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.add-money-back:hover {
+    color: #111;
+}
+
+.add-money-heading {
+    margin-bottom: 28px;
+}
+
+.add-money-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 10px;
+    color: #999;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.add-money-label::before {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: #888;
+}
+
+.add-money-title {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+}
+
+.add-money-subtitle {
+    margin: 9px 0 0;
+    color: #999;
+    font-size: 12px;
+}
+
+.add-money-card {
+    background: #fff;
+    border: 1px solid #dfe4ea;
+    border-radius: 18px;
+    padding: 34px 30px;
+}
+
+.amount-label {
+    display: block;
+    margin-bottom: 12px;
+    color: #999;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.amount-input-wrapper {
+    position: relative;
+}
+
+.amount-symbol {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 22px;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.amount-input {
+    width: 100%;
+    height: 78px;
+    box-sizing: border-box;
+    padding: 0 20px 0 50px;
+    border: 1px solid #d8dee5;
+    border-radius: 14px;
+    outline: none;
+    background: #f8fafc;
+    color: #111;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.amount-input:focus {
+    border-color: #111;
+    background: #fff;
+}
+
+.amount-help {
+    margin: 8px 0 26px;
+    color: #999;
+    font-size: 10px;
+}
+
+.quick-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 28px;
+}
+
+.quick-amount {
+    min-width: 65px;
+    height: 31px;
+    padding: 0 13px;
+    border: 1px solid #dce2e8;
+    border-radius: 18px;
+    background: #fff;
+    color: #111;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.quick-amount:hover {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+}
+
+.continue-button {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 25px;
+    background: #050505;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
+.continue-button:hover {
+    opacity: 0.85;
+}
+
+.continue-arrow {
+    margin-left: 8px;
+    font-size: 17px;
+    vertical-align: -1px;
+}
+
+.wallet-message {
+    margin-bottom: 18px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.wallet-message.error {
+    background: #fff0f0;
+    color: #c62828;
+    border: 1px solid #ffd1d1;
+}
+
+.wallet-message.success {
+    background: #eefaf4;
+    color: #168052;
+    border: 1px solid #cceedd;
+}
+
+@media (max-width: 600px) {
+    .add-money-page {
+        padding: 35px 16px 70px;
+    }
+
+    .add-money-card {
+        padding: 28px 20px;
+    }
+
+    .add-money-title {
+        font-size: 29px;
+    }
+}
+</style>
+
+<div class="add-money-page">
+
+    <a
+        href="{% url 'wallet:wallet' %}"
+        class="add-money-back"
+    >
+        ← Back to Wallet
+    </a>
+
+    <div class="add-money-heading">
+
+        <p class="add-money-label">
+            Wallet
+        </p>
+
+        <h1 class="add-money-title">
+            Add Money
+        </h1>
+
+        <p class="add-money-subtitle">
+            Top up your STRIDEX wallet instantly
+        </p>
+
+    </div>
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="
+                    wallet-message
+                    {% if message.tags %}
+                        {{ message.tags }}
+                    {% endif %}
+                "
+            >
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+    <div class="add-money-card">
+
+        <form
+            method="POST"
+            action="{% url 'wallet:add_money' %}"
+        >
+
+            {% csrf_token %}
+
+            <label
+                for="wallet-amount"
+                class="amount-label"
+            >
+                Enter Amount
+            </label>
+
+            <div class="amount-input-wrapper">
+
+                <span class="amount-symbol">
+                    ₹
+                </span>
+
+                <input
+                    type="number"
+                    id="wallet-amount"
+                    name="amount"
+                    class="amount-input"
+                    min="1"
+                    step="0.01"
+                    placeholder="0"
+                    value="{{ selected_amount }}"
+                    required
+                >
+
+            </div>
+
+            <p class="amount-help">
+                Minimum top-up: ₹1
+            </p>
+
+            <div class="quick-amounts">
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    data-amount="100"
+                >
+                    + ₹100
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    data-amount="250"
+                >
+                    + ₹250
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    data-amount="500"
+                >
+                    + ₹500
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    data-amount="1000"
+                >
+                    + ₹1,000
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    data-amount="2000"
+                >
+                    + ₹2,000
+                </button>
+
+            </div>
+
+            <button
+                type="submit"
+                class="continue-button"
+            >
+                CONTINUE TO PAY
+                <span class="continue-arrow">
+                    →
+                </span>
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const amountInput =
+            document.getElementById(
+                "wallet-amount"
+            );
+
+        const quickButtons =
+            document.querySelectorAll(
+                ".quick-amount"
+            );
+
+        quickButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        amountInput.value =
+                            button.dataset.amount;
+
+                        amountInput.focus();
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
+</script>
+
+{% endblock %}

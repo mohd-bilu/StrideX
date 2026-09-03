@@ -1,27 +1,21 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from django.db.models import Prefetch
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Prefetch, Q, Min
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from Admin_panel.product.models import Product, Variant
 from Admin_panel.category.models import Category
-from django.db.models import Q, Min
-from django.core.paginator import Paginator
 from User_panel.Cart.models import WishlistItem
 
+@login_required(login_url="login")
 def category_list(request):
     categories = Category.objects.filter(
         is_active=True,
         is_deleted=False,
     ).order_by("category_name")
 
-    paginator = Paginator(
-        categories,
-        6
-    )
-
+    paginator = Paginator(categories, 6)
     page_number = request.GET.get("page")
-
-    page_obj = paginator.get_page(
-        page_number
-    )
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,
@@ -31,6 +25,8 @@ def category_list(request):
             "page_obj": page_obj,
         },
     )
+
+
 def product_list(request):
     search = request.GET.get("search", "").strip()
     category = request.GET.get("category", "")
@@ -69,8 +65,10 @@ def product_list(request):
 
     if max_price:
         products = products.filter(min_price__lte=max_price)
+
     if selected_size:
         products = products.filter(variants__size=selected_size)
+
     if sort == "low":
         products = products.order_by("min_price")
     elif sort == "high":
@@ -89,6 +87,7 @@ def product_list(request):
         is_active=True,
         is_deleted=False,
     )
+
     sizes = (
         Variant.objects.filter(
             is_active=True,
@@ -100,19 +99,17 @@ def product_list(request):
         .distinct()
         .order_by("size")
     )
+
     wishlist_variant_ids = []
 
     if request.user.is_authenticated:
-
         wishlist_variant_ids = list(
-
             WishlistItem.objects.filter(
                 wishlist__user=request.user
             ).values_list(
                 "variant_id",
                 flat=True,
             )
-
         )
 
     context = {
@@ -130,8 +127,9 @@ def product_list(request):
 
     return render(request, "Product/shop.html", context)
 
-def product_detail(request, product_id):
 
+@login_required(login_url="login")
+def product_detail(request, product_id):
     product = get_object_or_404(
         Product.objects.prefetch_related(
             "variants__images",
@@ -151,6 +149,7 @@ def product_detail(request, product_id):
         .prefetch_related("images")
         .first()
     )
+
     active_variants = (
         product.variants.filter(
             is_active=True,
@@ -158,10 +157,10 @@ def product_detail(request, product_id):
         )
         .prefetch_related("images")
     )
+
     variant_data = []
 
     for item in active_variants:
-
         variant_data.append(
             {
                 "id": item.id,
@@ -176,7 +175,9 @@ def product_detail(request, product_id):
                 ],
             }
         )
+
     colors = []
+
     for item in active_variants:
         if item.color not in colors:
             colors.append(item.color)
@@ -203,20 +204,15 @@ def product_detail(request, product_id):
             )
         )
     )
-    wishlist_variant_ids = []
 
-    if request.user.is_authenticated:
-
-        wishlist_variant_ids = list(
-
-            WishlistItem.objects.filter(
-                wishlist__user=request.user
-            ).values_list(
-                "variant_id",
-                flat=True,
-            )
-
+    wishlist_variant_ids = list(
+        WishlistItem.objects.filter(
+            wishlist__user=request.user
+        ).values_list(
+            "variant_id",
+            flat=True,
         )
+    )
 
     context = {
         "product": product,

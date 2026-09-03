@@ -716,6 +716,10 @@ Order Detail - StrideX Admin
     background: #080808;
     color: #fff;
 }
+.timeline-item.cancelled .timeline-icon {
+    background: #d95353;
+    color: #fff;
+}
 
 .timeline-item.returned .timeline-icon,
 .timeline-return-icon-circle {
@@ -1624,48 +1628,88 @@ Order Detail - StrideX Admin
                     </div>
 
 
-                    <!-- PAYMENT CONFIRMED -->
+                    <!-- PAYMENT STATUS -->
 
-                    <div
-                        class="
-                            timeline-item
-                            {% if order.payment_status == 'PAID' %}
-                                completed
-                            {% else %}
-                                pending
-                            {% endif %}
-                        "
-                    >
+                        <div
+                            class="
+                                timeline-item
+                                {% if order.payment_status == 'PAID' %}
+                                    completed
+                                {% elif order.payment_status == 'CANCELLED' or order.payment_status == 'FAILED' %}
+                                    cancelled
+                                {% else %}
+                                    pending
+                                {% endif %}
+                            "
+                        >
 
-                        <div class="timeline-icon">
-
-                            <i class="fa-solid fa-wallet"></i>
-
-                        </div>
-
-                        <div class="timeline-content">
-
-                            <div class="timeline-title">
-                                Payment Confirmed
-                            </div>
-
-                            <div class="timeline-date">
+                            <div class="timeline-icon">
 
                                 {% if order.payment_status == "PAID" %}
 
-                                    Confirmed
+                                    <i class="fa-solid fa-check"></i>
+
+                                {% elif order.payment_status == "CANCELLED" or order.payment_status == "FAILED" %}
+
+                                    <i class="fa-solid fa-xmark"></i>
 
                                 {% else %}
 
-                                    Pending
+                                    <i class="fa-solid fa-wallet"></i>
 
                                 {% endif %}
 
                             </div>
 
-                        </div>
+                            <div class="timeline-content">
 
-                    </div>
+                                <div class="timeline-title">
+
+                                    {% if order.payment_status == "PAID" %}
+
+                                        Payment Confirmed
+
+                                    {% elif order.payment_status == "CANCELLED" %}
+
+                                        Payment Cancelled
+
+                                    {% elif order.payment_status == "FAILED" %}
+
+                                        Payment Failed
+
+                                    {% else %}
+
+                                        Payment Confirmed
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="timeline-date">
+
+                                    {% if order.payment_status == "PAID" %}
+
+                                        Confirmed
+
+                                    {% elif order.payment_status == "CANCELLED" %}
+
+                                        Cancelled
+
+                                    {% elif order.payment_status == "FAILED" %}
+
+                                        Failed
+
+                                    {% else %}
+
+                                        Pending
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
 
                     <!-- PROCESSING -->

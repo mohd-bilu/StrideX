@@ -1951,20 +1951,24 @@ Order Details - StrideX
 
                                 {% endif %}
 
-                                {% if item.status == "PENDING" or item.status == "PROCESSING" %}
+                                {% if order_items|length > 1 %}
 
-                                    <div class="stride-item-action">
+                                    {% if item.status == "PENDING" or item.status == "PROCESSING" %}
 
-                                        <button
-                                            type="button"
-                                            class="stride-cancel-item-button"
-                                            onclick="openCancelItemModal('{% url "order:cancel_order_item" order.order_id item.id %}')"
-                                        >
-                                            <i class="fa-solid fa-xmark"></i>
-                                            Cancel Item
-                                        </button>
+                                        <div class="stride-item-action">
 
-                                    </div>
+                                            <button
+                                                type="button"
+                                                class="stride-cancel-item-button"
+                                                onclick="openCancelItemModal('{% url "order:cancel_order_item" order.order_id item.id %}')"
+                                            >
+                                                <i class="fa-solid fa-xmark"></i>
+                                                Cancel Item
+                                            </button>
+
+                                        </div>
+
+                                    {% endif %}
 
                                 {% endif %}
 
@@ -2108,48 +2112,22 @@ Order Details - StrideX
             <!-- CANCEL ORDER -->
 
             {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
-
                 <div class="stride-card">
-
                     <div class="stride-card-header">
-
-                        <div class="stride-card-title">
-                            Order Actions
-                        </div>
-
+                        <div class="stride-card-title">Order Actions</div>
                         <div class="stride-card-line"></div>
-
                     </div>
 
                     <div class="stride-cancel-area">
-
-                        <form
-                            method="POST"
-                            action="{% url 'order:cancel_order' order.order_id %}"
-                            class="stride-cancel-form"
+                        <button
+                            type="button"
+                            class="stride-cancel-button"
+                            onclick="openCancelOrderModal()"
                         >
-
-                            {% csrf_token %}
-
-                            <textarea
-                                name="cancel_reason"
-                                placeholder="Cancellation reason (optional)"
-                                rows="3"
-                            ></textarea>
-
-                            <button
-                                type="submit"
-                                class="stride-cancel-button"
-                            >
-                                Cancel Order
-                            </button>
-
-                        </form>
-
+                            Cancel Order
+                        </button>
                     </div>
-
                 </div>
-
             {% endif %}
 
         </div>
@@ -2518,8 +2496,6 @@ Order Details - StrideX
 
 <!-- CANCEL ITEM MODAL -->
 
-<!-- CANCEL ITEM MODAL -->
-
 <div
     id="cancelItemModal"
     class="stride-cancel-item-modal-overlay"
@@ -2566,7 +2542,7 @@ Order Details - StrideX
                     class="stride-cancel-reason-label"
                 >
                     Cancellation Reason
-                    <span>(Optional)</span>
+                    <span>(Required)</span>
                 </label>
 
                 <textarea
@@ -2575,6 +2551,7 @@ Order Details - StrideX
                     class="stride-cancel-reason-input"
                     placeholder="Enter your reason for cancelling this item..."
                     rows="3"
+                    required
                 ></textarea>
 
             </div>
@@ -2604,8 +2581,87 @@ Order Details - StrideX
     </div>
 
 </div>
-{% endblock %}
 
+
+
+<!-- CANCEL ORDER MODAL -->
+
+<div
+    id="cancelOrderModal"
+    class="stride-cancel-item-modal-overlay"
+    onclick="closeCancelOrderModal(event)"
+>
+    <div
+        class="stride-cancel-item-modal"
+        onclick="event.stopPropagation()"
+    >
+        <button
+            type="button"
+            class="stride-cancel-item-modal-close"
+            onclick="closeCancelOrderModal()"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="stride-cancel-item-modal-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h3>Cancel This Order?</h3>
+
+        <p>
+            Are you sure you want to cancel this order?
+            The cancelled products will be added back to stock.
+            If your payment was already completed, the refund will be added to your wallet.
+        </p>
+
+        <form
+            method="POST"
+            action="{% url 'order:cancel_order' order.order_id %}"
+            id="cancelOrderForm"
+        >
+            {% csrf_token %}
+
+            <div class="stride-cancel-reason-group">
+                <label
+                    for="cancelOrderReason"
+                    class="stride-cancel-reason-label"
+                >
+                    Cancellation Reason
+                    <span>(Required)</span>
+                </label>
+
+                <textarea
+                    id="cancelOrderReason"
+                    name="cancel_reason"
+                    class="stride-cancel-reason-input"
+                    placeholder="Enter your reason for cancelling this order..."
+                    rows="3"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="stride-cancel-item-modal-actions">
+                <button
+                    type="button"
+                    class="stride-cancel-item-no"
+                    onclick="closeCancelOrderModal()"
+                >
+                    Keep Order
+                </button>
+
+                <button
+                    type="submit"
+                    class="stride-cancel-item-yes"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel Order
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
 {% block extra_js %}
 <script>
 function openReturnModal() {
@@ -2647,7 +2703,6 @@ function openCancelItemModal(cancelUrl) {
     }
 
     form.action = cancelUrl;
-
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
 }
@@ -2669,12 +2724,60 @@ function closeCancelItemModal(event) {
 
     modal.classList.remove("active");
     document.body.style.overflow = "";
+
+    const reason = document.getElementById("cancelItemReason");
+
+    if (reason) {
+        reason.value = "";
+    }
+}
+
+function openCancelOrderModal() {
+    const modal = document.getElementById("cancelOrderModal");
+    const reason = document.getElementById("cancelOrderReason");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    if (reason) {
+        reason.focus();
+    }
+}
+
+function closeCancelOrderModal(event) {
+    if (
+        event &&
+        event.target &&
+        event.target.id !== "cancelOrderModal"
+    ) {
+        return;
+    }
+
+    const modal = document.getElementById("cancelOrderModal");
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+
+    const reason = document.getElementById("cancelOrderReason");
+
+    if (reason) {
+        reason.value = "";
+    }
 }
 
 document.addEventListener("keydown", function(event) {
     if (event.key === "Escape") {
         closeReturnModal();
         closeCancelItemModal();
+        closeCancelOrderModal();
     }
 });
 </script>

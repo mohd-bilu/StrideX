@@ -698,6 +698,117 @@ Checkout - StrideX
         line-height: 1.5;
     }
 
+    .place-order-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(5px);
+    }
+
+    .place-order-modal-overlay.active {
+        display: flex;
+    }
+
+    .place-order-modal {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        padding: 30px;
+        border: 1px solid #292929;
+        border-radius: 17px;
+        background: #111;
+        text-align: center;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+    }
+
+    .place-order-modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #292929;
+        border-radius: 50%;
+        background: #191919;
+        color: #777;
+        cursor: pointer;
+    }
+
+    .place-order-modal-close:hover {
+        background: #292929;
+        color: #fff;
+    }
+
+    .place-order-modal-icon {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 121, 0, 0.1);
+        border: 1px solid rgba(255, 121, 0, 0.25);
+        color: #ff7900;
+        font-size: 18px;
+    }
+
+    .place-order-modal h3 {
+        margin: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .place-order-modal p {
+        margin: 10px 0 25px;
+        color: #777;
+        font-size: 10px;
+        line-height: 1.7;
+    }
+
+    .place-order-modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .place-order-modal-cancel,
+    .place-order-modal-confirm {
+        flex: 1;
+        height: 42px;
+        border-radius: 8px;
+        font-size: 9px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .place-order-modal-cancel {
+        border: 1px solid #303030;
+        background: #191919;
+        color: #aaa;
+    }
+
+    .place-order-modal-cancel:hover {
+        border-color: #555;
+        color: #fff;
+    }
+
+    .place-order-modal-confirm {
+        border: 1px solid #ff7900;
+        background: #ff7900;
+        color: #fff;
+    }
+
+    .place-order-modal-confirm:hover {
+        background: #ff8b20;
+        border-color: #ff8b20;
+    }
+
     @media (max-width: 900px) {
         .checkout-page {
             padding: 40px 25px 60px;
@@ -714,6 +825,21 @@ Checkout - StrideX
 
         .payment-card {
             order: -1;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .place-order-modal {
+            padding: 25px 20px;
+        }
+
+        .place-order-modal-actions {
+            flex-direction: column;
+        }
+
+        .place-order-modal-cancel,
+        .place-order-modal-confirm {
+            width: 100%;
         }
     }
 
@@ -1041,6 +1167,79 @@ Checkout - StrideX
                             <input
                                 type="radio"
                                 name="payment_method"
+                                id="payment-razorpay"
+                                value="RAZORPAY"
+                            >
+
+                            <label
+                                for="payment-razorpay"
+                                class="payment-label"
+                            >
+
+                                <span class="payment-radio"></span>
+
+                                <span class="payment-icon">
+                                    <i class="fa-regular fa-credit-card"></i>
+                                </span>
+
+                                <span class="payment-details">
+
+                                    <span class="payment-name">
+                                        Razorpay
+                                    </span>
+
+                                    <span class="payment-description">
+                                        UPI, Cards, Netbanking
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="payment-option">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                id="payment-wallet"
+                                value="WALLET"
+                            >
+
+                            <label
+                                for="payment-wallet"
+                                class="payment-label"
+                            >
+
+                                <span class="payment-radio"></span>
+
+                                <span class="payment-icon">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </span>
+
+                                <span class="payment-details">
+
+                                    <span class="payment-name">
+                                        Wallet
+                                    </span>
+
+                                    <span class="payment-description">
+                                        Available Balance:
+                                        ₹{{ wallet.balance|floatformat:2 }}
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="payment-option">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
                                 id="payment-cod"
                                 value="COD"
                                 checked
@@ -1072,7 +1271,7 @@ Checkout - StrideX
                             </label>
 
                         </div>
-
+                        
                     </div>
 
                     <div class="summary-card">
@@ -1264,7 +1463,7 @@ Checkout - StrideX
                             Place Order
                         </button>
 
-                        <p class="checkout-note">
+                        <p class="checkout-note" id="payment-method-note">
                             Your order will be placed using Cash on Delivery.
                         </p>
 
@@ -1300,205 +1499,375 @@ Checkout - StrideX
 
 </div>
 
-{% endblock %}
-{% block extra_js %}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const couponInput = document.getElementById("coupon-code");
-        const couponButton = document.getElementById("coupon-action-button");
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedCoupon =urlParams.get("coupon");
-        if (selectedCoupon && couponInput) {
-            couponInput.value =
-                selectedCoupon.toUpperCase();
-        }
-        const removeCouponButton = document.getElementById("remove-coupon-button");
-        const couponMessage = document.getElementById("coupon-message");
-        const couponApplied = document.getElementById("coupon-applied");
-        const couponAppliedCode = document.getElementById("coupon-applied-code");
-        const subtotalElement = document.getElementById("checkout-subtotal");
-        const offerDiscountElement = document.getElementById("checkout-offer-discount");
-        const couponDiscountElement = document.getElementById("checkout-coupon-discount");
-        const offerDiscountRow = document.getElementById("checkout-offer-discount-row");
-        const couponDiscountRow = document.getElementById("checkout-coupon-discount-row");
-        const shippingElement = document.getElementById("checkout-shipping");
-        const totalElement = document.getElementById("checkout-total");
+<!-- PLACE ORDER CONFIRMATION MODAL -->
 
-        if (!couponInput || !couponButton) {
+<div
+    id="placeOrderModal"
+    class="place-order-modal-overlay"
+    onclick="closePlaceOrderModal(event)"
+>
+    <div
+        class="place-order-modal"
+        onclick="event.stopPropagation()"
+    >
+        <button
+            type="button"
+            class="place-order-modal-close"
+            onclick="closePlaceOrderModal()"
+            aria-label="Close"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="place-order-modal-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h3>
+            Confirm Your Order?
+        </h3>
+
+        <p>
+            Are you sure you want to place this order?
+            Please make sure your delivery address and payment method are correct.
+        </p>
+
+        <div class="place-order-modal-actions">
+            <button
+                type="button"
+                class="place-order-modal-cancel"
+                onclick="closePlaceOrderModal()"
+            >
+                Go Back
+            </button>
+
+            <button
+                type="button"
+                class="place-order-modal-confirm"
+                id="confirmPlaceOrderButton"
+            >
+                Confirm Place Order
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const placeOrderModal = document.getElementById("placeOrderModal");
+    const confirmPlaceOrderButton = document.getElementById("confirmPlaceOrderButton");
+
+    function openPlaceOrderModal() {
+        if (!placeOrderModal) {
             return;
         }
 
-        function getCookie(name) {
-            let cookieValue = null;
+        placeOrderModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+    }
 
-            if (document.cookie && document.cookie !== "") {
-                const cookies = document.cookie.split(";");
+    window.closePlaceOrderModal = function (event) {
+        if (
+            event &&
+            event.target &&
+            event.target.id !== "placeOrderModal"
+        ) {
+            return;
+        }
 
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
+        if (!placeOrderModal) {
+            return;
+        }
 
-                    if (cookie.substring(0, name.length + 1) === name + "=") {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+        placeOrderModal.classList.remove("active");
+        document.body.style.overflow = "";
+    };
+
+    const couponInput = document.getElementById("coupon-code");
+    const couponButton = document.getElementById("coupon-action-button");
+    const removeCouponButton = document.getElementById("remove-coupon-button");
+    const couponMessage = document.getElementById("coupon-message");
+    const couponApplied = document.getElementById("coupon-applied");
+    const couponAppliedCode = document.getElementById("coupon-applied-code");
+    const subtotalElement = document.getElementById("checkout-subtotal");
+    const offerDiscountElement = document.getElementById("checkout-offer-discount");
+    const couponDiscountElement = document.getElementById("checkout-coupon-discount");
+    const offerDiscountRow = document.getElementById("checkout-offer-discount-row");
+    const couponDiscountRow = document.getElementById("checkout-coupon-discount-row");
+    const shippingElement = document.getElementById("checkout-shipping");
+    const totalElement = document.getElementById("checkout-total");
+    const checkoutForm = document.getElementById("place-order-form");
+
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+                    break;
                 }
             }
-
-            return cookieValue;
         }
 
-        const csrftoken = getCookie("csrftoken");
+        return cookieValue;
+    }
 
-        function formatCurrency(value) {
-            const number = Number(value);
+    const csrftoken = getCookie("csrftoken");
 
-            if (Number.isNaN(number)) {
-                return "₹0.00";
-            }
+    function formatCurrency(value) {
+        const number = Number(value);
 
-            return "₹" + number.toFixed(2);
+        if (Number.isNaN(number)) {
+            return "₹0.00";
         }
 
-        function setMessage(message, type) {
-            if (!couponMessage) {
-                return;
-            }
+        return "₹" + number.toFixed(2);
+    }
 
-            couponMessage.textContent = message || "";
-            couponMessage.className = "coupon-message";
-
-            if (type) {
-                couponMessage.classList.add(type);
-            }
+    function setMessage(message, type) {
+        if (!couponMessage) {
+            return;
         }
 
-        function updateSummary(data) {
-            if (subtotalElement && data.subtotal !== undefined) {
-                subtotalElement.textContent = formatCurrency(data.subtotal);
-            }
+        couponMessage.textContent = message || "";
+        couponMessage.className = "coupon-message";
 
-            const offerDiscount = Number(data.offer_discount || 0);
-            const couponDiscount = Number(data.coupon_discount || 0);
+        if (type) {
+            couponMessage.classList.add(type);
+        }
+    }
 
-            if (offerDiscountElement) {
-                offerDiscountElement.textContent = "-" + formatCurrency(offerDiscount);
-            }
-
-            if (couponDiscountElement) {
-                couponDiscountElement.textContent = "-" + formatCurrency(couponDiscount);
-            }
-
-            if (offerDiscountRow) {
-                if (offerDiscount > 0) {
-                    offerDiscountRow.style.display = "flex";
-                } else {
-                    offerDiscountRow.style.display = "none";
-                }
-            }
-
-            if (couponDiscountRow) {
-                if (couponDiscount > 0) {
-                    couponDiscountRow.style.display = "flex";
-                } else {
-                    couponDiscountRow.style.display = "none";
-                }
-            }
-
-            if (shippingElement && data.shipping !== undefined) {
-                const shipping = Number(data.shipping || 0);
-
-                if (shipping === 0) {
-                    shippingElement.textContent = "FREE";
-                } else {
-                    shippingElement.textContent = formatCurrency(shipping);
-                }
-            }
-
-            if (totalElement && data.total !== undefined) {
-                totalElement.textContent = formatCurrency(data.total);
-            }
+    function updateSummary(data) {
+        if (subtotalElement && data.subtotal !== undefined) {
+            subtotalElement.textContent = formatCurrency(data.subtotal);
         }
 
-        function setLoading(button, loadingText) {
-            if (!button) {
-                return;
-            }
+        const offerDiscount = Number(data.offer_discount || 0);
+        const couponDiscount = Number(data.coupon_discount || 0);
 
-            button.disabled = true;
-            button.dataset.originalText = button.textContent;
-            button.textContent = loadingText;
+        if (offerDiscountElement) {
+            offerDiscountElement.textContent =
+                "-" + formatCurrency(offerDiscount);
         }
 
-        function restoreButton(button) {
-            if (!button) {
-                return;
-            }
-
-            button.disabled = false;
-
-            if (button.dataset.originalText) {
-                button.textContent = button.dataset.originalText;
-            }
+        if (couponDiscountElement) {
+            couponDiscountElement.textContent =
+                "-" + formatCurrency(couponDiscount);
         }
 
-        function showAppliedCoupon(code) {
+        if (offerDiscountRow) {
+            offerDiscountRow.style.display =
+                offerDiscount > 0 ? "flex" : "none";
+        }
+
+        if (couponDiscountRow) {
+            couponDiscountRow.style.display =
+                couponDiscount > 0 ? "flex" : "none";
+        }
+
+        if (shippingElement && data.shipping !== undefined) {
+            const shipping = Number(data.shipping || 0);
+
+            shippingElement.textContent =
+                shipping === 0
+                    ? "FREE"
+                    : formatCurrency(shipping);
+        }
+
+        if (totalElement && data.total !== undefined) {
+            totalElement.textContent = formatCurrency(data.total);
+        }
+    }
+
+    function setLoading(button, loadingText) {
+        if (!button) {
+            return;
+        }
+
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = loadingText;
+    }
+
+    function restoreButton(button) {
+        if (!button) {
+            return;
+        }
+
+        button.disabled = false;
+
+        if (button.dataset.originalText) {
+            button.textContent = button.dataset.originalText;
+        }
+    }
+
+    function showAppliedCoupon(code) {
+        if (couponInput) {
             couponInput.value = code || "";
             couponInput.disabled = true;
-            couponButton.textContent = "Applied";
-            couponButton.disabled = true;
-
-            if (couponAppliedCode) {
-                couponAppliedCode.textContent = code || "";
-            }
-
-            if (couponApplied) {
-                couponApplied.classList.add("active");
-            }
         }
 
-        function showCouponInput() {
+        if (couponButton) {
+            couponButton.textContent = "Applied";
+            couponButton.disabled = true;
+        }
+
+        if (couponAppliedCode) {
+            couponAppliedCode.textContent = code || "";
+        }
+
+        if (couponApplied) {
+            couponApplied.classList.add("active");
+        }
+    }
+
+    function showCouponInput() {
+        if (couponInput) {
             couponInput.disabled = false;
             couponInput.value = "";
+        }
+
+        if (couponButton) {
             couponButton.disabled = false;
             couponButton.textContent = "Apply";
+        }
 
-            if (couponApplied) {
-                couponApplied.classList.remove("active");
-            }
+        if (couponApplied) {
+            couponApplied.classList.remove("active");
+        }
 
-            if (couponAppliedCode) {
-                couponAppliedCode.textContent = "";
-            }
+        if (couponAppliedCode) {
+            couponAppliedCode.textContent = "";
+        }
+    }
+
+    if (couponInput && couponButton) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCoupon = urlParams.get("coupon");
+
+        if (selectedCoupon) {
+            couponInput.value = selectedCoupon.toUpperCase();
         }
 
         couponButton.addEventListener("click", function () {
             const couponCode = couponInput.value.trim().toUpperCase();
 
             if (!couponCode) {
-                setMessage("Please enter a coupon code.", "error");
+                setMessage(
+                    "Please enter a coupon code.",
+                    "error"
+                );
+
                 couponInput.focus();
                 return;
             }
 
-            setLoading(couponButton, "Applying...");
+            setLoading(
+                couponButton,
+                "Applying..."
+            );
+
             setMessage("", "");
 
             const formData = new FormData();
-            formData.append("coupon_code", couponCode);
 
-            fetch("{% url 'order:apply_coupon' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                body: formData
+            formData.append(
+                "coupon_code",
+                couponCode
+            );
+
+            fetch(
+                "{% url 'order:apply_coupon' %}",
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: formData
+                }
+            )
+            .then(function (response) {
+                return response.json().then(function (data) {
+                    return {
+                        ok: response.ok,
+                        data: data
+                    };
+                });
             })
+            .then(function (result) {
+                const data = result.data;
+
+                if (!result.ok || !data.success) {
+                    restoreButton(couponButton);
+
+                    setMessage(
+                        data.message ||
+                        "Unable to apply coupon.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                updateSummary(data);
+                showAppliedCoupon(data.coupon_code);
+
+                setMessage(
+                    data.message ||
+                    "Coupon applied successfully.",
+                    "success"
+                );
+            })
+            .catch(function (error) {
+                console.error(
+                    "Apply coupon error:",
+                    error
+                );
+
+                restoreButton(couponButton);
+
+                setMessage(
+                    "Something went wrong. Please try again.",
+                    "error"
+                );
+            });
+        });
+
+        if (removeCouponButton) {
+            removeCouponButton.addEventListener("click", function () {
+                setLoading(
+                    removeCouponButton,
+                    "Removing..."
+                );
+
+                setMessage("", "");
+
+                fetch(
+                    "{% url 'order:remove_coupon' %}",
+                    {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": csrftoken,
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    }
+                )
                 .then(function (response) {
                     return response.json().then(function (data) {
                         return {
                             ok: response.ok,
-                            status: response.status,
                             data: data
                         };
                     });
@@ -1506,82 +1875,40 @@ Checkout - StrideX
                 .then(function (result) {
                     const data = result.data;
 
-                    if (!data.success) {
-                        couponButton.disabled = false;
-                        couponButton.textContent = "Apply";
+                    if (!result.ok || !data.success) {
+                        restoreButton(removeCouponButton);
+
                         setMessage(
-                            data.message || "Unable to apply coupon.",
+                            data.message ||
+                            "Unable to remove coupon.",
                             "error"
                         );
+
                         return;
                     }
 
                     updateSummary(data);
-                    showAppliedCoupon(data.coupon_code);
+                    showCouponInput();
+
                     setMessage(
-                        data.message || "Coupon applied successfully.",
+                        data.message ||
+                        "Coupon removed successfully.",
                         "success"
                     );
                 })
                 .catch(function (error) {
-                    console.error("Apply coupon error:", error);
-                    couponButton.disabled = false;
-                    couponButton.textContent = "Apply";
+                    console.error(
+                        "Remove coupon error:",
+                        error
+                    );
+
+                    restoreButton(removeCouponButton);
+
                     setMessage(
                         "Something went wrong. Please try again.",
                         "error"
                     );
                 });
-        });
-
-        if (removeCouponButton) {
-            removeCouponButton.addEventListener("click", function () {
-                setLoading(removeCouponButton, "Removing...");
-                setMessage("", "");
-
-                fetch("{% url 'order:remove_coupon' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": csrftoken,
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                })
-                    .then(function (response) {
-                        return response.json().then(function (data) {
-                            return {
-                                ok: response.ok,
-                                status: response.status,
-                                data: data
-                            };
-                        });
-                    })
-                    .then(function (result) {
-                        const data = result.data;
-
-                        if (!data.success) {
-                            restoreButton(removeCouponButton);
-                            setMessage(
-                                data.message || "Unable to remove coupon.",
-                                "error"
-                            );
-                            return;
-                        }
-
-                        updateSummary(data);
-                        showCouponInput();
-                        setMessage(
-                            data.message || "Coupon removed successfully.",
-                            "success"
-                        );
-                    })
-                    .catch(function (error) {
-                        console.error("Remove coupon error:", error);
-                        restoreButton(removeCouponButton);
-                        setMessage(
-                            "Something went wrong. Please try again.",
-                            "error"
-                        );
-                    });
             });
         }
 
@@ -1590,6 +1917,208 @@ Checkout - StrideX
         if (existingCoupon && couponInput.disabled) {
             showAppliedCoupon(existingCoupon);
         }
+    }
+
+    const paymentMethodInputs = document.querySelectorAll(
+        'input[name="payment_method"]'
+    );
+
+    const paymentMethodNote = document.getElementById(
+        "payment-method-note"
+    );
+
+    paymentMethodInputs.forEach(function (input) {
+        input.addEventListener("change", function () {
+            if (!paymentMethodNote) {
+                return;
+            }
+
+            if (this.value === "WALLET") {
+                paymentMethodNote.textContent =
+                    "Your wallet balance will be used to pay for this order.";
+            } else if (this.value === "RAZORPAY") {
+                paymentMethodNote.textContent =
+                    "You will be redirected to Razorpay to complete your payment.";
+            } else {
+                paymentMethodNote.textContent =
+                    "Your order will be placed using Cash on Delivery.";
+            }
+        });
     });
+
+    if (!checkoutForm) {
+        return;
+    }
+
+    let orderConfirmationPending = false;
+
+    checkoutForm.addEventListener("submit", function (event) {
+        if (!orderConfirmationPending) {
+            event.preventDefault();
+            openPlaceOrderModal();
+            return;
+        }
+
+        orderConfirmationPending = false;
+
+        const selectedPayment = document.querySelector(
+            'input[name="payment_method"]:checked'
+        );
+
+        if (
+            !selectedPayment ||
+            selectedPayment.value !== "RAZORPAY"
+        ) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const address = document.querySelector(
+            'input[name="address"]:checked'
+        );
+
+        if (!address) {
+            alert(
+                "Please select a delivery address."
+            );
+
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append(
+            "address",
+            address.value
+        );
+
+        fetch(
+            "{% url 'order:create_razorpay_order' %}",
+            {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            }
+        )
+        .then(function (response) {
+            return response.json().then(function (data) {
+                return {
+                    ok: response.ok,
+                    data: data
+                };
+            });
+        })
+        .then(function (result) {
+            const data = result.data;
+
+            if (!result.ok || !data.success) {
+                alert(
+                    data.message ||
+                    "Unable to start payment."
+                );
+
+                return;
+            }
+
+            const options = {
+                key: data.key,
+                amount: data.amount,
+                currency: data.currency,
+                name: data.name,
+                description: data.description,
+                order_id: data.razorpay_order_id,
+
+                handler: function (response) {
+                    const paymentForm = document.createElement("form");
+                    paymentForm.method = "POST";
+                    paymentForm.action = "{% url 'order:razorpay_payment_success' %}";
+
+                    const csrf = document.createElement("input");
+                    csrf.type = "hidden";
+                    csrf.name = "csrfmiddlewaretoken";
+                    csrf.value = csrftoken;
+                    paymentForm.appendChild(csrf);
+
+                    const paymentId = document.createElement("input");
+                    paymentId.type = "hidden";
+                    paymentId.name = "razorpay_payment_id";
+                    paymentId.value = response.razorpay_payment_id;
+                    paymentForm.appendChild(paymentId);
+
+                    const orderId = document.createElement("input");
+                    orderId.type = "hidden";
+                    orderId.name = "razorpay_order_id";
+                    orderId.value = response.razorpay_order_id;
+                    paymentForm.appendChild(orderId);
+
+                    const signature = document.createElement("input");
+                    signature.type = "hidden";
+                    signature.name = "razorpay_signature";
+                    signature.value = response.razorpay_signature;
+                    paymentForm.appendChild(signature);
+
+                    document.body.appendChild(paymentForm);
+                    paymentForm.submit();
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        window.location.href =
+                            "{% url 'order:razorpay_payment_failed' %}";
+                    }
+                }
+            };
+
+            const razorpay = new Razorpay(options);
+
+            razorpay.on("payment.failed", function (response) {
+                console.error("Razorpay payment failed:", response);
+
+                window.location.href =
+                    "{% url 'order:razorpay_payment_failed' %}";
+            });
+
+            razorpay.open();
+        })
+        .catch(function (error) {
+            console.error(
+                "Razorpay Error:",
+                error
+            );
+
+            alert(
+                "Unable to start payment. Please try again."
+            );
+        });
+    });
+
+    if (confirmPlaceOrderButton) {
+        confirmPlaceOrderButton.addEventListener("click", function () {
+            if (!checkoutForm) {
+                return;
+            }
+
+            orderConfirmationPending = true;
+
+            if (placeOrderModal) {
+                placeOrderModal.classList.remove("active");
+            }
+
+            document.body.style.overflow = "";
+
+            checkoutForm.requestSubmit();
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            window.closePlaceOrderModal();
+        }
+    });
+});
 </script>
 {% endblock %}

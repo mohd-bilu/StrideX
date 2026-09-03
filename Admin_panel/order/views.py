@@ -383,7 +383,6 @@ def update_order_status(request, order_id):
         order_id=order.order_id,
     )
 
-
 @never_cache
 @login_required(login_url="admin_login")
 @staff_member_required
@@ -465,11 +464,52 @@ def update_return_status(request, item_id):
             ]
         )
 
-        messages.success(
-            request,
-            f"Return approved for "
-            f"{item.variant.product.product_name}.",
-        )
+        order = item.order
+
+        if order.payment_status == "PAID":
+            from User_panel.Wallet.models import (
+                Wallet,
+                WalletTransaction,
+            )
+
+            refund_amount = item.price * item.quantity
+
+            wallet, created = Wallet.objects.get_or_create(
+                user=order.user
+            )
+
+            wallet.balance += refund_amount
+
+            wallet.save(
+                update_fields=[
+                    "balance",
+                    "updated_at",
+                ]
+            )
+
+            WalletTransaction.objects.create(
+                wallet=wallet,
+                transaction_type="CREDIT",
+                amount=refund_amount,
+                description=(
+                    f"Refund for returned item "
+                    f"{item.variant.product.product_name}"
+                ),
+                reference=order.order_id,
+            )
+
+            messages.success(
+                request,
+                f"Return approved and ₹{refund_amount:.2f} "
+                f"refunded to wallet.",
+            )
+
+        else:
+            messages.success(
+                request,
+                f"Return approved for "
+                f"{item.variant.product.product_name}.",
+            )
 
     elif new_status == "REJECTED":
         item.status = "REJECTED"

@@ -206,7 +206,6 @@ def logout_view(request):
 
     return redirect("home")
 
-
 @login_required(login_url="login")
 def user_home(request):
 

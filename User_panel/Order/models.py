@@ -20,11 +20,15 @@ class Order(models.Model):
 
     PAYMENT_METHOD_CHOICES = (
         ("COD", "Cash On Delivery"),
+        ("WALLET", "Wallet"),
+        ("RAZORPAY", "Razorpay"),
     )
 
     PAYMENT_STATUS_CHOICES = (
         ("PENDING", "Pending"),
         ("PAID", "Paid"),
+        ("FAILED", "Failed"),
+        ("CANCELLED", "Cancelled"),
     )
 
     user = models.ForeignKey(
