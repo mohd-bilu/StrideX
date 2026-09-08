@@ -15,7 +15,7 @@ Available Coupons
         </div>
 
         <a
-            href="{% url 'order:checkout' %}"
+            href="{% url 'checkout:checkout' %}"
             class="back-button"
         >
             ← Back to Checkout
@@ -206,7 +206,7 @@ Available Coupons
             </p>
 
             <a
-                href="{% url 'order:checkout' %}"
+                href="{% url 'checkout:checkout' %}"
                 class="back-button"
             >
                 Back to Checkout
@@ -430,7 +430,7 @@ document.addEventListener(
                         }
 
                         window.location.href =
-                            "{% url 'order:checkout' %}"
+                            "{% url 'checkout:checkout' %}"
                             +
                             "?coupon="
                             +

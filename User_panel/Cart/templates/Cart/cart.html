@@ -684,7 +684,7 @@ Cart
                 {% if cart and cart.items.exists %}
 
                     <a
-                        href="{% url 'order:checkout' %}"
+                        href="{% url 'checkout:checkout' %}"
                         class="checkout-btn">
                         Proceed to Checkout
                     </a>

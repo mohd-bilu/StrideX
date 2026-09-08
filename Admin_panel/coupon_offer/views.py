@@ -9,37 +9,25 @@ from .models import Coupon, Offer
 
 
 def coupon_list(request):
-    search_query = request.GET.get(
-        "search",
-        ""
-    ).strip()
-
+    search = request.GET.get("search", "").strip()
     coupons = Coupon.objects.all()
 
-    if search_query:
+    if search:
         coupons = coupons.filter(
-            Q(code__icontains=search_query)
+            Q(code__icontains=search)
+            | Q(discount_type__icontains=search)
         )
 
-    paginator = Paginator(
-        coupons,
-        10
-    )
+    paginator = Paginator(coupons, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
-    page_number = request.GET.get(
-        "page"
-    )
-
-    page_obj = paginator.get_page(
-        page_number
-    )
-
-    now = timezone.now()
+    now = timezone.localtime(timezone.now())
 
     for coupon in page_obj:
         if not coupon.is_active:
             coupon.display_status = "INACTIVE"
-        elif coupon.expiry_date < now:
+        elif coupon.expiry_date <= now:
             coupon.display_status = "EXPIRED"
         elif coupon.start_date > now:
             coupon.display_status = "UPCOMING"
@@ -51,284 +39,181 @@ def coupon_list(request):
         else:
             coupon.display_status = "ACTIVE"
 
-    context = {
-        "coupons": page_obj,
-        "page_obj": page_obj,
-        "search_query": search_query,
-        "total_coupons": coupons.count(),
-    }
+    active_count = Coupon.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        expiry_date__gt=now,
+    ).filter(
+        Q(usage_limit__isnull=True)
+        | Q(used_count__lt=Q("usage_limit"))
+    ).count()
 
     return render(
         request,
         "coupon_offer/coupon_list.html",
-        context
+        {
+            "coupons": page_obj,
+            "search": search,
+            "active_count": active_count,
+        },
     )
 
 
 def coupon_add(request):
     if request.method == "POST":
-        form = CouponForm(
-            request.POST
-        )
+        form = CouponForm(request.POST)
 
         if form.is_valid():
-            coupon = form.save()
-
-            messages.success(
-                request,
-                f"Coupon {coupon.code} created successfully."
-            )
-
-            return redirect(
-                "coupon_offer:coupon_list"
-            )
-
+            form.save()
+            messages.success(request, "Coupon created successfully.")
+            return redirect("coupon_offer:coupon_list")
     else:
         form = CouponForm()
-
-    context = {
-        "form": form,
-        "page_title": "Add Coupon",
-        "submit_text": "Create Coupon",
-    }
 
     return render(
         request,
         "coupon_offer/coupon_add.html",
-        context
+        {"form": form},
     )
 
 
 def coupon_edit(request, coupon_id):
-    coupon = get_object_or_404(
-        Coupon,
-        id=coupon_id
-    )
+    coupon = get_object_or_404(Coupon, pk=coupon_id)
 
     if request.method == "POST":
-        form = CouponForm(
-            request.POST,
-            instance=coupon
-        )
+        form = CouponForm(request.POST, instance=coupon)
 
         if form.is_valid():
-            coupon = form.save()
-
-            messages.success(
-                request,
-                f"Coupon {coupon.code} updated successfully."
-            )
-
-            return redirect(
-                "coupon_offer:coupon_list"
-            )
-
+            form.save()
+            messages.success(request, "Coupon updated successfully.")
+            return redirect("coupon_offer:coupon_list")
     else:
-        form = CouponForm(
-            instance=coupon
-        )
-
-    context = {
-        "form": form,
-        "coupon": coupon,
-        "page_title": "Edit Coupon",
-        "submit_text": "Update Coupon",
-    }
+        form = CouponForm(instance=coupon)
 
     return render(
         request,
         "coupon_offer/coupon_edit.html",
-        context
+        {
+            "form": form,
+            "coupon": coupon,
+        },
     )
 
 
 def coupon_delete(request, coupon_id):
-    coupon = get_object_or_404(
-        Coupon,
-        id=coupon_id
-    )
+    if request.method != "POST":
+        return redirect("coupon_offer:coupon_list")
 
-    if request.method == "POST":
-        code = coupon.code
+    coupon = get_object_or_404(Coupon, pk=coupon_id)
+    coupon.delete()
 
-        coupon.delete()
-
-        messages.success(
-            request,
-            f"Coupon {code} deleted successfully."
-        )
-
-        return redirect(
-            "coupon_offer:coupon_list"
-        )
-
-    return redirect(
-        "coupon_offer:coupon_list"
-    )
+    messages.success(request, "Coupon deleted successfully.")
+    return redirect("coupon_offer:coupon_list")
 
 
 def offer_list(request):
-    search_query = request.GET.get(
-        "search",
-        ""
-    ).strip()
+    search = request.GET.get("search", "").strip()
 
-    offers = (
-        Offer.objects
-        .select_related(
-            "product",
-            "category",
-        )
-        .all()
+    offers = Offer.objects.select_related(
+        "product",
+        "category",
     )
 
-    if search_query:
+    if search:
         offers = offers.filter(
-            Q(name__icontains=search_query)
-            | Q(product__product_name__icontains=search_query)
-            | Q(category__category_name__icontains=search_query)
+            Q(name__icontains=search)
+            | Q(offer_type__icontains=search)
+            | Q(discount_type__icontains=search)
+            | Q(product__product_name__icontains=search)
+            | Q(category__name__icontains=search)
         )
 
-    paginator = Paginator(
-        offers,
-        10
-    )
+    paginator = Paginator(offers, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
-    page_number = request.GET.get(
-        "page"
-    )
-
-    page_obj = paginator.get_page(
-        page_number
-    )
-
-    now = timezone.now()
+    now = timezone.localtime(timezone.now())
 
     for offer in page_obj:
-
         if not offer.is_active:
             offer.display_status = "INACTIVE"
-
-        elif offer.expiry_date < now:
+        elif offer.expiry_date <= now:
             offer.display_status = "EXPIRED"
-
         elif offer.start_date > now:
             offer.display_status = "UPCOMING"
-
         else:
             offer.display_status = "ACTIVE"
 
-    context = {
-        "offers": page_obj,
-        "page_obj": page_obj,
-        "search_query": search_query,
-        "total_offers": offers.count(),
-    }
+    active_count = Offer.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        expiry_date__gt=now,
+    ).count()
 
     return render(
         request,
         "coupon_offer/offer_list.html",
-        context
+        {
+            "offers": page_obj,
+            "search": search,
+            "active_count": active_count,
+        },
     )
 
 
 def offer_add(request):
     if request.method == "POST":
-        form = OfferForm(
-            request.POST
-        )
+        form = OfferForm(request.POST)
 
         if form.is_valid():
-            offer = form.save()
-
-            messages.success(
-                request,
-                f"Offer {offer.name} created successfully."
-            )
-
-            return redirect(
-                "coupon_offer:offer_list"
-            )
-
+            form.save()
+            messages.success(request, "Offer created successfully.")
+            return redirect("coupon_offer:offer_list")
     else:
         form = OfferForm()
-
-    context = {
-        "form": form,
-        "page_title": "Add Offer",
-        "submit_text": "Create Offer",
-    }
 
     return render(
         request,
         "coupon_offer/offer_form.html",
-        context
+        {
+            "form": form,
+            "page_title": "Add Offer",
+            "submit_text": "Create Offer",
+        },
     )
 
 
 def offer_edit(request, offer_id):
-    offer = get_object_or_404(
-        Offer,
-        id=offer_id
-    )
+    offer = get_object_or_404(Offer, pk=offer_id)
 
     if request.method == "POST":
-        form = OfferForm(
-            request.POST,
-            instance=offer
-        )
+        form = OfferForm(request.POST, instance=offer)
 
         if form.is_valid():
-            offer = form.save()
-
-            messages.success(
-                request,
-                f"Offer {offer.name} updated successfully."
-            )
-
-            return redirect(
-                "coupon_offer:offer_list"
-            )
-
+            form.save()
+            messages.success(request, "Offer updated successfully.")
+            return redirect("coupon_offer:offer_list")
     else:
-        form = OfferForm(
-            instance=offer
-        )
-
-    context = {
-        "form": form,
-        "offer": offer,
-        "page_title": "Edit Offer",
-        "submit_text": "Update Offer",
-    }
+        form = OfferForm(instance=offer)
 
     return render(
         request,
         "coupon_offer/offer_form.html",
-        context
+        {
+            "form": form,
+            "offer": offer,
+            "page_title": "Edit Offer",
+            "submit_text": "Update Offer",
+        },
     )
 
 
 def offer_delete(request, offer_id):
-    offer = get_object_or_404(
-        Offer,
-        id=offer_id
-    )
+    if request.method != "POST":
+        return redirect("coupon_offer:offer_list")
 
-    if request.method == "POST":
-        offer_name = offer.name
+    offer = get_object_or_404(Offer, pk=offer_id)
+    offer.delete()
 
-        offer.delete()
-
-        messages.success(
-            request,
-            f"Offer {offer_name} deleted successfully."
-        )
-
-        return redirect(
-            "coupon_offer:offer_list"
-        )
-
-    return redirect(
-        "coupon_offer:offer_list"
-    )
+    messages.success(request, "Offer deleted successfully.")
+    return redirect("coupon_offer:offer_list")

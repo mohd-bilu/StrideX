@@ -10,6 +10,7 @@ urlpatterns = [
     path("", include("User_panel.Authentication.urls")),
     path("products/", include(("User_panel.Product.urls", "product"), namespace="product")),
     path("cart/",include("User_panel.Cart.urls")),
+    path("checkout/", include(("User_panel.Checkout.urls", "checkout"), namespace="checkout")),
     path("order/", include("User_panel.Order.urls")),
     path("wallet/", include("User_panel.Wallet.urls")),
 

@@ -70,7 +70,6 @@ class ProductImage(models.Model):
             f"Image {self.id}"
         )
 
-
 class Variant(models.Model):
 
     product = models.ForeignKey(
@@ -122,6 +121,9 @@ class Variant(models.Model):
         ordering = [
             "-updated_at",
         ]
+
+    def __str__(self):
+        return f"{self.product.product_name} - {self.size} - {self.color} - {self.sku}"
 class VariantImage(models.Model):
     variant = models.ForeignKey(
         Variant,

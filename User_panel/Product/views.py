@@ -1,10 +1,61 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Prefetch, Q, Min
-from django.core.paginator import Paginator
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required
-from Admin_panel.product.models import Product, Variant
+from django.core.paginator import Paginator
+from django.db.models import Min, Prefetch, Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
 from Admin_panel.category.models import Category
+from Admin_panel.coupon_offer.models import Offer
+from Admin_panel.product.models import Product, Variant
 from User_panel.Cart.models import WishlistItem
+
+
+def get_best_offer(variant, now=None):
+    if now is None:
+        now = timezone.now()
+
+    offers = Offer.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        expiry_date__gte=now,
+    ).filter(
+        Q(
+            offer_type="PRODUCT",
+            product_id=variant.product_id,
+        )
+        | Q(
+            offer_type="CATEGORY",
+            category_id=variant.product.category_id,
+        )
+    )
+
+    best_offer = None
+    best_discount = Decimal("0.00")
+
+    for offer in offers:
+        if offer.discount_type == "PERCENTAGE":
+            discount = (
+                variant.price * offer.discount_value
+            ) / Decimal("100")
+        else:
+            discount = min(
+                offer.discount_value,
+                variant.price,
+            )
+
+        discount = max(
+            Decimal("0.00"),
+            min(discount, variant.price),
+        )
+
+        if discount > best_discount:
+            best_offer = offer
+            best_discount = discount
+
+    return best_offer, best_discount
+
 
 @login_required(login_url="login")
 def category_list(request):
@@ -125,13 +176,17 @@ def product_list(request):
         "selected_size": selected_size,
     }
 
-    return render(request, "Product/shop.html", context)
+    return render(
+        request,
+        "Product/shop.html",
+        context,
+    )
 
 
 @login_required(login_url="login")
 def product_detail(request, product_id):
     product = get_object_or_404(
-        Product.objects.prefetch_related(
+        Product.objects.select_related("category").prefetch_related(
             "variants__images",
         ),
         id=product_id,
@@ -141,26 +196,30 @@ def product_detail(request, product_id):
         category__is_deleted=False,
     )
 
-    variant = (
+    active_variants = list(
         product.variants.filter(
             is_active=True,
             is_deleted=False,
         )
         .prefetch_related("images")
-        .first()
+        .order_by("color", "size")
     )
 
-    active_variants = (
-        product.variants.filter(
-            is_active=True,
-            is_deleted=False,
-        )
-        .prefetch_related("images")
-    )
+    variant = active_variants[0] if active_variants else None
 
+    if variant is None:
+        return redirect("product:product_list")
+
+    now = timezone.now()
     variant_data = []
 
     for item in active_variants:
+        offer, discount = get_best_offer(item, now)
+        offer_price = max(
+            Decimal("0.00"),
+            item.price - discount,
+        )
+
         variant_data.append(
             {
                 "id": item.id,
@@ -168,7 +227,18 @@ def product_detail(request, product_id):
                 "size": item.size,
                 "price": str(item.price),
                 "stock": item.stock,
-                "sku": item.sku,
+                "offer_name": offer.name if offer else "",
+                "discount_type": offer.discount_type if offer else "",
+                "discount_value": (
+                    str(offer.discount_value)
+                    if offer
+                    else "0.00"
+                ),
+                "discount": str(discount),
+                "offer_price": str(offer_price),
+                "has_offer": bool(
+                    offer and discount > 0
+                ),
                 "images": [
                     image.image.url
                     for image in item.images.all()
@@ -176,14 +246,22 @@ def product_detail(request, product_id):
             }
         )
 
+    selected_offer, selected_discount = get_best_offer(
+        variant,
+        now,
+    )
+
+    selected_offer_price = max(
+        Decimal("0.00"),
+        variant.price - selected_discount,
+    )
+
     colors = []
 
     for item in active_variants:
-        if item.color not in colors:
-            colors.append(item.color)
-
-    if variant is None:
-        return redirect("product:product_list")
+        color = item.color.strip()
+        if color and color not in colors:
+            colors.append(color)
 
     similar_products = (
         Product.objects.filter(
@@ -222,6 +300,9 @@ def product_detail(request, product_id):
         "colors": colors,
         "similar_products": similar_products,
         "wishlist_variant_ids": wishlist_variant_ids,
+        "selected_offer": selected_offer,
+        "selected_discount": selected_discount,
+        "selected_offer_price": selected_offer_price,
     }
 
     return render(

@@ -1,2784 +1,683 @@
 {% extends "user_base.html" %}
 
-{% block title %}
-Order Details - StrideX
-{% endblock %}
+{% block title %}Order Details - StrideX{% endblock %}
 
 {% block extra_css %}
 <style>
-.stride-order-detail {
-    width: 100%;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 45px 28px 80px;
-    color: #fff;
+.stride-order-detail{
+    max-width:1200px;
+    margin:0 auto;
+    padding:40px 20px 70px;
 }
 
-.stride-order-detail * {
-    box-sizing: border-box;
+.stride-order-detail h1{
+    margin:0 0 30px;
+    color:#172033;
+    font-size:32px;
+    font-weight:700;
 }
 
-.stride-order-detail h1,
-.stride-order-detail h2,
-.stride-order-detail h3,
-.stride-order-detail p {
-    margin: 0;
+.stride-order-detail h2{
+    margin:0 0 18px;
+    color:#172033;
+    font-size:22px;
+    font-weight:700;
 }
 
-.stride-order-detail h1 {
-    color: #fff;
-    font-size: 38px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 28px;
+.stride-order-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    padding:24px;
+    background:#fff;
+    border:1px solid #e5e9ef;
+    border-radius:14px;
+    box-shadow:0 5px 18px rgba(23,32,51,.05);
 }
 
-.stride-order-detail h2 {
-    color: #fff;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: .2px;
+.stride-order-header p{
+    margin:0 0 8px;
+    color:#667386;
+    font-size:15px;
 }
 
-.stride-order-detail hr {
-    border: 0;
-    border-top: 1px solid #262626;
-    margin: 30px 0;
+.stride-order-header p:last-child{
+    margin-bottom:0;
 }
 
-/* TOP AREA */
-
-.stride-order-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 18px;
-}
-
-.stride-back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #8e8e8e;
-    text-decoration: none;
-    font-size: 11px;
-    font-weight: 600;
-    transition: .2s ease;
-}
-
-.stride-back-link:hover {
-    color: #ff7a00;
-}
-
-.stride-order-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.stride-meta-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 11px;
-    border-radius: 20px;
-    background: #171717;
-    border: 1px solid #252525;
-    color: #a4a4a4;
-    font-size: 9px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-}
-
-.stride-meta-pill i {
-    color: #777;
-}
-
-/* ORDER ID */
-
-.stride-order-id {
-    color: #fff;
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -1px;
-}
-
-.stride-order-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: 10px;
-    padding: 7px 13px;
-    border-radius: 20px;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-    vertical-align: middle;
-}
-
-.stride-order-status::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-}
-
-.status-pending {
-    color: #ffb13b;
-    background: rgba(255,177,59,.1);
-    border: 1px solid rgba(255,177,59,.25);
-}
-
-.status-processing {
-    color: #5c9eff;
-    background: rgba(92,158,255,.1);
-    border: 1px solid rgba(92,158,255,.25);
-}
-
-.status-shipped {
-    color: #9a7cff;
-    background: rgba(154,124,255,.1);
-    border: 1px solid rgba(154,124,255,.25);
-}
-
-.status-out-for-delivery {
-    color: #ff9a42;
-    background: rgba(255,154,66,.1);
-    border: 1px solid rgba(255,154,66,.25);
-}
-
-.status-delivered {
-    color: #54d889;
-    background: rgba(84,216,137,.1);
-    border: 1px solid rgba(84,216,137,.25);
-}
-
-.status-cancelled {
-    color: #ff6658;
-    background: rgba(255,102,88,.1);
-    border: 1px solid rgba(255,102,88,.25);
-}
-
-.status-return-requested {
-    color: #ff9f32;
-    background: rgba(255,159,50,.1);
-    border: 1px solid rgba(255,159,50,.25);
-}
-
-.status-returned {
-    color: #bd68ff;
-    background: rgba(189,104,255,.1);
-    border: 1px solid rgba(189,104,255,.25);
-}
-
-.status-rejected {
-    color: #ff5c5c;
-    background: rgba(255,92,92,.1);
-    border: 1px solid rgba(255,92,92,.25);
-}
-
-/* RETURNED BANNER */
-
-.stride-returned-banner {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-height: 96px;
-    padding: 20px 26px;
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 17px;
-}
-
-.stride-returned-icon {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #a43df0;
-    color: #fff;
-    font-size: 15px;
-    box-shadow: 0 0 0 5px rgba(164,61,240,.1);
-}
-
-.stride-returned-title {
-    color: #c067ff;
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-}
-
-.stride-returned-description {
-    margin-top: 5px;
-    color: #888;
-    font-size: 10px;
-}
-
-/* NORMAL TIMELINE */
-
-.stride-status-timeline {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 32px 42px 25px;
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 17px;
-    margin-top: 24px;
-}
-
-.stride-status-line {
-    position: absolute;
-    top: 52px;
-    left: 9%;
-    right: 9%;
-    height: 2px;
-    background: #2b2b2b;
-}
-
-.stride-status-line-active {
-    position: absolute;
-    top: 52px;
-    left: 9%;
-    height: 2px;
-    background: #ff7a00;
-    transition: width .3s ease;
-}
-
-.stride-timeline-step {
-    position: relative;
-    z-index: 2;
-    width: 20%;
-    text-align: center;
-}
-
-.stride-timeline-icon {
-    width: 34px;
-    height: 34px;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #202020;
-    border: 3px solid #111;
-    color: #666;
-    font-size: 11px;
-    box-shadow: 0 0 0 1px #303030;
-}
-
-.stride-timeline-step.completed .stride-timeline-icon,
-.stride-timeline-step.current .stride-timeline-icon {
-    background: #ff7a00;
-    color: #fff;
-    box-shadow: 0 0 0 1px #ff7a00;
-}
-
-.stride-timeline-title {
-    color: #777;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .7px;
-}
-
-.stride-timeline-step.completed .stride-timeline-title,
-.stride-timeline-step.current .stride-timeline-title {
-    color: #fff;
-}
-
-.stride-timeline-date {
-    margin-top: 5px;
-    color: #555;
-    font-size: 8px;
-}
-
-/* MAIN GRID */
-
-.stride-order-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 315px;
-    gap: 22px;
-    margin-top: 24px;
-}
-
-.stride-main-column {
-    min-width: 0;
-}
-
-.stride-side-column {
-    min-width: 0;
-}
-
-/* CARD */
-
-.stride-card {
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 17px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.stride-card:last-child {
-    margin-bottom: 0;
-}
-
-.stride-card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 20px 23px;
-    border-bottom: 1px solid #252525;
-}
-
-.stride-card-title {
-    color: #8d8d8d;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.stride-card-line {
-    flex: 1;
-    height: 1px;
-    background: #252525;
-}
-
-.stride-card-count {
-    color: #666;
-    font-size: 8px;
-}
-
-/* ORDER ITEMS */
-
-.stride-items {
-    padding: 0 22px;
-}
-
-.stride-product {
-    display: flex;
-    align-items: center;
-    gap: 17px;
-    padding: 22px 0;
-    border-bottom: 1px solid #242424;
-}
-
-.stride-product:last-child {
-    border-bottom: none;
-}
-
-.stride-product-image {
-    width: 84px;
-    height: 84px;
-    flex: 0 0 84px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: 12px;
-    background: #191919;
-    border: 1px solid #292929;
-}
-
-.stride-product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.stride-product-info {
-    min-width: 0;
-    flex: 1;
-}
-
-.stride-product-category {
-    margin-bottom: 6px;
-    color: #666;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.stride-product-name {
-    margin-bottom: 8px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.stride-product-tags {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-.stride-product-tag {
-    padding: 5px 8px;
-    border-radius: 10px;
-    background: #1c1c1c;
-    color: #777;
-    font-size: 7px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.stride-product-price {
-    min-width: 90px;
-    text-align: right;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.stride-product-qty {
-    min-width: 48px;
-    padding: 6px 8px;
-    border-radius: 10px;
-    background: #1c1c1c;
-    color: #777;
-    text-align: center;
-    font-size: 7px;
-    font-weight: 700;
-}
-
-/* PRODUCT STATUS */
-
-.stride-item-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 8px;
-    padding: 5px 9px;
-    border-radius: 12px;
-    font-size: 7px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.stride-item-status::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-}
-
-.stride-item-return-message {
-    margin-top: 8px;
-    color: #ff9f32;
-    font-size: 8px;
-    font-weight: 600;
-}
-
-.stride-item-returned-message {
-    margin-top: 8px;
-    color: #bd68ff;
-    font-size: 8px;
-    font-weight: 600;
-}
-
-.stride-item-rejected-message {
-    margin-top: 8px;
-    color: #ff5c5c;
-    font-size: 8px;
-    font-weight: 600;
-}
-
-.stride-item-action {
-    margin-top: 10px;
-}
-
-.stride-cancel-item-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 11px;
-    border: 1px solid rgba(255, 92, 80, .3);
-    border-radius: 7px;
-    background: rgba(255, 92, 80, .08);
-    color: #ff6658;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: .4px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: .2s ease;
-}
-
-.stride-cancel-item-button:hover {
-    background: #ff6658;
-    border-color: #ff6658;
-    color: #fff;
-}
-
-.stride-cancel-item-button i {
-    font-size: 8px;
-}
-
-/* ADDRESS */
-
-.stride-address-content {
-    display: flex;
-    gap: 14px;
-    padding: 23px;
-}
-
-.stride-address-icon {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #303030;
-    border-radius: 10px;
-    color: #aaa;
-    background: #181818;
+.stride-order-header strong{
+    color:#172033;
 }
 
-.stride-address-name {
-    color: #fff;
-    font-size: 11px;
-    font-weight: 800;
-    margin-bottom: 6px;
-    text-transform: uppercase;
+.stride-order-status{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:9px 15px;
+    border-radius:30px;
+    background:#eef3ff;
+    color:#3157b7;
+    font-size:13px;
+    font-weight:700;
 }
 
-.stride-address-text {
-    color: #777;
-    font-size: 9px;
-    line-height: 1.7;
+.stride-order-detail hr{
+    margin:30px 0;
+    border:0;
+    border-top:1px solid #e5e9ef;
 }
 
-/* PAYMENT */
-
-.stride-payment-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-.stride-payment-column {
-    padding: 22px;
-}
-
-.stride-payment-column + .stride-payment-column {
-    border-left: 1px solid #252525;
-}
-
-.stride-payment-label {
-    color: #666;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.stride-payment-value {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.stride-payment-icon {
-    width: 34px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    background: #202020;
-    color: #fff;
-    font-size: 9px;
-}
-
-.stride-payment-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 10px;
-    border-radius: 15px;
-    background: rgba(66,210,128,.1);
-    color: #54d889;
-    border: 1px solid rgba(66,210,128,.2);
-    font-size: 8px;
-    font-weight: 800;
-}
-
-/* SUMMARY */
-
-.stride-summary {
-    padding: 21px 22px;
-}
-
-.stride-summary-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 8px 0;
-}
-
-.stride-summary-label {
-    color: #777;
-    font-size: 9px;
-}
-
-.stride-summary-value {
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-}
-
-.stride-summary-discount {
-    color: #54d889;
-}
-
-.stride-summary-return {
-    color: #54d889;
-}
-
-.stride-summary-divider {
-    height: 1px;
-    margin: 12px 0;
-    background: #ddd;
-}
-
-.stride-summary-total {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.stride-summary-total-label {
-    color: #fff;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.stride-summary-total-value {
-    color: #fff;
-    font-size: 21px;
-    font-weight: 800;
-}
-
-/* RETURNED SUMMARY */
-
-.stride-returned-summary .stride-summary-return {
-    color: #54d889;
-}
-
-/* INVOICE */
-
-.stride-invoice-card {
-    padding: 18px;
-}
-
-.stride-invoice-button {
-    width: 100%;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: 1px solid #ff7a00;
-    border-radius: 9px;
-    background: #ff7a00;
-    color: #fff;
-    text-decoration: none;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    transition: .2s ease;
-}
-
-.stride-invoice-button:hover {
-    background: #ff922b;
-    border-color: #ff922b;
-    color: #fff;
-}
-
-/* HELP */
-
-.stride-help-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 18px;
-}
-
-.stride-help-icon {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #303030;
-    border-radius: 10px;
-    color: #aaa;
-}
-
-.stride-help-info {
-    flex: 1;
-}
-
-.stride-help-title {
-    color: #fff;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.stride-help-description {
-    margin-top: 4px;
-    color: #666;
-    font-size: 8px;
-}
-
-.stride-help-arrow {
-    color: #666;
-}
-
-/* CANCEL ORDER */
-
-.stride-cancel-area {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 22px;
-}
-
-.stride-cancel-form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-.stride-cancel-form textarea {
-    width: 350px;
-    max-width: 100%;
-    min-height: 75px;
-    padding: 11px 13px;
-    border: 1px solid #303030;
-    border-radius: 9px;
-    background: #0d0d0d;
-    color: #fff;
-    outline: none;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 12px;
+.stride-address{
+    padding:24px;
+    background:#fff;
+    border:1px solid #e5e9ef;
+    border-radius:14px;
+    box-shadow:0 5px 18px rgba(23,32,51,.05);
 }
 
-.stride-cancel-form textarea::placeholder {
-    color: #555;
+.stride-address p{
+    margin:0 0 8px;
+    color:#667386;
+    font-size:15px;
+    line-height:1.6;
 }
 
-.stride-cancel-form textarea:focus {
-    border-color: #d83220;
+.stride-address p:last-child{
+    margin-bottom:0;
 }
 
-.stride-cancel-button {
-    height: 40px;
-    padding: 0 18px;
-    border: 1px solid #7e281c;
-    border-radius: 8px;
-    background: #8f2d20;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
+.stride-address strong{
+    color:#172033;
+    font-size:16px;
 }
 
-.stride-cancel-button:hover {
-    background: #b63827;
+.stride-order-product{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:25px;
+    margin-bottom:20px;
+    padding:22px;
+    background:#fff;
+    border:1px solid #e5e9ef;
+    border-radius:14px;
+    box-shadow:0 5px 18px rgba(23,32,51,.05);
 }
 
-/* RETURN */
-
-.stride-return-card {
-    overflow: hidden;
-}
-
-.stride-return-box {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 18px;
-}
-
-.stride-return-icon {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #f0dfcf;
-    border-radius: 10px;
-    background: #fff8f2;
-    color: #a94f00;
-    font-size: 13px;
-}
-
-.stride-return-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.stride-return-title {
-    color: #171717;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-}
-
-.stride-return-description {
-    margin-top: 5px;
-    color: #8a8a8a;
-    font-size: 8px;
-    line-height: 1.5;
-}
-
-.stride-return-open-button {
-    height: 34px;
-    padding: 0 13px;
-    border: 1px solid #dedede;
-    border-radius: 7px;
-    background: #fff;
-    color: #171717;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: .2s ease;
-}
-
-.stride-return-open-button:hover {
-    background: #a94f00;
-    border-color: #a94f00;
-    color: #fff;
-}
-
-/* RETURN MODAL */
-
-.stride-return-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(10, 12, 16, .55);
-    backdrop-filter: blur(5px);
-}
-
-.stride-return-modal-overlay.active {
-    display: flex;
-}
-
-.stride-return-modal {
-    position: relative;
-    width: 100%;
-    max-width: 540px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 25px;
-    border: 1px solid #e5e5e5;
-    border-radius: 15px;
-    background: #fff;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, .18);
-}
-
-.stride-return-modal-close {
-    position: absolute;
-    top: 17px;
-    right: 17px;
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 50%;
-    background: #f5f5f5;
-    color: #666;
-    cursor: pointer;
-}
-
-.stride-return-modal-close:hover {
-    background: #171717;
-    color: #fff;
-}
-
-.stride-return-modal-header {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding-right: 35px;
-    margin-bottom: 25px;
-}
-
-.stride-return-modal-icon {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    background: #fff4e9;
-    color: #a94f00;
-    font-size: 14px;
-}
-
-.stride-return-modal-header h3 {
-    color: #171717;
-    font-size: 15px;
-    font-weight: 800;
+.stride-product-image{
+    width:100%;
+    height:240px;
+    overflow:hidden;
+    border-radius:10px;
+    background:#f5f6f8;
 }
 
-.stride-return-modal-header p {
-    margin-top: 5px;
-    color: #8a8a8a;
-    font-size: 9px;
-    line-height: 1.5;
+.stride-product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
-.stride-return-form-section {
-    margin-bottom: 20px;
+.stride-product-details{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
-.stride-return-form-label {
-    display: block;
-    margin-bottom: 9px;
-    color: #7d8794;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+.stride-product-details h3{
+    margin:0 0 14px;
+    color:#172033;
+    font-size:21px;
+    font-weight:700;
 }
 
-.stride-return-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-height: 70px;
-    margin-bottom: 9px;
-    padding: 10px;
-    border: 1px solid #e5e8ec;
-    border-radius: 10px;
-    background: #fff;
-    cursor: pointer;
-    transition: .2s ease;
+.stride-product-details p{
+    margin:0 0 8px;
+    color:#667386;
+    font-size:15px;
 }
 
-.stride-return-item:hover {
-    border-color: #c98245;
-    background: #fffaf6;
+.stride-product-details p strong{
+    color:#172033;
 }
 
-.stride-return-item input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
+.stride-variant{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    width:max-content;
+    max-width:100%;
+    margin:4px 0 12px;
+    color:#4f5d70;
+    font-size:13px;
+    font-weight:600;
 }
 
-.stride-return-item:has(input:checked) {
-    border-color: #a94f00;
-    background: #fff8f2;
+.stride-variant span{
+    padding:6px 10px;
+    border-radius:6px;
+    background:#f3f5f8;
 }
 
-.stride-return-item-image {
-    width: 50px;
-    height: 50px;
-    flex: 0 0 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 1px solid #edf0f2;
-    border-radius: 8px;
-    background: #f8f8f8;
+.stride-item-status{
+    display:inline-flex;
+    width:max-content;
+    margin-top:4px;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
 }
 
-.stride-return-item-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.status-pending{
+    background:#fff4d6;
+    color:#9a6a00;
 }
 
-.stride-return-item-image i {
-    color: #aeb5bd;
-    font-size: 14px;
+.status-processing{
+    background:#eaf2ff;
+    color:#3157b7;
 }
 
-.stride-return-item-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-    min-width: 0;
+.status-shipped{
+    background:#e8f4ff;
+    color:#1971b8;
 }
 
-.stride-return-item-info strong {
-    color: #20252d;
-    font-size: 9px;
-    font-weight: 800;
-    text-transform: uppercase;
+.status-out-for-delivery{
+    background:#f0ebff;
+    color:#6842c2;
 }
 
-.stride-return-item-info small {
-    color: #8993a0;
-    font-size: 7px;
+.status-delivered{
+    background:#e8f8ef;
+    color:#21864a;
 }
 
-.stride-return-radio {
-    width: 16px;
-    height: 16px;
-    flex: 0 0 16px;
-    border: 1px solid #cbd1d8;
-    border-radius: 50%;
+.status-cancelled{
+    background:#ffe9e9;
+    color:#c43d3d;
 }
 
-.stride-return-item:has(input:checked) .stride-return-radio {
-    border: 4px solid #a94f00;
+.status-return-requested{
+    background:#fff3dd;
+    color:#a46600;
 }
 
-.stride-return-textarea {
-    width: 100%;
-    min-height: 110px;
-    padding: 12px;
-    resize: vertical;
-    outline: none;
-    border: 1px solid #e1e5e9;
-    border-radius: 9px;
-    background: #fafbfc;
-    color: #252b33;
-    font-family: inherit;
-    font-size: 9px;
+.status-returned{
+    background:#e8f8ef;
+    color:#21864a;
 }
 
-.stride-return-textarea:focus {
-    border-color: #a94f00;
-    background: #fff;
+.status-rejected{
+    background:#ffe9e9;
+    color:#c43d3d;
 }
 
-.stride-return-textarea::placeholder {
-    color: #a5adb7;
+.stride-order-actions{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:12px;
+    margin-top:25px;
 }
 
-.stride-return-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 9px;
-    padding-top: 5px;
+.stride-order-actions form{
+    margin:0;
 }
 
-.stride-return-cancel-button,
-.stride-return-submit-button {
-    height: 37px;
-    padding: 0 15px;
-    border-radius: 7px;
-    font-size: 8px;
-    font-weight: 800;
-    text-transform: uppercase;
-    cursor: pointer;
+.stride-order-actions button,
+.stride-order-actions > a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:44px;
+    padding:10px 18px;
+    border:0;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.2s ease;
 }
 
-.stride-return-cancel-button {
-    border: 1px solid #dfe3e7;
-    background: #fff;
-    color: #66717e;
+.stride-btn-primary{
+    background:#172033;
+    color:#fff;
 }
 
-.stride-return-cancel-button:hover {
-    background: #f6f7f8;
+.stride-btn-primary:hover{
+    background:#29364e;
 }
 
-.stride-return-submit-button {
-    border: none;
-    background: #111;
-    color: #fff;
+.stride-btn-danger{
+    background:#d94a4a;
+    color:#fff;
 }
 
-.stride-return-submit-button:hover {
-    background: #a94f00;
+.stride-btn-danger:hover{
+    background:#bd3838;
 }
 
-/* CANCEL ITEM MODAL */
-.stride-cancel-reason-group {
-    width: 100%;
-    margin-bottom: 20px;
-    text-align: left;
+.stride-btn-secondary{
+    background:#f1f3f6;
+    color:#172033;
 }
 
-.stride-cancel-reason-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #aaa;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+.stride-btn-secondary:hover{
+    background:#e5e8ed;
 }
 
-.stride-cancel-reason-label span {
-    color: #666;
-    font-size: 7px;
-    font-weight: 600;
-    letter-spacing: .3px;
-    text-transform: none;
+.stride-order-actions textarea{
+    display:block;
+    width:100%;
+    min-width:300px;
+    min-height:90px;
+    margin-bottom:10px;
+    padding:11px 13px;
+    border:1px solid #d8dee7;
+    border-radius:8px;
+    resize:vertical;
+    background:#fff;
+    color:#172033;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.5;
+    outline:none;
 }
 
-.stride-cancel-reason-input {
-    width: 100%;
-    min-height: 82px;
-    padding: 11px 12px;
-    border: 1px solid #303030;
-    border-radius: 9px;
-    background: #0d0d0d;
-    color: #fff;
-    outline: none;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 10px;
-    line-height: 1.5;
-    transition: .2s ease;
+.stride-order-actions textarea::placeholder{
+    color:#667386;
+    opacity:1;
 }
 
-.stride-cancel-reason-input::placeholder {
-    color: #555;
+.stride-order-actions textarea:focus{
+    border-color:#172033;
+    color:#172033;
+    background:#fff;
 }
 
-.stride-cancel-reason-input:hover {
-    border-color: #444;
+.stride-empty{
+    padding:35px 20px;
+    text-align:center;
+    color:#667386;
+    background:#fff;
+    border:1px solid #e5e9ef;
+    border-radius:14px;
 }
-
-.stride-cancel-reason-input:focus {
-    border-color: #ff6658;
-    background: #101010;
-    box-shadow: 0 0 0 2px rgba(255,102,88,.08);
-}
-.stride-cancel-item-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, .72);
-    backdrop-filter: blur(5px);
-}
-
-.stride-cancel-item-modal-overlay.active {
-    display: flex;
-}
-
-.stride-cancel-item-modal {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    padding: 30px;
-    border: 1px solid #292929;
-    border-radius: 17px;
-    background: #111;
-    text-align: center;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
-}
-
-.stride-cancel-item-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
-    border: 1px solid #292929;
-    border-radius: 50%;
-    background: #191919;
-    color: #777;
-    cursor: pointer;
-}
-
-.stride-cancel-item-modal-close:hover {
-    background: #292929;
-    color: #fff;
-}
-
-.stride-cancel-item-modal-icon {
-    width: 52px;
-    height: 52px;
-    margin: 0 auto 17px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 92, 80, .1);
-    border: 1px solid rgba(255, 92, 80, .25);
-    color: #ff6658;
-    font-size: 18px;
-}
-
-.stride-cancel-item-modal h3 {
-    margin: 0;
-    color: #fff;
-    font-size: 17px;
-    font-weight: 800;
-}
-
-.stride-cancel-item-modal p {
-    margin: 10px 0 25px;
-    color: #777;
-    font-size: 10px;
-    line-height: 1.7;
-}
-
-.stride-cancel-item-modal-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.stride-cancel-item-no,
-.stride-cancel-item-yes {
-    flex: 1;
-    height: 42px;
-    border-radius: 8px;
-    font-size: 9px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.stride-cancel-item-no {
-    border: 1px solid #303030;
-    background: #191919;
-    color: #aaa;
-}
-
-.stride-cancel-item-no:hover {
-    border-color: #555;
-    color: #fff;
-}
-
-.stride-cancel-item-yes {
-    border: 1px solid #a32f25;
-    background: #8f2d20;
-    color: #fff;
-}
-
-.stride-cancel-item-yes:hover {
-    background: #b63827;
-    border-color: #b63827;
-}
-
-/* EMPTY */
-
-.stride-empty {
-    padding: 30px 22px;
-    color: #666;
-    font-size: 11px;
-}
-
-/* RESPONSIVE */
 
-@media(max-width:950px) {
-    .stride-order-grid {
-        grid-template-columns: 1fr;
+@media(max-width:768px){
+    .stride-order-detail{
+        padding:30px 15px 50px;
     }
 
-    .stride-side-column {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+    .stride-order-detail h1{
+        font-size:27px;
     }
 
-    .stride-side-column .stride-card {
-        margin-bottom: 0;
+    .stride-order-header{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    .stride-help-card {
-        grid-column: 1 / -1;
+    .stride-order-product{
+        grid-template-columns:1fr;
+    }
+
+    .stride-product-image{
+        height:240px;
+    }
+
+    .stride-order-actions{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .stride-order-actions form{
+        width:100%;
+    }
+
+    .stride-order-actions textarea{
+        width:100%;
+        min-width:0;
+    }
+
+    .stride-order-actions button,
+    .stride-order-actions > a{
+        width:100%;
     }
 }
 
-@media(max-width:700px) {
-    .stride-order-detail {
-        padding: 30px 16px 60px;
+@media(max-width:480px){
+    .stride-order-detail{
+        padding:25px 14px 50px;
     }
 
-    .stride-order-detail h1 {
-        font-size: 29px;
+    .stride-order-detail h1{
+        font-size:25px;
     }
 
-    .stride-order-id {
-        font-size: 25px;
+    .stride-order-product{
+        padding:17px;
     }
 
-    .stride-order-status {
-        margin-left: 0;
-        margin-top: 8px;
+    .stride-address,
+    .stride-order-header,
+    .stride-order-actions{
+        padding:18px;
     }
 
-    .stride-status-timeline {
-        padding: 25px 12px 20px;
-    }
-
-    .stride-timeline-title {
-        font-size: 6px;
-    }
-
-    .stride-timeline-date {
-        font-size: 6px;
-    }
-
-    .stride-product {
-        align-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    .stride-product-image {
-        width: 72px;
-        height: 72px;
-        flex-basis: 72px;
-    }
-
-    .stride-product-info {
-        width: calc(100% - 90px);
-    }
-
-    .stride-product-price {
-        width: 100%;
-        padding-left: 89px;
-        text-align: left;
-    }
-
-    .stride-product-qty {
-        margin-left: 89px;
-    }
-
-    .stride-side-column {
-        display: block;
-    }
-
-    .stride-side-column .stride-card {
-        margin-bottom: 20px;
-    }
-
-    .stride-payment-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stride-payment-column + .stride-payment-column {
-        border-left: none;
-        border-top: 1px solid #252525;
-    }
-
-    .stride-cancel-area {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .stride-cancel-form {
-        width: 100%;
-    }
-
-    .stride-cancel-form textarea {
-        width: 100%;
-    }
-
-    .stride-cancel-button {
-        width: 100%;
-    }
-}
-
-@media(max-width:600px) {
-    .stride-return-box {
-        align-items: flex-start;
-        flex-wrap: wrap;
-    }
-
-    .stride-return-content {
-        width: calc(100% - 55px);
-    }
-
-    .stride-return-open-button {
-        width: 100%;
-        margin-top: 5px;
-    }
-
-    .stride-return-modal {
-        padding: 20px;
-    }
-
-    .stride-return-modal-actions {
-        flex-direction: column-reverse;
-    }
-
-    .stride-return-cancel-button,
-    .stride-return-submit-button {
-        width: 100%;
-    }
-}
-
-@media(max-width:480px) {
-    .stride-order-detail {
-        padding: 25px 12px 50px;
-    }
-
-    .stride-order-meta {
-        gap: 5px;
-    }
-
-    .stride-meta-pill {
-        font-size: 7px;
-    }
-
-    .stride-status-timeline {
-        overflow-x: auto;
-        min-width: 600px;
-    }
-
-    .stride-order-grid {
-        overflow: hidden;
-    }
-
-    .stride-cancel-item-modal {
-        padding: 25px 20px;
-    }
-
-    .stride-cancel-item-modal-actions {
-        flex-direction: column;
-    }
-
-    .stride-cancel-item-no,
-    .stride-cancel-item-yes {
-        width: 100%;
+    .stride-product-image{
+        height:210px;
     }
 }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <div class="stride-order-detail">
 
-    <!-- HEADER -->
+    <h1>Order Details</h1>
 
-    <a
-        href="{% url 'order:order_list' %}"
-        class="stride-back-link"
-    >
-        <i class="fa-solid fa-arrow-left"></i>
-        BACK TO ORDERS
-    </a>
+    <div class="stride-order-header">
+        <div>
+            <p>
+                <strong>Order ID:</strong>
+                {{ order.order_id }}
+            </p>
 
-    <div style="margin-top:20px;">
-
-        <div class="stride-order-id">
-
-            ORDER #{{ order.order_id }}
-
-            {% if order.order_status == "RETURNED" %}
-
-                <span class="stride-order-status status-returned">
-                    Returned
-                </span>
-
-            {% elif order.order_status == "CANCELLED" %}
-
-                <span class="stride-order-status status-cancelled">
-                    Cancelled
-                </span>
-
-            {% elif order.order_status == "DELIVERED" %}
-
-                <span class="stride-order-status status-delivered">
-                    Delivered
-                </span>
-
-            {% elif order.order_status == "OUT_FOR_DELIVERY" %}
-
-                <span class="stride-order-status status-out-for-delivery">
-                    Out For Delivery
-                </span>
-
-            {% elif order.order_status == "SHIPPED" %}
-
-                <span class="stride-order-status status-shipped">
-                    Shipped
-                </span>
-
-            {% elif order.order_status == "PROCESSING" %}
-
-                <span class="stride-order-status status-processing">
-                    Processing
-                </span>
-
-            {% else %}
-
-                <span class="stride-order-status status-pending">
-                    Pending
-                </span>
-
-            {% endif %}
-
+            <p>
+                <strong>Order Date:</strong>
+                {{ order.created_at|date:"d M Y, h:i A" }}
+            </p>
         </div>
 
-        <div class="stride-order-meta">
-
-            <span class="stride-meta-pill">
-                <i class="fa-regular fa-calendar"></i>
-                {{ order.created_at|date:"F d, Y" }}
-            </span>
-
-            <span class="stride-meta-pill">
-                <i class="fa-regular fa-credit-card"></i>
-                {{ order.get_payment_method_display }}
-            </span>
-
-            <span class="stride-meta-pill">
-                <i class="fa-regular fa-circle-check"></i>
-                {{ order.get_payment_status_display }}
-            </span>
-
+        <div class="stride-order-status">
+            {{ order.get_order_status_display }}
         </div>
-
     </div>
 
-    <!-- RETURNED ORDER -->
+    <hr>
 
-    {% if order.order_status == "RETURNED" %}
+    <h2>Delivery Address</h2>
 
-        <div class="stride-returned-banner" style="margin-top:25px;">
+    <div class="stride-address">
+        <p>
+            <strong>{{ order.address_full_name }}</strong>
+        </p>
 
-            <div class="stride-returned-icon">
-                <i class="fa-solid fa-arrow-left"></i>
-            </div>
+        {% if order.address_phone_number %}
+            <p>{{ order.address_phone_number }}</p>
+        {% endif %}
 
-            <div>
-
-                <div class="stride-returned-title">
-                    Order Returned
-                </div>
-
-                <div class="stride-returned-description">
-                    Refund successfully processed to your wallet
-                </div>
-
-            </div>
-
-        </div>
-
-    {% else %}
-
-        <!-- NORMAL ORDER TIMELINE -->
-
-        <div class="stride-status-timeline">
-
-            <div class="stride-status-line"></div>
-
-            {% if order.order_status == "PENDING" %}
-
-                <div
-                    class="stride-status-line-active"
-                    style="width:0%;"
-                ></div>
-
-            {% elif order.order_status == "PROCESSING" %}
-
-                <div
-                    class="stride-status-line-active"
-                    style="width:20%;"
-                ></div>
-
-            {% elif order.order_status == "SHIPPED" %}
-
-                <div
-                    class="stride-status-line-active"
-                    style="width:40%;"
-                ></div>
-
-            {% elif order.order_status == "OUT_FOR_DELIVERY" %}
-
-                <div
-                    class="stride-status-line-active"
-                    style="width:60%;"
-                ></div>
-
-            {% elif order.order_status == "DELIVERED" %}
-
-                <div
-                    class="stride-status-line-active"
-                    style="width:82%;"
-                ></div>
-
+        <p>
+            {{ order.address_line1 }}
+            {% if order.address_line2 %}
+                , {{ order.address_line2 }}
             {% endif %}
-
-            <div class="stride-timeline-step completed">
-
-                <div class="stride-timeline-icon">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-
-                <div class="stride-timeline-title">
-                    Ordered
-                </div>
-
-                <div class="stride-timeline-date">
-                    {{ order.created_at|date:"M d" }}
-                </div>
-
-            </div>
-
-            <div
-                class="
-                    stride-timeline-step
-                    {% if order.order_status == 'PROCESSING' or order.order_status == 'SHIPPED' or order.order_status == 'OUT_FOR_DELIVERY' or order.order_status == 'DELIVERED' %}
-                        completed
-                    {% endif %}
-                "
-            >
-
-                <div class="stride-timeline-icon">
-                    <i class="fa-solid fa-rotate"></i>
-                </div>
-
-                <div class="stride-timeline-title">
-                    Processing
-                </div>
-
-                <div class="stride-timeline-date">
-
-                    {% if order.order_status == "PROCESSING" %}
-
-                        In Progress
-
-                    {% elif order.order_status == "SHIPPED" or order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
-
-                        Completed
-
-                    {% else %}
-
-                        Pending
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            <div
-                class="
-                    stride-timeline-step
-                    {% if order.order_status == 'SHIPPED' or order.order_status == 'OUT_FOR_DELIVERY' or order.order_status == 'DELIVERED' %}
-                        completed
-                    {% endif %}
-                "
-            >
-
-                <div class="stride-timeline-icon">
-                    <i class="fa-solid fa-box"></i>
-                </div>
-
-                <div class="stride-timeline-title">
-                    Shipped
-                </div>
-
-                <div class="stride-timeline-date">
-
-                    {% if order.order_status == "SHIPPED" or order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
-
-                        Completed
-
-                    {% else %}
-
-                        Pending
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            <div
-                class="
-                    stride-timeline-step
-                    {% if order.order_status == 'OUT_FOR_DELIVERY' or order.order_status == 'DELIVERED' %}
-                        completed
-                    {% endif %}
-                "
-            >
-
-                <div class="stride-timeline-icon">
-                    <i class="fa-solid fa-truck"></i>
-                </div>
-
-                <div class="stride-timeline-title">
-                    Out For Delivery
-                </div>
-
-                <div class="stride-timeline-date">
-
-                    {% if order.order_status == "OUT_FOR_DELIVERY" or order.order_status == "DELIVERED" %}
-
-                        Completed
-
-                    {% else %}
-
-                        Pending
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            <div
-                class="
-                    stride-timeline-step
-                    {% if order.order_status == 'DELIVERED' %}
-                        completed
-                    {% endif %}
-                "
-            >
-
-                <div class="stride-timeline-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-                <div class="stride-timeline-title">
-                    Delivered
-                </div>
-
-                <div class="stride-timeline-date">
-
-                    {% if order.order_status == "DELIVERED" %}
-
-                        Completed
-
-                    {% else %}
-
-                        Pending
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-        </div>
-
-    {% endif %}
-
-    <!-- MAIN -->
-
-    <div class="stride-order-grid">
-
-        <!-- LEFT -->
-
-        <div class="stride-main-column">
-
-            <!-- ORDER ITEMS -->
-
-            <div class="stride-card">
-
-                <div class="stride-card-header">
-
-                    <div class="stride-card-title">
-                        Order Items
-                    </div>
-
-                    <div class="stride-card-line"></div>
-
-                    <div class="stride-card-count">
-                        {{ order_items|length }} item{{ order_items|length|pluralize }}
-                    </div>
-
-                </div>
-
-                <div class="stride-items">
-
-                    {% for item in order_items %}
-
-                        <div class="stride-product">
-
-                            {% with image=item.variant.images.first %}
-
-                                {% if image %}
-
-                                    <div class="stride-product-image">
-
-                                        <img
-                                            src="{{ image.image.url }}"
-                                            alt="{{ item.variant.product.product_name }}"
-                                        >
-
-                                    </div>
-
-                                {% else %}
-
-                                    <div class="stride-product-image">
-
-                                        <i
-                                            class="fa-solid fa-box"
-                                            style="color:#555;"
-                                        ></i>
-
-                                    </div>
-
-                                {% endif %}
-
-                            {% endwith %}
-
-                            <div class="stride-product-info">
-
-                                <div class="stride-product-category">
-                                    Lifestyle
-                                </div>
-
-                                <div class="stride-product-name">
-                                    {{ item.variant.product.product_name }}
-                                </div>
-
-                                <div class="stride-product-tags">
-
-                                    <span class="stride-product-tag">
-                                        {{ item.variant }}
-                                    </span>
-
-                                    {% if item.variant.sku %}
-
-                                        <span class="stride-product-tag">
-                                            SKU: {{ item.variant.sku }}
-                                        </span>
-
-                                    {% endif %}
-
-                                </div>
-
-                                {% if item.status == "PENDING" %}
-
-                                    <span class="stride-item-status status-pending">
-                                        Pending
-                                    </span>
-
-                                {% elif item.status == "PROCESSING" %}
-
-                                    <span class="stride-item-status status-processing">
-                                        Processing
-                                    </span>
-
-                                {% elif item.status == "SHIPPED" %}
-
-                                    <span class="stride-item-status status-shipped">
-                                        Shipped
-                                    </span>
-
-                                {% elif item.status == "OUT_FOR_DELIVERY" %}
-
-                                    <span class="stride-item-status status-out-for-delivery">
-                                        Out For Delivery
-                                    </span>
-
-                                {% elif item.status == "DELIVERED" %}
-
-                                    <span class="stride-item-status status-delivered">
-                                        Delivered
-                                    </span>
-
-                                {% elif item.status == "RETURN_REQUESTED" %}
-
-                                    <span class="stride-item-status status-return-requested">
-                                        Return Requested
-                                    </span>
-
-                                    <div class="stride-item-return-message">
-                                        Return requested:
-                                        {{ item.return_reason|default:"No reason provided." }}
-                                    </div>
-
-                                {% elif item.status == "RETURNED" %}
-
-                                    <span class="stride-item-status status-returned">
-                                        Returned
-                                    </span>
-
-                                    <div class="stride-item-returned-message">
-                                        Return approved and refund processed.
-                                    </div>
-
-                                {% elif item.status == "REJECTED" %}
-
-                                    <span class="stride-item-status status-rejected">
-                                        Return Rejected
-                                    </span>
-
-                                    <div class="stride-item-rejected-message">
-                                        {{ item.rejection_reason|default:"Return request rejected." }}
-                                    </div>
-
-                                {% elif item.status == "CANCELLED" %}
-
-                                    <span class="stride-item-status status-cancelled">
-                                        Cancelled
-                                    </span>
-
-                                {% endif %}
-
-                                {% if order_items|length > 1 %}
-
-                                    {% if item.status == "PENDING" or item.status == "PROCESSING" %}
-
-                                        <div class="stride-item-action">
-
-                                            <button
-                                                type="button"
-                                                class="stride-cancel-item-button"
-                                                onclick="openCancelItemModal('{% url "order:cancel_order_item" order.order_id item.id %}')"
-                                            >
-                                                <i class="fa-solid fa-xmark"></i>
-                                                Cancel Item
-                                            </button>
-
-                                        </div>
-
-                                    {% endif %}
-
-                                {% endif %}
-
-                            </div>
-
-                            <div class="stride-product-price">
-                                ₹{{ item.total_price }}
-                            </div>
-
-                            <div class="stride-product-qty">
-                                QTY: {{ item.quantity }}
-                            </div>
-
-                        </div>
-
-                    {% empty %}
-
-                        <div class="stride-empty">
-                            No products found for this order.
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </div>
-
-            <!-- SHIPPING ADDRESS -->
-
-            <div class="stride-card">
-
-                <div class="stride-card-header">
-
-                    <div class="stride-card-title">
-                        Shipping Address
-                    </div>
-
-                    <div class="stride-card-line"></div>
-
-                </div>
-
-                <div class="stride-address-content">
-
-                    <div class="stride-address-icon">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </div>
-
-                    <div>
-
-                        <div class="stride-address-name">
-                            {{ order.address.full_name }}
-                        </div>
-
-                        <div class="stride-address-text">
-
-                            {{ order.address.address_line1 }}
-
-                            {% if order.address.address_line2 %}
-                                <br>
-                                {{ order.address.address_line2 }}
-                            {% endif %}
-
-                            <br>
-
-                            {{ order.address.city }},
-                            {{ order.address.state }}
-                            -
-                            {{ order.address.pincode }}
-
-                            <br>
-
-                            {{ order.address.country }}
-
-                            {% if order.address.phone_number %}
-                                <br>
-                                {{ order.address.phone_number }}
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- PAYMENT -->
-
-            <div class="stride-card">
-
-                <div class="stride-card-header">
-
-                    <div class="stride-card-title">
-                        Payment Details
-                    </div>
-
-                    <div class="stride-card-line"></div>
-
-                </div>
-
-                <div class="stride-payment-grid">
-
-                    <div class="stride-payment-column">
-
-                        <div class="stride-payment-label">
-                            Payment Method
-                        </div>
-
-                        <div class="stride-payment-value">
-
-                            <span class="stride-payment-icon">
-                                <i class="fa-regular fa-credit-card"></i>
-                            </span>
-
-                            {{ order.get_payment_method_display }}
-
-                        </div>
-
-                    </div>
-
-                    <div class="stride-payment-column">
-
-                        <div class="stride-payment-label">
-                            Payment Status
-                        </div>
-
-                        <span class="stride-payment-status">
-
-                            <i class="fa-regular fa-circle-check"></i>
-
-                            {{ order.get_payment_status_display }}
-
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- CANCEL ORDER -->
-
-            {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
-                <div class="stride-card">
-                    <div class="stride-card-header">
-                        <div class="stride-card-title">Order Actions</div>
-                        <div class="stride-card-line"></div>
-                    </div>
-
-                    <div class="stride-cancel-area">
-                        <button
-                            type="button"
-                            class="stride-cancel-button"
-                            onclick="openCancelOrderModal()"
-                        >
-                            Cancel Order
-                        </button>
-                    </div>
-                </div>
-            {% endif %}
-
-        </div>
-
-        <!-- RIGHT -->
-
-        <div class="stride-side-column">
-
-            <!-- PRICE SUMMARY -->
-
-            <div class="stride-card">
-
-                <div class="stride-card-header">
-
-                    <div class="stride-card-title">
-                        Order Summary
-                    </div>
-
-                    <div class="stride-card-line"></div>
-
-                </div>
-
-                <div class="stride-summary">
-
-                    <div class="stride-summary-row">
-
-                        <span class="stride-summary-label">
-                            Subtotal
-                        </span>
-
-                        <span class="stride-summary-value">
-                            ₹{{ order.subtotal }}
-                        </span>
-
-                    </div>
-
-                    <div class="stride-summary-row">
-
-                        <span class="stride-summary-label">
-                            Shipping
-                        </span>
-
-                        <span class="stride-summary-value">
-
-                            {% if order.shipping_charge == 0 %}
-
-                                <span style="color:#54d889;">
-                                    FREE
-                                </span>
-
-                            {% else %}
-
-                                ₹{{ order.shipping_charge }}
-
-                            {% endif %}
-
-                        </span>
-
-                    </div>
-
-                    {% if order.discount %}
-
-                        <div class="stride-summary-row">
-
-                            <span class="stride-summary-label">
-                                Discount
-                            </span>
-
-                            <span class="stride-summary-value stride-summary-discount">
-                                -₹{{ order.discount }}
-                            </span>
-
-                        </div>
-
-                    {% endif %}
-
-                    {% if order.order_status == "RETURNED" %}
-
-                        <div class="stride-summary-row">
-
-                            <span class="stride-summary-label">
-                                Cancelled / Returned
-                            </span>
-
-                            <span class="stride-summary-value stride-summary-return">
-                                -₹{{ order.total_amount }}
-                            </span>
-
-                        </div>
-
-                    {% endif %}
-
-                    <div class="stride-summary-divider"></div>
-
-                    <div class="stride-summary-total">
-
-                        <span class="stride-summary-total-label">
-                            Total
-                        </span>
-
-                        <span class="stride-summary-total-value">
-                            ₹{{ order.total_amount }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- RETURN ORDER -->
-
-            {% if has_returnable_items %}
-
-                <div class="stride-card stride-return-card">
-
-                    <div class="stride-return-box">
-
-                        <div class="stride-return-icon">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </div>
-
-                        <div class="stride-return-content">
-
-                            <div class="stride-return-title">
-                                Return Order
-                            </div>
-
-                            <div class="stride-return-description">
-                                Request a return for a delivered item.
-                            </div>
-
-                        </div>
-
-                        <button
-                            type="button"
-                            class="stride-return-open-button"
-                            onclick="openReturnModal()"
-                        >
-                            Return Order
-                        </button>
-
-                    </div>
-
-                </div>
-
-            {% endif %}
-
-            <!-- INVOICE -->
-
-            {% if order.order_status != "RETURNED" %}
-
-                <div class="stride-card">
-
-                    <div class="stride-invoice-card">
-
-                        <a
-                            href="{% url 'order:download_invoice' order.order_id %}"
-                            class="stride-invoice-button"
-                        >
-                            <i class="fa-solid fa-download"></i>
-                            Download Invoice
-                        </a>
-
-                    </div>
-
-                </div>
-
-            {% endif %}
-
-            <!-- HELP -->
-
-            <div class="stride-card">
-
-                <div class="stride-help-card">
-
-                    <div class="stride-help-icon">
-                        <i class="fa-regular fa-comment-dots"></i>
-                    </div>
-
-                    <div class="stride-help-info">
-
-                        <div class="stride-help-title">
-                            Need Help?
-                        </div>
-
-                        <div class="stride-help-description">
-                            Contact our 24/7 support team
-                        </div>
-
-                    </div>
-
-                    <div class="stride-help-arrow">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
+        </p>
+
+        <p>
+            {{ order.address_city }},
+            {{ order.address_state }}
+            - {{ order.address_pincode }}
+        </p>
+
+        <p>{{ order.address_country }}</p>
     </div>
 
-</div>
+    <hr>
 
-<!-- RETURN ORDER MODAL -->
+    <h2>Ordered Products</h2>
 
-<div
-    id="returnOrderModal"
-    class="stride-return-modal-overlay"
-    onclick="closeReturnModal(event)"
->
+    {% for item in order_items %}
+        <div class="stride-order-product">
 
-    <div
-        class="stride-return-modal"
-        onclick="event.stopPropagation()"
-    >
+            {% with image=item.variant.images.first %}
+                {% if image %}
+                    <div class="stride-product-image">
+                        <img
+                            src="{{ image.image.url }}"
+                            alt="{{ item.variant.product.product_name }}"
+                        >
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-        <button
-            type="button"
-            class="stride-return-modal-close"
-            onclick="closeReturnModal()"
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <div class="stride-return-modal-header">
-
-            <div class="stride-return-modal-icon">
-                <i class="fa-solid fa-rotate-left"></i>
-            </div>
-
-            <div>
-
+            <div class="stride-product-details">
                 <h3>
-                    Return Order
+                    {{ item.variant.product.product_name }}
                 </h3>
 
-                <p>
-                    Select the item you want to return and provide a reason.
-                </p>
-
-            </div>
-
-        </div>
-
-        <form
-            method="POST"
-            action="{% url 'order:request_return' order.order_id %}"
-            id="returnOrderForm"
-        >
-
-            {% csrf_token %}
-
-            <div class="stride-return-form-section">
-
-                <label class="stride-return-form-label">
-                    SELECT PRODUCT
-                </label>
-
-                {% for item in order_items %}
-
-                    {% if item.status == "DELIVERED" %}
-
-                        <label class="stride-return-item">
-
-                            <input
-                                type="radio"
-                                name="item_id"
-                                value="{{ item.id }}"
-                                required
-                            >
-
-                            <span class="stride-return-item-image">
-
-                                {% with image=item.variant.images.first %}
-
-                                    {% if image %}
-
-                                        <img
-                                            src="{{ image.image.url }}"
-                                            alt="{{ item.variant.product.product_name }}"
-                                        >
-
-                                    {% else %}
-
-                                        <i class="fa-solid fa-box"></i>
-
-                                    {% endif %}
-
-                                {% endwith %}
-
-                            </span>
-
-                            <span class="stride-return-item-info">
-
-                                <strong>
-                                    {{ item.variant.product.product_name }}
-                                </strong>
-
-                                <small>
-                                    {{ item.variant }}
-                                </small>
-
-                                <small>
-                                    Qty: {{ item.quantity }}
-                                </small>
-
-                            </span>
-
-                            <span class="stride-return-radio"></span>
-
-                        </label>
-
+                <div class="stride-variant">
+                    {% if item.variant.size %}
+                        <span>Size: {{ item.variant.size }}</span>
                     {% endif %}
 
-                {% endfor %}
+                    {% if item.variant.color %}
+                        <span>Color: {{ item.variant.color }}</span>
+                    {% endif %}
 
+                </div>
+
+                <p>
+                    <strong>Price:</strong>
+                    ₹{{ item.price }}
+                </p>
+
+                <p>
+                    <strong>Quantity:</strong>
+                    {{ item.quantity }}
+                </p>
+
+                <p>
+                    <strong>Item Total:</strong>
+                    ₹{{ item.total_price }}
+                </p>
+
+                <span class="stride-item-status
+                    {% if item.status == 'PENDING' %}
+                        status-pending
+                    {% elif item.status == 'PROCESSING' %}
+                        status-processing
+                    {% elif item.status == 'SHIPPED' %}
+                        status-shipped
+                    {% elif item.status == 'OUT_FOR_DELIVERY' %}
+                        status-out-for-delivery
+                    {% elif item.status == 'DELIVERED' %}
+                        status-delivered
+                    {% elif item.status == 'CANCELLED' %}
+                        status-cancelled
+                    {% elif item.status == 'RETURN_REQUESTED' %}
+                        status-return-requested
+                    {% elif item.status == 'RETURNED' %}
+                        status-returned
+                    {% elif item.status == 'REJECTED' %}
+                        status-rejected
+                    {% endif %}">
+                    {% if item.status == "RETURN_REQUESTED" %}
+                        PENDING
+                    {% elif item.status == "RETURNED" %}
+                        APPROVED
+                    {% elif item.status == "REJECTED" %}
+                        REJECTED
+                    {% else %}
+                        {{ item.get_status_display }}
+                    {% endif %}
+                </span>
+
+                <div class="stride-order-actions">
+
+                    {% if order_items|length > 1 %}
+                        {% if item.status == "PENDING" or item.status == "PROCESSING" %}
+                            <form
+                                method="POST"
+                                action="{% url 'order:cancel_order_item' order.order_id item.id %}"
+                            >
+                                {% csrf_token %}
+
+                                <textarea
+                                    name="cancel_reason"
+                                    placeholder="Enter cancellation reason"
+                                ></textarea>
+
+                                <button
+                                    type="submit"
+                                    class="stride-btn-danger"
+                                >
+                                    Cancel Item
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if item.status == "DELIVERED" %}
+                        <form
+                            method="POST"
+                            action="{% url 'order:request_return' order.order_id %}"
+                        >
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="item_id"
+                                value="{{ item.id }}"
+                            >
+
+                            <textarea
+                                name="return_reason"
+                                placeholder="Enter return reason"
+                                required
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                class="stride-btn-secondary"
+                                onclick="return confirm('Are you sure you want to request a return for this item?');"
+                            >
+                                Request Return
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
             </div>
-
-            <div class="stride-return-form-section">
-
-                <label
-                    for="returnReason"
-                    class="stride-return-form-label"
-                >
-                    RETURN REASON
-                </label>
-
-                <textarea
-                    id="returnReason"
-                    name="return_reason"
-                    class="stride-return-textarea"
-                    placeholder="Tell us why you want to return this product..."
-                    required
-                ></textarea>
-
-            </div>
-
-            <div class="stride-return-modal-actions">
-
-                <button
-                    type="button"
-                    class="stride-return-cancel-button"
-                    onclick="closeReturnModal()"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="submit"
-                    class="stride-return-submit-button"
-                >
-                    <i class="fa-solid fa-rotate-left"></i>
-                    Submit Return Request
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-<!-- CANCEL ITEM MODAL -->
-
-<div
-    id="cancelItemModal"
-    class="stride-cancel-item-modal-overlay"
-    onclick="closeCancelItemModal(event)"
->
-
-    <div
-        class="stride-cancel-item-modal"
-        onclick="event.stopPropagation()"
-    >
-
-        <button
-            type="button"
-            class="stride-cancel-item-modal-close"
-            onclick="closeCancelItemModal()"
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <div class="stride-cancel-item-modal-icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
-
-        <h3>
-            Cancel This Item?
-        </h3>
-
-        <p>
-            Are you sure you want to cancel this product?
-            The quantity will be added back to stock.
-        </p>
-
-        <form
-            method="POST"
-            id="cancelItemForm"
-        >
-
-            {% csrf_token %}
-
-            <div class="stride-cancel-reason-group">
-
-                <label
-                    for="cancelItemReason"
-                    class="stride-cancel-reason-label"
-                >
-                    Cancellation Reason
-                    <span>(Required)</span>
-                </label>
-
-                <textarea
-                    id="cancelItemReason"
-                    name="cancel_reason"
-                    class="stride-cancel-reason-input"
-                    placeholder="Enter your reason for cancelling this item..."
-                    rows="3"
-                    required
-                ></textarea>
-
-            </div>
-
-            <div class="stride-cancel-item-modal-actions">
-
-                <button
-                    type="button"
-                    class="stride-cancel-item-no"
-                    onclick="closeCancelItemModal()"
-                >
-                    Keep Item
-                </button>
-
-                <button
-                    type="submit"
-                    class="stride-cancel-item-yes"
-                >
-                    <i class="fa-solid fa-xmark"></i>
-                    Cancel Item
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-
-<!-- CANCEL ORDER MODAL -->
-
-<div
-    id="cancelOrderModal"
-    class="stride-cancel-item-modal-overlay"
-    onclick="closeCancelOrderModal(event)"
->
-    <div
-        class="stride-cancel-item-modal"
-        onclick="event.stopPropagation()"
-    >
-        <button
-            type="button"
-            class="stride-cancel-item-modal-close"
-            onclick="closeCancelOrderModal()"
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <div class="stride-cancel-item-modal-icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+    {% empty %}
+        <div class="stride-empty">
+            No products found for this order.
         </div>
+    {% endfor %}
 
-        <h3>Cancel This Order?</h3>
+    <hr>
 
-        <p>
-            Are you sure you want to cancel this order?
-            The cancelled products will be added back to stock.
-            If your payment was already completed, the refund will be added to your wallet.
-        </p>
+   <div class="stride-order-actions">
 
-        <form
-            method="POST"
-            action="{% url 'order:cancel_order' order.order_id %}"
-            id="cancelOrderForm"
-        >
-            {% csrf_token %}
+    <a
+        href="{% url 'order:download_invoice' order.order_id %}"
+        class="stride-btn-primary"
+    >
+        Download Invoice
+    </a>
 
-            <div class="stride-cancel-reason-group">
-                <label
-                    for="cancelOrderReason"
-                    class="stride-cancel-reason-label"
-                >
-                    Cancellation Reason
-                    <span>(Required)</span>
-                </label>
+        {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
+            <form
+                method="POST"
+                action="{% url 'order:cancel_order' order.order_id %}"
+            >
+                {% csrf_token %}
 
                 <textarea
-                    id="cancelOrderReason"
                     name="cancel_reason"
-                    class="stride-cancel-reason-input"
-                    placeholder="Enter your reason for cancelling this order..."
-                    rows="3"
-                    required
+                    placeholder="Enter cancellation reason"
                 ></textarea>
-            </div>
-
-            <div class="stride-cancel-item-modal-actions">
-                <button
-                    type="button"
-                    class="stride-cancel-item-no"
-                    onclick="closeCancelOrderModal()"
-                >
-                    Keep Order
-                </button>
 
                 <button
                     type="submit"
-                    class="stride-cancel-item-yes"
+                    class="stride-btn-danger"
                 >
-                    <i class="fa-solid fa-xmark"></i>
                     Cancel Order
                 </button>
-            </div>
-        </form>
-    </div>
+            </form>
+        {% endif %}
+    <a
+        href="{% url 'order:order_list' %}"
+        class="stride-btn-secondary"
+    >
+        Back to Orders
+    </a>
+
 </div>
 {% endblock %}
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-function openReturnModal() {
-    const modal = document.getElementById("returnOrderModal");
+document.addEventListener("DOMContentLoaded", function () {
 
-    if (!modal) {
-        return;
-    }
+    document.querySelectorAll('form[action*="cancel-item"], form[action*="cancel/"]').forEach(function (form) {
 
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-}
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-function closeReturnModal(event) {
-    if (
-        event &&
-        event.target &&
-        event.target.id !== "returnOrderModal"
-    ) {
-        return;
-    }
+            const reason = form.querySelector('textarea[name="cancel_reason"]');
 
-    const modal = document.getElementById("returnOrderModal");
+            if (reason && !reason.value.trim()) {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please provide a cancellation reason.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
 
-    if (!modal) {
-        return;
-    }
+                reason.focus();
+                return;
+            }
 
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-}
+            const isItemCancellation = form.action.includes("cancel-item");
 
-function openCancelItemModal(cancelUrl) {
-    const modal = document.getElementById("cancelItemModal");
-    const form = document.getElementById("cancelItemForm");
+            Swal.fire({
+                title: isItemCancellation
+                    ? "Cancel this item?"
+                    : "Cancel this order?",
+                text: isItemCancellation
+                    ? "Are you sure you want to cancel this item?"
+                    : "Are you sure you want to cancel this order?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d94a4a",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, cancel",
+                cancelButtonText: "No",
+                reverseButtons: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
 
-    if (!modal || !form) {
-        return;
-    }
+    });
 
-    form.action = cancelUrl;
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-}
+    {% if messages %}
+        {% for message in messages %}
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}",
+                title: "{{ message|escapejs }}",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        {% endfor %}
+    {% endif %}
 
-function closeCancelItemModal(event) {
-    if (
-        event &&
-        event.target &&
-        event.target.id !== "cancelItemModal"
-    ) {
-        return;
-    }
-
-    const modal = document.getElementById("cancelItemModal");
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-
-    const reason = document.getElementById("cancelItemReason");
-
-    if (reason) {
-        reason.value = "";
-    }
-}
-
-function openCancelOrderModal() {
-    const modal = document.getElementById("cancelOrderModal");
-    const reason = document.getElementById("cancelOrderReason");
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-
-    if (reason) {
-        reason.focus();
-    }
-}
-
-function closeCancelOrderModal(event) {
-    if (
-        event &&
-        event.target &&
-        event.target.id !== "cancelOrderModal"
-    ) {
-        return;
-    }
-
-    const modal = document.getElementById("cancelOrderModal");
-
-    if (!modal) {
-        return;
-    }
-
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-
-    const reason = document.getElementById("cancelOrderReason");
-
-    if (reason) {
-        reason.value = "";
-    }
-}
-
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape") {
-        closeReturnModal();
-        closeCancelItemModal();
-        closeCancelOrderModal();
-    }
 });
 </script>
 {% endblock %}

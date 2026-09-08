@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "User_panel.Authentication.apps.AuthenticationConfig",
     "User_panel.Product",
     "User_panel.Cart",
+    "User_panel.Checkout",
     "User_panel.Order",
     "User_panel.Wallet",
 ]
@@ -185,7 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 

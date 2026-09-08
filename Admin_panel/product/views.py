@@ -304,10 +304,7 @@ def edit_variant(request, variant_id):
             instance=variant,
         )
 
-        images = request.FILES.getlist("images")
-        print("FILES:", request.FILES)
-        print("IMAGES:", images)
-        print("COUNT:", len(images))    
+        images = request.FILES.getlist("images")  
 
         if form.is_valid():
             print("FORM VALID:", form.is_valid())

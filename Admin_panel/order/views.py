@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -10,6 +12,78 @@ from django.views.decorators.cache import never_cache
 from User_panel.Order.models import Order, OrderItem
 
 
+def refund_admin_cancelled_order(order):
+    if order.payment_status != "PAID":
+        return Decimal("0.00")
+
+    items = order.items.filter(
+        status__in=[
+            "PENDING",
+            "PROCESSING",
+        ]
+    )
+
+    refund_amount = sum(
+        (
+            item.total_price
+            for item in items
+        ),
+        Decimal("0.00"),
+    )
+
+    if refund_amount <= 0:
+        return Decimal("0.00")
+
+    from User_panel.Wallet.models import (
+        Wallet,
+        WalletTransaction,
+    )
+
+    wallet, created = (
+        Wallet.objects
+        .select_for_update()
+        .get_or_create(
+            user=order.user,
+            defaults={
+                "balance": Decimal("0.00"),
+            },
+        )
+    )
+
+    refund_reference = f"REFUND-{order.order_id}"
+
+    existing_refund = WalletTransaction.objects.filter(
+        wallet=wallet,
+        reference=refund_reference,
+        transaction_type="CREDIT",
+    ).exists()
+
+    if existing_refund:
+        return Decimal("0.00")
+
+    wallet.balance += refund_amount
+
+    wallet.save(
+        update_fields=[
+            "balance",
+            "updated_at",
+        ]
+    )
+
+    WalletTransaction.objects.create(
+        wallet=wallet,
+        transaction_type="CREDIT",
+        amount=refund_amount,
+        description=(
+            f"Refund for cancelled order "
+            f"{order.order_id}"
+        ),
+        reference=refund_reference,
+    )
+
+    return refund_amount
+
+
 @never_cache
 @login_required(login_url="admin_login")
 @staff_member_required
@@ -20,7 +94,10 @@ def order_list(request):
 
     orders = (
         Order.objects
-        .select_related("user", "address")
+        .select_related(
+            "user",
+            "address",
+        )
         .prefetch_related(
             "items__variant__product",
             "items__variant__images",
@@ -204,6 +281,7 @@ def return_list(request):
         },
     )
 
+
 @never_cache
 @login_required(login_url="admin_login")
 @staff_member_required
@@ -231,6 +309,11 @@ def order_detail(request, order_id):
         status="RETURN_REQUESTED"
     ).exists()
 
+    is_order_returned = (
+        order.order_status == "RETURNED"
+        or has_returned_items
+    )
+
     return render(
         request,
         "order/order_detail.html",
@@ -239,6 +322,7 @@ def order_detail(request, order_id):
             "order_items": order_items,
             "has_returned_items": has_returned_items,
             "has_return_requested_items": has_return_requested_items,
+            "is_order_returned": is_order_returned,
         },
     )
 
@@ -255,7 +339,7 @@ def update_order_status(request, order_id):
         )
 
     order = get_object_or_404(
-        Order,
+        Order.objects.select_for_update(),
         order_id=order_id,
     )
 
@@ -330,23 +414,19 @@ def update_order_status(request, order_id):
             order_id=order.order_id,
         )
 
-    order.order_status = new_status
-
-    if new_status == "DELIVERED":
-        order.payment_status = "PAID"
-
-    order.save()
-
     if new_status == "CANCELLED":
-        cancellable_items = order.items.filter(
-            status__in=[
-                "PENDING",
-                "PROCESSING",
-            ]
-        ).select_related("variant")
+        cancellable_items = list(
+            order.items.filter(
+                status__in=[
+                    "PENDING",
+                    "PROCESSING",
+                ]
+            ).select_related("variant")
+        )
 
         for item in cancellable_items:
             item.variant.stock += item.quantity
+
             item.variant.save(
                 update_fields=[
                     "stock",
@@ -354,23 +434,63 @@ def update_order_status(request, order_id):
             )
 
             item.status = "CANCELLED"
+
             item.save(
                 update_fields=[
                     "status",
                 ]
             )
 
-    else:
-        order.items.filter(
-            status__in=[
-                "PENDING",
-                "PROCESSING",
-                "SHIPPED",
-                "OUT_FOR_DELIVERY",
+        order.order_status = "CANCELLED"
+        order.save(
+            update_fields=[
+                "order_status",
+                "updated_at",
             ]
-        ).update(
-            status=new_status
         )
+
+        refund_amount = refund_admin_cancelled_order(order)
+
+        if refund_amount > 0:
+            messages.success(
+                request,
+                f"Order {order.order_id} cancelled successfully. "
+                f"₹{refund_amount:.2f} has been refunded to the customer's wallet.",
+            )
+        else:
+            messages.success(
+                request,
+                f"Order {order.order_id} cancelled successfully.",
+            )
+
+        return redirect(
+            "admin_order:order_detail",
+            order_id=order.order_id,
+        )
+
+    order.order_status = new_status
+
+    if new_status == "DELIVERED":
+        order.payment_status = "PAID"
+
+    order.save(
+        update_fields=[
+            "order_status",
+            "payment_status",
+            "updated_at",
+        ]
+    )
+
+    order.items.filter(
+        status__in=[
+            "PENDING",
+            "PROCESSING",
+            "SHIPPED",
+            "OUT_FOR_DELIVERY",
+        ]
+    ).update(
+        status=new_status
+    )
 
     messages.success(
         request,
@@ -382,6 +502,7 @@ def update_order_status(request, order_id):
         "admin_order:order_detail",
         order_id=order.order_id,
     )
+
 
 @never_cache
 @login_required(login_url="admin_login")
@@ -472,38 +593,69 @@ def update_return_status(request, item_id):
                 WalletTransaction,
             )
 
-            refund_amount = item.price * item.quantity
-
-            wallet, created = Wallet.objects.get_or_create(
-                user=order.user
+            refund_amount = max(
+                Decimal("0.00"),
+                item.total_price,
             )
 
-            wallet.balance += refund_amount
+            if refund_amount > 0:
+                wallet, created = (
+                    Wallet.objects
+                    .select_for_update()
+                    .get_or_create(
+                        user=order.user,
+                        defaults={
+                            "balance": Decimal("0.00"),
+                        },
+                    )
+                )
 
-            wallet.save(
-                update_fields=[
-                    "balance",
-                    "updated_at",
-                ]
-            )
+                refund_reference = (
+                    f"REFUND-{order.order_id}-ITEM-{item.id}"
+                )
 
-            WalletTransaction.objects.create(
-                wallet=wallet,
-                transaction_type="CREDIT",
-                amount=refund_amount,
-                description=(
-                    f"Refund for returned item "
-                    f"{item.variant.product.product_name}"
-                ),
-                reference=order.order_id,
-            )
+                existing_refund = WalletTransaction.objects.filter(
+                    wallet=wallet,
+                    reference=refund_reference,
+                    transaction_type="CREDIT",
+                ).exists()
 
-            messages.success(
-                request,
-                f"Return approved and ₹{refund_amount:.2f} "
-                f"refunded to wallet.",
-            )
+                if not existing_refund:
+                    wallet.balance += refund_amount
 
+                    wallet.save(
+                        update_fields=[
+                            "balance",
+                            "updated_at",
+                        ]
+                    )
+
+                    WalletTransaction.objects.create(
+                        wallet=wallet,
+                        transaction_type="CREDIT",
+                        amount=refund_amount,
+                        description=(
+                            f"Refund for returned item "
+                            f"{item.variant.product.product_name}"
+                        ),
+                        reference=refund_reference,
+                    )
+
+                    messages.success(
+                        request,
+                        f"Return approved and ₹{refund_amount:.2f} "
+                        f"refunded to wallet.",
+                    )
+                else:
+                    messages.success(
+                        request,
+                        "Return approved. Refund was already processed.",
+                    )
+            else:
+                messages.success(
+                    request,
+                    "Return approved.",
+                )
         else:
             messages.success(
                 request,
