@@ -17,7 +17,6 @@ from User_panel.Authentication.models import Address
 from User_panel.Cart.models import Cart
 from User_panel.Order.models import Order, OrderItem
 
-
 def get_cart_subtotal(cart):
     subtotal = Decimal("0.00")
     if not cart:
@@ -25,7 +24,6 @@ def get_cart_subtotal(cart):
     for item in cart.items.select_related("variant"):
         subtotal += item.variant.price * item.quantity
     return subtotal
-
 
 def calculate_coupon_discount(coupon, subtotal):
     if coupon.discount_type == "PERCENTAGE":
@@ -37,7 +35,6 @@ def calculate_coupon_discount(coupon, subtotal):
     else:
         return Decimal("0.00")
     return min(discount, subtotal).quantize(Decimal("0.01"))
-
 
 def validate_coupon(coupon, subtotal, user):
     now = timezone.localtime(timezone.now())
@@ -57,7 +54,6 @@ def validate_coupon(coupon, subtotal, user):
     if discount <= 0:
         return False, "This coupon does not provide a valid discount.", Decimal("0.00")
     return True, "", discount
-
 
 def get_best_offer_for_variant(variant):
     now = timezone.now()
@@ -84,7 +80,6 @@ def get_best_offer_for_variant(variant):
             best_discount = discount
     return best_offer, best_discount.quantize(Decimal("0.01"))
 
-
 def get_buy_now_item(request):
     if not request.session.get("buy_now"):
         return None
@@ -108,7 +103,6 @@ def get_buy_now_item(request):
     if variant.stock < quantity:
         raise ValueError("The selected quantity is no longer available.")
     return variant, quantity
-
 
 def get_checkout_items(request):
     buy_now_item = get_buy_now_item(request)
@@ -136,7 +130,6 @@ def get_checkout_items(request):
         items.append((variant, item.quantity))
     return items, False
 
-
 def calculate_checkout_totals(items):
     original_subtotal = Decimal("0.00")
     offer_discount = Decimal("0.00")
@@ -161,14 +154,12 @@ def calculate_checkout_totals(items):
     offer_subtotal = max(original_subtotal - offer_discount, Decimal("0.00"))
     return original_subtotal, offer_subtotal, offer_discount, item_calculations
 
-
 def calculate_cart_offer_discount(cart_items):
     offer_discount = Decimal("0.00")
     for item in cart_items:
         _, discount_per_unit = get_best_offer_for_variant(item.variant)
         offer_discount += discount_per_unit * item.quantity
     return offer_discount.quantize(Decimal("0.01"))
-
 
 def get_cart_totals(cart):
     if not cart:
@@ -193,7 +184,6 @@ def get_coupon_for_checkout(request, subtotal):
         return None, Decimal("0.00")
     return coupon, discount
 
-
 def clear_checkout_session(request, clear_buy_now=True):
     request.session.pop("checkout_coupon_code", None)
     request.session.pop("razorpay_checkout", None)
@@ -204,7 +194,7 @@ def clear_checkout_session(request, clear_buy_now=True):
     request.session.modified = True
 
 
-@login_required
+@login_required(login_url="login")
 def checkout(request):
     buy_now = request.GET.get("buy_now") == "1"
     variant_id = request.GET.get("variant_id")
@@ -275,7 +265,7 @@ def checkout(request):
     return render(request, "Checkout/checkout.html", context)
 
 
-@login_required
+@login_required(login_url="login")
 def apply_coupon(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid request."}, status=400)

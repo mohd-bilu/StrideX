@@ -1841,6 +1841,20 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(response => response.json())
             .then(data => {
+
+                if (data.login_required) {
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "warning",
+                        title: "Please login first.",
+                        showConfirmButton: false,
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
                 if (!data.success) {
                     Swal.fire({
                         toast: true,
@@ -1851,7 +1865,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         timer: 1800,
                         timerProgressBar: true
                     });
-
                     return;
                 }
 
@@ -1957,6 +1970,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
+
+                if (data.login_required) {
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "warning",
+                        title: "Please login first.",
+                        showConfirmButton: false,
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
                 if (!data.success) {
                     Swal.fire({
                         toast: true,
@@ -2025,6 +2051,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (buyNowBtn) {
         buyNowBtn.addEventListener("click", function (e) {
             e.preventDefault();
+            {% if not request.user.is_authenticated %}
+                window.location.href = "{% url 'login' %}";
+                return;
+            {% endif %}
 
             const activeVariant = document.querySelector(".size-btn.active");
 

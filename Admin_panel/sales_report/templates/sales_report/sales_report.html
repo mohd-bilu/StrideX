@@ -1,0 +1,1331 @@
+{% extends "Admin_account/base_admin.html" %}
+
+{% block title %}Sales Report | StrideX Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+.sales-page{
+    width:100%;
+}
+
+.sales-page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:55px;
+}
+
+.sales-heading small{
+    display:block;
+    color:#91a1ba;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.1px;
+    margin-bottom:6px;
+}
+
+.sales-heading h1{
+    font-size:28px;
+    line-height:1.1;
+    font-weight:800;
+    color:#111827;
+}
+
+.sales-overview{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:34px;
+}
+
+.sales-overview-title small{
+    display:block;
+    color:#91a1ba;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+.sales-overview-title h2{
+    color:#182238;
+    font-size:15px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.sales-overview-title p{
+    color:#61738f;
+    font-size:14px;
+    line-height:1.5;
+    max-width:470px;
+}
+
+.overall-view{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 12px;
+    border-radius:20px;
+    background:#f4f7fa;
+    color:#71819a;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.4px;
+}
+
+.overall-view i{
+    font-size:9px;
+}
+
+.sales-filter-card{
+    background:#fff;
+    border:1px solid #edf0f4;
+    border-radius:15px;
+    box-shadow:0 5px 18px rgba(35,48,70,.035);
+    margin-bottom:32px;
+    overflow:hidden;
+}
+
+.sales-filter-header{
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    border-bottom:1px solid #edf0f4;
+}
+
+.sales-filter-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#61738f;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.sales-filter-title i{
+    color:#91a1ba;
+    font-size:13px;
+}
+
+.export-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.export-btn{
+    height:38px;
+    padding:0 17px;
+    border-radius:11px;
+    border:1px solid #e1e7ef;
+    background:#fff;
+    color:#61738f;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.3px;
+    transition:.2s ease;
+}
+
+.export-btn:hover{
+    background:#f7f9fb;
+    color:#182238;
+}
+
+.export-btn.pdf{
+    background:#050505;
+    border-color:#050505;
+    color:#fff;
+}
+
+.export-btn.pdf:hover{
+    background:#222;
+    color:#fff;
+}
+
+.sales-filter-body{
+    padding:27px 21px 20px;
+}
+
+.filter-fields{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1.05fr 1.05fr;
+    gap:16px;
+    align-items:end;
+}
+
+.filter-field{
+    min-width:0;
+}
+
+.filter-field label{
+    display:block;
+    color:#91a1ba;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1px;
+    margin:0 0 9px 2px;
+}
+
+.filter-field input,
+.period-select{
+    width:100%;
+    height:46px;
+    border:1px solid #dfe6ef;
+    border-radius:11px;
+    background:#fff;
+    padding:0 14px;
+    color:#50627d;
+    font-size:12px;
+    font-weight:600;
+    outline:none;
+}
+
+.filter-field input:focus,
+.period-select:focus{
+    border-color:#a9b7c9;
+}
+
+.period-wrapper{
+    position:relative;
+}
+
+.period-select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding-right:35px;
+    cursor:pointer;
+}
+
+.period-wrapper i{
+    position:absolute;
+    right:14px;
+    bottom:17px;
+    color:#91a1ba;
+    font-size:9px;
+    pointer-events:none;
+}
+
+.apply-filter-btn,
+.clear-filter-btn{
+    height:46px;
+    border-radius:11px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.3px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+}
+
+.apply-filter-btn{
+    width:100%;
+    border:1px solid #050505;
+    background:#050505;
+    color:#fff;
+}
+
+.apply-filter-btn:hover{
+    background:#242424;
+}
+
+.clear-filter-btn{
+    width:100%;
+    border:1px solid #dfe6ef;
+    background:#fff;
+    color:#657691;
+}
+
+.clear-filter-btn:hover{
+    background:#f8fafc;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:31px;
+}
+
+.stat-card{
+    min-height:154px;
+    padding:23px 21px 20px;
+    background:#fff;
+    border:1px solid #edf0f4;
+    border-radius:15px;
+    box-shadow:0 5px 18px rgba(35,48,70,.035);
+}
+
+.stat-card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.stat-label{
+    color:#91a1ba;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.stat-icon{
+    width:34px;
+    height:34px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f1f5f9;
+    color:#71839c;
+    font-size:13px;
+}
+
+.stat-icon.revenue{
+    background:#eafbf4;
+    color:#22b77d;
+}
+
+.stat-icon.net{
+    background:#eafbf4;
+    color:#22b77d;
+}
+
+.stat-icon.discount{
+    background:#fff8df;
+    color:#e4a51b;
+}
+
+.stat-icon.offer{
+    background:#f2edff;
+    color:#9670ed;
+}
+
+.stat-icon.coupon{
+    background:#fff2e7;
+    color:#f39a43;
+}
+
+.stat-icon.cancelled{
+    background:#fff0f0;
+    color:#ed7070;
+}
+
+.stat-icon.returned{
+    background:#f1f5f9;
+    color:#7890ae;
+}
+
+.stat-value{
+    color:#151e31;
+    font-size:27px;
+    line-height:1;
+    font-weight:800;
+    letter-spacing:-.6px;
+    margin-bottom:13px;
+}
+
+.stat-footer{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:10px;
+    font-weight:700;
+}
+
+.stat-footer.blue{
+    color:#249cf1;
+}
+
+.stat-footer.green{
+    color:#22b77d;
+}
+
+.stat-footer.orange{
+    color:#e9a31c;
+}
+
+.stat-footer.purple{
+    color:#9670ed;
+}
+
+.stat-footer.red{
+    color:#ed7070;
+}
+
+.stat-footer.gray{
+    color:#8a9bb2;
+}
+
+.chart-card{
+    background:#fff;
+    border:1px solid #edf0f4;
+    border-radius:15px;
+    box-shadow:0 5px 18px rgba(35,48,70,.035);
+    margin-bottom:25px;
+    overflow:hidden;
+}
+
+.chart-header{
+    padding:20px 20px 10px;
+}
+
+.chart-header small{
+    display:block;
+    color:#91a1ba;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1px;
+    margin-bottom:5px;
+}
+
+.chart-header h2{
+    color:#182238;
+    font-size:14px;
+    font-weight:800;
+}
+
+.chart-wrapper{
+    height:330px;
+    padding:4px 20px 17px;
+    position:relative;
+}
+
+.order-breakdown-card{
+    background:#fff;
+    border:1px solid #edf0f4;
+    border-radius:15px;
+    box-shadow:0 5px 18px rgba(35,48,70,.035);
+    overflow:hidden;
+}
+
+.breakdown-header{
+    height:62px;
+    padding:0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #edf0f4;
+}
+
+.breakdown-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.breakdown-title i{
+    color:#91a1ba;
+    font-size:11px;
+}
+
+.breakdown-title h2{
+    color:#61738f;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.order-count{
+    background:#f1f5f9;
+    color:#8191a8;
+    padding:4px 9px;
+    border-radius:10px;
+    font-size:9px;
+    font-weight:800;
+}
+
+.filtered-by{
+    color:#91a1ba;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.5px;
+}
+
+.filtered-by strong{
+    color:#50627d;
+}
+
+.table-wrapper{
+    width:100%;
+    overflow-x:auto;
+}
+
+.sales-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.sales-table th{
+    height:48px;
+    padding:0 17px;
+    background:#fff;
+    color:#91a1ba;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    white-space:nowrap;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.sales-table th:last-child,
+.sales-table td:last-child{
+    text-align:right;
+}
+
+.sales-table td{
+    height:68px;
+    padding:8px 17px;
+    border-bottom:1px solid #f0f3f6;
+    color:#4f627e;
+    font-size:10px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.sales-table tbody tr:hover{
+    background:#fbfcfd;
+}
+
+.order-id-cell{
+    color:#111827 !important;
+    font-weight:800 !important;
+}
+
+.customer-cell strong{
+    display:block;
+    color:#182238;
+    font-size:10px;
+    margin-bottom:3px;
+}
+
+.customer-cell small{
+    display:block;
+    color:#91a1ba;
+    font-size:8px;
+}
+
+.date-cell strong{
+    display:block;
+    color:#52657f;
+    font-size:9px;
+    margin-bottom:3px;
+}
+
+.date-cell small{
+    display:block;
+    color:#91a1ba;
+    font-size:8px;
+}
+
+.payment-method{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:#50627d;
+    font-size:9px;
+    font-weight:800;
+}
+
+.payment-method i{
+    color:#35a6e8;
+    font-size:9px;
+}
+
+.payment-method.cod i{
+    color:#8d9caf;
+}
+
+.payment-method.wallet i{
+    color:#8e6de9;
+}
+
+.status-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:51px;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+.payment-paid{
+    background:#dff8e9;
+    color:#20a967;
+}
+
+.payment-pending{
+    background:#fff4c9;
+    color:#d79c17;
+}
+
+.payment-failed,
+.payment-cancelled{
+    background:#ffe7e7;
+    color:#d85f5f;
+}
+
+.order-pending{
+    background:#fff4c9;
+    color:#d79c17;
+}
+
+.order-processing{
+    background:#e9f0ff;
+    color:#5b7fd1;
+}
+
+.order-shipped{
+    background:#e8f4ff;
+    color:#258fca;
+}
+
+.order-out{
+    background:#e7e9ff;
+    color:#5d62cf;
+}
+
+.order-delivered{
+    background:#dff8e9;
+    color:#20a967;
+}
+
+.order-cancelled{
+    background:#ffe7e7;
+    color:#d85f5f;
+}
+
+.order-returned,
+.order-return-requested{
+    background:#f0eaff;
+    color:#8764d4;
+}
+
+.total-cell{
+    color:#182238 !important;
+    font-size:10px !important;
+    font-weight:800 !important;
+}
+
+.table-footer{
+    min-height:76px;
+    padding:0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.total-info{
+    color:#91a1ba;
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.6px;
+}
+
+.total-info strong{
+    color:#50627d;
+}
+
+.pagination{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.page-link{
+    min-width:25px;
+    height:25px;
+    border:1px solid #e6ebf1;
+    border-radius:7px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#50627d;
+    background:#fff;
+    font-size:9px;
+    font-weight:800;
+}
+
+.page-link:hover{
+    background:#f5f7fa;
+}
+
+.page-link.active{
+    background:#050505;
+    color:#fff;
+    border-color:#050505;
+}
+
+.page-link.disabled{
+    color:#b8c1cd;
+    pointer-events:none;
+}
+
+.empty-table{
+    padding:55px 20px !important;
+    text-align:center !important;
+    color:#91a1ba !important;
+}
+
+.empty-table i{
+    display:block;
+    font-size:28px;
+    margin-bottom:10px;
+    color:#c5ced9;
+}
+
+@media(max-width:1250px){
+    .filter-fields{
+        grid-template-columns:1fr 1fr 1fr;
+    }
+
+    .stats-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:900px){
+    .sales-page-header,
+    .sales-overview{
+        flex-direction:column;
+        gap:18px;
+    }
+
+    .filter-fields{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:650px){
+    .sales-page-header{
+        margin-bottom:35px;
+    }
+
+    .sales-heading h1{
+        font-size:24px;
+    }
+
+    .sales-overview{
+        margin-bottom:25px;
+    }
+
+    .filter-fields{
+        grid-template-columns:1fr;
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .sales-filter-header{
+        height:auto;
+        padding:16px;
+        gap:15px;
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .export-buttons{
+        width:100%;
+    }
+
+    .export-btn{
+        flex:1;
+    }
+
+    .table-footer{
+        padding:15px;
+        gap:15px;
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .chart-wrapper{
+        height:260px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sales-page">
+
+    <div class="sales-page-header">
+        <div class="sales-heading">
+            <small>MANAGEMENT</small>
+            <h1>Sales Report</h1>
+        </div>
+    </div>
+
+    <div class="sales-overview">
+        <div class="sales-overview-title">
+            <small>ANALYTICS &amp; INSIGHTS</small>
+            <h2>Financial performance overview</h2>
+            <p>Financial performance overview – revenue, discounts, and order breakdown.</p>
+        </div>
+
+        <div class="overall-view">
+            <i class="fa-solid fa-sliders"></i>
+            OVERALL VIEW
+        </div>
+    </div>
+
+    <div class="sales-filter-card">
+
+        <div class="sales-filter-header">
+            <div class="sales-filter-title">
+                <i class="fa-solid fa-sliders"></i>
+                FILTER &amp; DATE RANGE
+            </div>
+
+            <div class="export-buttons">
+                <a href="{% url 'sales_report:sales_report_excel' %}?from_date={{ from_date }}&to_date={{ to_date }}" class="export-btn">
+                    <i class="fa-solid fa-download"></i>
+                    EXCEL
+                </a>
+
+                <a href="{% url 'sales_report:sales_report_pdf' %}?from_date={{ from_date }}&to_date={{ to_date }}" class="export-btn pdf">
+                    <i class="fa-regular fa-file-lines"></i>
+                    PDF
+                </a>
+            </div>
+        </div>
+
+        <div class="sales-filter-body">
+            <form method="GET" id="salesFilterForm">
+                <div class="filter-fields">
+
+                    <div class="filter-field">
+                        <label for="period">PERIOD</label>
+                        <div class="period-wrapper">
+                            <select name="period" id="period" class="period-select">
+                                <option value="overall">Overall</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <div class="filter-field">
+                        <label for="from_date">START DATE</label>
+                        <input type="date" id="from_date" name="from_date" value="{{ from_date }}" required>
+                    </div>
+
+                    <div class="filter-field">
+                        <label for="to_date">END DATE</label>
+                        <input type="date" id="to_date" name="to_date" value="{{ to_date }}" required>
+                    </div>
+
+                    <div class="filter-field">
+                        <button type="submit" class="apply-filter-btn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            APPLY FILTER
+                        </button>
+                    </div>
+
+                    <div class="filter-field">
+                        <button type="button" class="clear-filter-btn" id="clearFilter">
+                            <i class="fa-solid fa-xmark"></i>
+                            CLEAR
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">TOTAL ORDERS</div>
+                <div class="stat-icon">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">{{ total_orders }}</div>
+
+            <div class="stat-footer blue">
+                <i class="fa-solid fa-chart-column"></i>
+                Orders placed
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">TOTAL REVENUE</div>
+                <div class="stat-icon revenue">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
+
+            <div class="stat-footer green">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                Gross revenue
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">NET REVENUE</div>
+                <div class="stat-icon net">
+                    <i class="fa-regular fa-square-check"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ net_revenue|floatformat:2 }}</div>
+
+            <div class="stat-footer green">
+                <i class="fa-regular fa-circle-check"></i>
+                After deductions
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">TOTAL DISCOUNTS</div>
+                <div class="stat-icon discount">
+                    <i class="fa-solid fa-tag"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ total_discounts|floatformat:2 }}</div>
+
+            <div class="stat-footer orange">
+                <i class="fa-regular fa-circle-info"></i>
+                All discounts
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">OFFER DISCOUNTS</div>
+                <div class="stat-icon offer">
+                    <i class="fa-regular fa-tag"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ offer_discount|floatformat:2 }}</div>
+
+            <div class="stat-footer purple">
+                <i class="fa-regular fa-tag"></i>
+                Product offers
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">COUPON DISCOUNTS</div>
+                <div class="stat-icon coupon">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ coupon_discount|floatformat:2 }}</div>
+
+            <div class="stat-footer orange">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Coupon savings
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">CANCELLED AMOUNT</div>
+                <div class="stat-icon cancelled">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ cancelled_amount|floatformat:2 }}</div>
+
+            <div class="stat-footer red">
+                <i class="fa-regular fa-circle-exclamation"></i>
+                Needs review
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-top">
+                <div class="stat-label">RETURNED AMOUNT</div>
+                <div class="stat-icon returned">
+                    <i class="fa-regular fa-calendar-check"></i>
+                </div>
+            </div>
+
+            <div class="stat-value">₹{{ returned_amount|floatformat:2 }}</div>
+
+            <div class="stat-footer gray">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                Refunded
+            </div>
+        </div>
+
+    </div>
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+            <small>REVENUE ANALYTICS</small>
+            <h2>Sales Trend</h2>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="salesTrendChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="order-breakdown-card">
+
+        <div class="breakdown-header">
+            <div class="breakdown-title">
+                <i class="fa-regular fa-rectangle-list"></i>
+                <h2>ORDER BREAKDOWN</h2>
+                <span class="order-count">{{ total_orders }} orders</span>
+            </div>
+
+            <div class="filtered-by">
+                FILTERED BY: <strong>OVERALL</strong>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+
+            <table class="sales-table">
+
+                <thead>
+                    <tr>
+                        <th>ORDER ID</th>
+                        <th>CUSTOMER</th>
+                        <th>DATE</th>
+                        <th>PAYMENT METHOD</th>
+                        <th>PAYMENT STATUS</th>
+                        <th>ORDER STATUS</th>
+                        <th>FINAL TOTAL</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for order in page_obj %}
+
+                    <tr>
+
+                        <td class="order-id-cell">
+                            #{{ order.order_id }}
+                        </td>
+
+                        <td class="customer-cell">
+                            <strong>
+                                {{ order.user.full_name|default:order.user.email }}
+                            </strong>
+                            <small>
+                                {{ order.user.email }}
+                            </small>
+                        </td>
+
+                        <td class="date-cell">
+                            <strong>
+                                {{ order.created_at|date:"M d, Y" }}
+                            </strong>
+                            <small>
+                                {{ order.created_at|date:"h:i A" }}
+                            </small>
+                        </td>
+
+                        <td>
+                            {% if order.payment_method == "RAZORPAY" %}
+                                <div class="payment-method">
+                                    <i class="fa-regular fa-credit-card"></i>
+                                    RAZORPAY
+                                </div>
+                            {% elif order.payment_method == "WALLET" %}
+                                <div class="payment-method wallet">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    WALLET
+                                </div>
+                            {% else %}
+                                <div class="payment-method cod">
+                                    <i class="fa-regular fa-money-bill-1"></i>
+                                    COD
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if order.payment_status == "PAID" %}
+                                <span class="status-pill payment-paid">PAID</span>
+                            {% elif order.payment_status == "PENDING" %}
+                                <span class="status-pill payment-pending">PENDING</span>
+                            {% elif order.payment_status == "FAILED" %}
+                                <span class="status-pill payment-failed">FAILED</span>
+                            {% else %}
+                                <span class="status-pill payment-cancelled">CANCELLED</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if order.order_status == "PENDING" %}
+                                <span class="status-pill order-pending">PENDING</span>
+                            {% elif order.order_status == "PROCESSING" %}
+                                <span class="status-pill order-processing">PROCESSING</span>
+                            {% elif order.order_status == "SHIPPED" %}
+                                <span class="status-pill order-shipped">SHIPPED</span>
+                            {% elif order.order_status == "OUT_FOR_DELIVERY" %}
+                                <span class="status-pill order-out">OUT FOR DELIVERY</span>
+                            {% elif order.order_status == "DELIVERED" %}
+                                <span class="status-pill order-delivered">DELIVERED</span>
+                            {% elif order.order_status == "CANCELLED" %}
+                                <span class="status-pill order-cancelled">CANCELLED</span>
+                            {% elif order.order_status == "RETURN_REQUESTED" %}
+                                <span class="status-pill order-return-requested">RETURN REQUESTED</span>
+                            {% elif order.order_status == "RETURNED" %}
+                                <span class="status-pill order-returned">RETURNED</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="total-cell">
+                            ₹{{ order.total_amount|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="7" class="empty-table">
+                            <i class="fa-solid fa-chart-column"></i>
+                            No orders found for the selected period.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="table-footer">
+
+            <div class="total-info">
+                SHOWING
+                <strong>{{ page_obj.start_index|default:0 }}</strong>
+                TO
+                <strong>{{ page_obj.end_index|default:0 }}</strong>
+                OF
+                <strong>{{ page_obj.paginator.count }}</strong>
+            </div>
+
+            <div class="pagination">
+
+                {% if page_obj.has_previous %}
+                    <a class="page-link" href="?from_date={{ from_date }}&to_date={{ to_date }}&page={{ page_obj.previous_page_number }}">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                {% else %}
+                    <span class="page-link disabled">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </span>
+                {% endif %}
+
+                {% for number in page_obj.paginator.page_range %}
+
+                    {% if number == page_obj.number %}
+                        <span class="page-link active">{{ number }}</span>
+                    {% elif number <= 3 or number > page_obj.paginator.num_pages|add:"-2" %}
+                        <a class="page-link" href="?from_date={{ from_date }}&to_date={{ to_date }}&page={{ number }}">
+                            {{ number }}
+                        </a>
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="page-link" href="?from_date={{ from_date }}&to_date={{ to_date }}&page={{ page_obj.next_page_number }}">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                {% else %}
+                    <span class="page-link disabled">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chartCanvas = document.getElementById("salesTrendChart");
+
+    if (chartCanvas) {
+        const labels = {{ chart_labels|safe }};
+        const values = {{ chart_values|safe }};
+
+        new Chart(chartCanvas, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    borderWidth: 2.5,
+                    borderColor: "#182238",
+                    backgroundColor: "rgba(24,34,56,0.08)",
+                    fill: true,
+                    tension: 0.42,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBorderWidth: 2,
+                    pointBackgroundColor: "#182238"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: "index"
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return " ₹" + Number(context.raw).toLocaleString("en-IN", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                });
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: "#8191a8",
+                            font: {
+                                size: 8
+                            },
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 20
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: "#edf0f4"
+                        },
+                        ticks: {
+                            color: "#8191a8",
+                            font: {
+                                size: 8
+                            },
+                            callback: function(value) {
+                                return "₹" + Number(value).toLocaleString("en-IN");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const clearButton = document.getElementById("clearFilter");
+
+    if (clearButton) {
+        clearButton.addEventListener("click", function () {
+            window.location.href = "{% url 'sales_report:sales_report' %}";
+        });
+    }
+
+    const periodSelect = document.getElementById("period");
+    const fromDate = document.getElementById("from_date");
+    const toDate = document.getElementById("to_date");
+
+    if (periodSelect && fromDate && toDate) {
+        periodSelect.addEventListener("change", function () {
+            const today = new Date();
+            let start = new Date(today);
+
+            if (this.value === "today") {
+                start = new Date(today);
+            }
+
+            if (this.value === "week") {
+                const day = today.getDay();
+                const difference = day === 0 ? 6 : day - 1;
+                start.setDate(today.getDate() - difference);
+            }
+
+            if (this.value === "month") {
+                start = new Date(
+                    today.getFullYear(),
+                    today.getMonth(),
+                    1
+                );
+            }
+
+            if (this.value === "year") {
+                start = new Date(
+                    today.getFullYear(),
+                    0,
+                    1
+                );
+            }
+
+            if (this.value !== "overall") {
+                fromDate.value = formatDate(start);
+                toDate.value = formatDate(today);
+            }
+        });
+    }
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+});
+</script>
+{% endblock %}

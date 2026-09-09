@@ -96,47 +96,59 @@
                 </div>
 
                <div class="input-box">
-    <label>Password</label>
+                    <label>Password</label>
 
-    <div class="input-field">
-        <i class="fa-solid fa-lock"></i>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
 
-        <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••"
-            required
-        >
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            required
+                        >
 
-        <i
-            class="fa-regular fa-eye password-eye"
-            onclick="togglePassword('password', this)"
-        ></i>
-    </div>
-</div>
+                        <i
+                            class="fa-regular fa-eye password-eye"
+                            onclick="togglePassword('password', this)"
+                        ></i>
+                    </div>
+                </div>
 
 
-<div class="input-box">
-    <label>Confirm Password</label>
+                <div class="input-box">
+                    <label>Confirm Password</label>
 
-    <div class="input-field">
-        <i class="fa-solid fa-lock"></i>
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
 
-        <input
-            type="password"
-            id="confirmPassword"
-            name="confirm_password"
-            placeholder="••••••••"
-            required
-        >
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirm_password"
+                            placeholder="••••••••"
+                            required
+                        >
 
-        <i
-            class="fa-regular fa-eye password-eye"
-            onclick="togglePassword('confirmPassword', this)"
-        ></i>
-    </div>
-</div>
+                        <i
+                            class="fa-regular fa-eye password-eye"
+                            onclick="togglePassword('confirmPassword', this)"
+                        ></i>
+                    </div>
+                </div>
+                <div class="input-box">
+                    <label>Referral Code <span style="font-weight:400;">(Optional)</span></label>
+                    <div class="input-field">
+                        <i class="fa-solid fa-gift"></i>
+                        <input
+                            type="text"
+                            name="referral_code"
+                            placeholder="Enter referral code"
+                            value="{{ request.POST.referral_code|default:referral_code }}"
+                        >
+                    </div>
+                </div>
                 <div class="checkbox">
 
                     <input
@@ -154,20 +166,20 @@
 
                 </div>
 
-                <button type="submit" class="signup-btn">
-                    Create Account
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
+                    <button type="submit" class="signup-btn">
+                        Create Account
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
 
                 <div class="divider">
                     <span>CONTINUE WITH</span>
                 </div>
 
                 <div class="google-login">
-    <a href="{% provider_login_url 'google' process='login' %}">
-    Continue with Google
-</a>
-</div>
+                    <a href="{% provider_login_url 'google' process='login' %}">
+                         Continue with Google
+                    </a>
+                </div>
 
                 <p class="login">
                     Already have an account?

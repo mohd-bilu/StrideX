@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -45,7 +45,7 @@ def coupon_list(request):
         expiry_date__gt=now,
     ).filter(
         Q(usage_limit__isnull=True)
-        | Q(used_count__lt=Q("usage_limit"))
+        | Q(used_count__lt=F("usage_limit"))
     ).count()
 
     return render(

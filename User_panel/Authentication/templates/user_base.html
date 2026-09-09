@@ -1889,81 +1889,83 @@ main{
             ACCOUNT SECTION
     ============================ -->
 
-    <div class="profile-section">
+    {% if request.user.is_authenticated %}
 
-        <div class="section-title">
+        <div class="profile-section">
 
-            ACCOUNT
+            <div class="section-title">
+                ACCOUNT
+            </div>
+
+            <a href="{% url 'profile' %}"
+            class="profile-item">
+                <i class="fa-regular fa-user"></i>
+                <span>
+                    My Profile
+                </span>
+            </a>
+
+            <a href="{% url 'address_list' %}"
+            class="profile-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>
+                    Address
+                </span>
+            </a>
+
+            <a href="{% url 'order:order_list' %}"
+            class="profile-item">
+                <i class="fa-solid fa-box"></i>
+                <span>
+                    My Orders
+                </span>
+            </a>
+
+            <a href="{% url 'wishlist' %}"
+            class="profile-item">
+                <i class="fa-regular fa-heart"></i>
+                <span>
+                    Wishlist
+                </span>
+            </a>
+
+            <a href="{% url 'wallet:wallet' %}"
+            class="profile-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span>
+                    Wallet
+                </span>
+            </a>
 
         </div>
 
-        <a href="{% url 'profile' %}"
-           class="profile-item">
+        {% else %}
 
-            <i class="fa-regular fa-user"></i>
+        <div class="profile-section">
 
-            <span>
+            <div class="section-title">
+                ACCOUNT
+            </div>
 
-                My Profile
+            <a href="{% url 'login' %}"
+            class="profile-item">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>
+                    Login
+                </span>
+            </a>
 
-            </span>
+            <a href="{% url 'signup' %}"
+            class="profile-item">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>
+                    Sign Up
+                </span>
+            </a>
 
-        </a>
+        </div>
 
-        <a href="{% url 'address_list' %}"
-           class="profile-item">
-
-            <i class="fa-solid fa-location-dot"></i>
-
-            <span>
-
-                Address Book
-
-            </span>
-
-        </a>
-
-        <a href="{% url 'order:order_list' %}"
-           class="profile-item">
-
-            <i class="fa-solid fa-box"></i>
-
-            <span>
-
-                My Orders
-
-            </span>
-
-        </a>
-
-        <a href="{% url 'wishlist' %}"
-           class="profile-item">
-
-            <i class="fa-regular fa-heart"></i>
-
-            <span>
-
-                Wishlist
-
-            </span>
-
-        </a>
-
-        <a href="{% url 'wallet:wallet' %}"
-           class="profile-item">
-
-            <i class="fa-solid fa-wallet"></i>
-
-            <span>
-
-                Wallet
-
-            </span>
-
-        </a>
-
-    </div>
-
+        {% endif %}
     <!-- ===========================
             LOGOUT
     ============================ -->

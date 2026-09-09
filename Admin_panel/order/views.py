@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 
 from User_panel.Order.models import Order, OrderItem
-
+from User_panel.Order.views import reward_referrer_for_order
 
 def refund_admin_cancelled_order(order):
     if order.payment_status != "PAID":
@@ -492,11 +492,25 @@ def update_order_status(request, order_id):
         status=new_status
     )
 
-    messages.success(
-        request,
-        f"Order {order.order_id} updated to "
-        f"{valid_statuses[new_status]}.",
-    )
+    referral_reward = Decimal("0.00")
+
+    if new_status == "DELIVERED":
+        referral_reward = reward_referrer_for_order(order)
+
+    if referral_reward > 0:
+        messages.success(
+            request,
+            f"Order {order.order_id} updated to "
+            f"{valid_statuses[new_status]}. "
+            f"₹{referral_reward:.2f} referral reward "
+            f"credited to the referrer's wallet.",
+        )
+    else:
+        messages.success(
+            request,
+            f"Order {order.order_id} updated to "
+            f"{valid_statuses[new_status]}.",
+        )
 
     return redirect(
         "admin_order:order_detail",

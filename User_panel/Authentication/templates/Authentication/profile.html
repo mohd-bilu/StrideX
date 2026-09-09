@@ -3,17 +3,15 @@
 
 {% block extra_css %}
 
-<style>       
+<style>
 /*==================================================
                 PROFILE PAGE
 ==================================================*/
 
 .profile-page {
-
     max-width: 950px;
     margin: 50px auto 80px;
     padding: 0 20px;
-
 }
 
 /*==================================================
@@ -21,32 +19,26 @@
 ==================================================*/
 
 .profile-page-header {
-
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 40px;
-
 }
 
 .profile-page-header h1 {
-
     margin: 0;
     font-size: 38px;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: .5px;
     line-height: 1.2;
-
 }
 
 .profile-page-header p {
-
     margin: 8px 0 0;
     font-size: 15px;
     color: #9d9d9d;
     line-height: 1.6;
-
 }
 
 /*==================================================
@@ -54,13 +46,11 @@
 ==================================================*/
 
 .profile-page-card {
-
     background: #181818;
     border: 1px solid rgba(245, 130, 32, .15);
     border-radius: 24px;
     padding: 45px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
-
 }
 
 /*==================================================
@@ -68,13 +58,11 @@
 ==================================================*/
 
 .profile-page-top {
-
     display: flex;
     align-items: center;
     gap: 28px;
     padding-bottom: 35px;
     border-bottom: 1px solid rgba(255, 255, 255, .08);
-
 }
 
 /*==================================================
@@ -82,7 +70,6 @@
 ==================================================*/
 
 .profile-page-avatar {
-
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -93,22 +80,17 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-
 }
 
 .profile-page-avatar img {
-
     width: 100%;
     height: 100%;
     object-fit: cover;
-
 }
 
 .profile-page-avatar i {
-
     font-size: 52px;
     color: #f58220;
-
 }
 
 /*==================================================
@@ -116,30 +98,23 @@
 ==================================================*/
 
 .profile-page-user {
-
     flex: 1;
-
 }
 
 .profile-page-name {
-
     display: flex;
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
-
 }
 
 .profile-page-name h2 {
-
     font-size: 32px;
     color: #ffffff;
     font-weight: 700;
-
 }
 
 .verified-badge {
-
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -149,15 +124,12 @@
     color: #f58220;
     font-size: 13px;
     font-weight: 600;
-
 }
 
 .member-since {
-
     margin-top: 12px;
     color: #9a9a9a;
     font-size: 15px;
-
 }
 
 /*==================================================
@@ -165,47 +137,112 @@
 ==================================================*/
 
 .profile-page-details {
-
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
     padding: 40px 0;
-
 }
 
 .detail-box {
-
     background: #202020;
     border: 1px solid rgba(255, 255, 255, .05);
     border-radius: 18px;
     padding: 24px;
-
 }
 
 .detail-box label {
-
     display: block;
     margin-bottom: 10px;
     color: #8f8f8f;
     font-size: 12px;
     letter-spacing: 1px;
     font-weight: 700;
-
 }
 
 .detail-box p {
-
     color: #ffffff;
     font-size: 18px;
     font-weight: 600;
     word-break: break-word;
-
 }
 
 .empty-value {
-
     color: #777777;
+}
 
+/*==================================================
+                REFERRAL SECTION
+==================================================*/
+
+.profile-referral {
+    background: #202020;
+    border: 1px solid rgba(245, 130, 32, .12);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 35px;
+}
+
+.profile-referral-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #8f8f8f;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.profile-referral-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 800;
+    font-style: italic;
+}
+
+.profile-referral-text {
+    margin: 10px 0 20px;
+    color: #9d9d9d;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.profile-referral-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-referral-code {
+    flex: 1;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 12px;
+    background: #181818;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    outline: none;
+}
+
+.profile-referral-copy {
+    height: 52px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 999px;
+    background: #f58220;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.profile-referral-copy:hover {
+    background: #ff9a35;
+    transform: translateY(-2px);
 }
 
 /*==================================================
@@ -213,16 +250,13 @@
 ==================================================*/
 
 .profile-page-actions {
-
     display: flex;
     flex-direction: column;
     gap: 18px;
     padding-top: 10px;
-
 }
 
 .profile-primary-btn {
-
     width: 100%;
     height: 58px;
     border-radius: 14px;
@@ -235,18 +269,14 @@
     font-weight: 700;
     letter-spacing: .5px;
     transition: .3s;
-
 }
 
 .profile-primary-btn:hover {
-
     background: #ff9a35;
     transform: translateY(-2px);
-
 }
 
 .profile-secondary-btn {
-
     width: 100%;
     height: 58px;
     border-radius: 14px;
@@ -259,15 +289,12 @@
     font-size: 15px;
     font-weight: 600;
     transition: .3s;
-
 }
 
 .profile-secondary-btn:hover {
-
     border-color: #f58220;
     color: #f58220;
     transform: translateY(-2px);
-
 }
 
 /*==================================================
@@ -277,89 +304,87 @@
 @media (max-width: 768px) {
 
     .profile-page {
-
         margin: 30px auto 60px;
-
     }
 
     .profile-page-card {
-
         padding: 30px 22px;
-
     }
 
     .profile-page-top {
-
         flex-direction: column;
         text-align: center;
-
     }
 
     .profile-page-name {
-
         justify-content: center;
-
     }
 
     .profile-page-details {
-
         grid-template-columns: 1fr;
-
     }
 
     .profile-page-name h2 {
-
         font-size: 26px;
-
     }
 
     .profile-page-header h1 {
-
         font-size: 30px;
-
     }
 
+    .profile-referral-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-referral-copy {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
 
     .profile-page-avatar {
-
         width: 100px;
         height: 100px;
-
     }
 
     .profile-page-avatar i {
-
         font-size: 42px;
-
     }
 
     .detail-box {
-
         padding: 20px;
-
     }
 
     .detail-box p {
-
         font-size: 16px;
-
     }
 
     .profile-primary-btn,
     .profile-secondary-btn {
-
         height: 54px;
         font-size: 14px;
-
     }
 
+    .profile-referral {
+        padding: 22px;
+    }
+
+    .profile-referral-title {
+        font-size: 20px;
+    }
+
+    .profile-referral-code {
+        font-size: 14px;
+    }
 }
 </style>
+
 {% endblock %}
+
 {% block content %}
+
 <div class="profile-page">
 
     <div class="profile-page-header">
@@ -476,6 +501,51 @@
         </div>
 
         <!-- ===========================
+                REFERRAL
+        ============================ -->
+
+        {% if user.referral_code %}
+
+        <div class="profile-referral">
+
+            <span class="profile-referral-label">
+                INVITE & EARN
+            </span>
+
+            <h3 class="profile-referral-title">
+                SHARE YOUR REFERRAL CODE
+            </h3>
+
+            <p class="profile-referral-text">
+                Invite a friend. When they place their first order,
+                you earn ₹200 in your wallet.
+            </p>
+
+            <div class="profile-referral-row">
+
+                <input
+                    type="text"
+                    class="profile-referral-code"
+                    id="referralCode"
+                    value="{{ user.referral_code }}"
+                    readonly
+                >
+
+                <button
+                    type="button"
+                    class="profile-referral-copy"
+                    id="copyReferralCode"
+                >
+                    COPY CODE
+                </button>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+        <!-- ===========================
                 ACTION BUTTONS
         ============================ -->
 
@@ -507,31 +577,85 @@
     </section>
 
 </div>
+
 {% endblock %}
+
 {% block extra_js %}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-{% if messages %}
 <script>
-document.addEventListener("DOMContentLoaded",function(){
-{% for message in messages %}
-Swal.fire({
-toast:true,
-position:"top-end",
-icon:"{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
-title:"{{ message|escapejs }}",
-showConfirmButton:false,
-timer:3000,
-timerProgressBar:true,
-background:"#21130e",
-color:"#fff"
-});
-{% endfor %}
+document.addEventListener("DOMContentLoaded", function () {
+
+    const copyButton = document.getElementById("copyReferralCode");
+    const referralCode = document.getElementById("referralCode");
+
+    if (copyButton && referralCode) {
+
+        copyButton.addEventListener("click", function () {
+
+            navigator.clipboard.writeText(referralCode.value).then(function () {
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "success",
+                    title: "Referral code copied!",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#fff"
+                });
+
+            }).catch(function () {
+
+                referralCode.select();
+                document.execCommand("copy");
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "success",
+                    title: "Referral code copied!",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#fff"
+                });
+
+            });
+
+        });
+
+    }
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}",
+                title: "{{ message|escapejs }}",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: "#21130e",
+                color: "#fff"
+            });
+
+        {% endfor %}
+
+    {% endif %}
+
 });
 </script>
-{% endif %}
+
 <script>
-    window.history.forward();
+window.history.forward();
 </script>
+
 {% endblock %}

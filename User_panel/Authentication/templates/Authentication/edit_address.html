@@ -1097,11 +1097,10 @@ a{
 
 
                     <a
-                        href="{% url 'address_list' %}"
-                        class="cancel-btn">
-
+                        href="{% if next_url %}{{ next_url }}{% else %}{% url 'address_list' %}{% endif %}"
+                        class="cancel-btn"
+                    >
                         CANCEL
-
                     </a>
 
 

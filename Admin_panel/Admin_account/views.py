@@ -120,35 +120,12 @@ def admin_logout(request):
     return redirect("admin_login")
 
 
-@never_cache
-@login_required(login_url="admin_login")
 def user_management(request):
     search_query = request.GET.get("search", "").strip()
     status_filter = request.GET.get("status", "").strip()
+    sort_by = request.GET.get("sort", "latest").strip()
 
-    base_users = User.objects.filter(
-        is_staff=False,
-        is_superuser=False
-    )
-
-    total_users = base_users.count()
-
-    active_users = base_users.filter(
-        is_active=True,
-        is_blocked=False
-    ).count()
-
-    blocked_users = base_users.filter(
-        is_blocked=True
-    ).count()
-
-    seven_days_ago = timezone.now() - timedelta(days=7)
-
-    new_users = base_users.filter(
-        date_joined__gte=seven_days_ago
-    ).count()
-
-    users = base_users.order_by("-date_joined")
+    users = User.objects.all()
 
     if search_query:
         users = users.filter(
@@ -159,30 +136,59 @@ def user_management(request):
     if status_filter == "active":
         users = users.filter(
             is_active=True,
-            is_blocked=False
+            is_blocked=False,
+        )
+    elif status_filter == "blocked":
+        users = users.filter(
+            Q(is_blocked=True)
+            | Q(is_active=False)
         )
 
-    elif status_filter == "blocked":
-        users = users.filter(is_blocked=True)
+    if sort_by == "oldest":
+        users = users.order_by("date_joined")
+    elif sort_by == "name_az":
+        users = users.order_by("full_name", "id")
+    elif sort_by == "name_za":
+        users = users.order_by("-full_name", "-id")
+    else:
+        sort_by = "latest"
+        users = users.order_by("-date_joined", "-id")
 
-    paginator = Paginator(users, 5)
+    paginator = Paginator(users, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    context = {
-        "page_obj": page_obj,
-        "search_query": search_query,
-        "status_filter": status_filter,
-        "total_users": total_users,
-        "active_users": active_users,
-        "new_users": new_users,
-        "blocked_users": blocked_users,
-    }
+    total_users = User.objects.count()
+
+    active_users = User.objects.filter(
+        is_active=True,
+        is_blocked=False,
+    ).count()
+
+    blocked_users = User.objects.filter(
+        Q(is_blocked=True)
+        | Q(is_active=False)
+    ).count()
+
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+
+    new_users = User.objects.filter(
+        date_joined__gte=thirty_days_ago
+    ).count()
 
     return render(
         request,
         "Admin_account/user_management.html",
-        context
+        {
+            "page_obj": page_obj,
+            "search_query": search_query,
+            "status_filter": status_filter,
+            "sort_by": sort_by,
+            "total_users": total_users,
+            "active_users": active_users,
+            "blocked_users": blocked_users,
+            "new_users": new_users,
+        },
     )
 @never_cache
 @login_required(login_url="admin_login")

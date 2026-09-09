@@ -1,3 +1,4 @@
+import uuid
 from datetime import timedelta
 
 from django.contrib.auth.models import AbstractUser
@@ -34,10 +35,35 @@ class User(AbstractUser):
     )
     is_blocked = models.BooleanField(default=False)
 
+    referral_code = models.CharField(
+        max_length=20,
+        unique=True,
+        blank=True,
+        null=True
+    )
+    referred_by = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="referred_users"
+    )
+    referral_reward_given = models.BooleanField(default=False)
+
     REQUIRED_FIELDS = [
         "email",
         "full_name"
     ]
+
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = self.generate_referral_code()
+
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_referral_code():
+        return uuid.uuid4().hex[:8].upper()
 
     def __str__(self):
         return self.email

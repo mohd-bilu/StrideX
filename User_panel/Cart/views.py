@@ -139,8 +139,13 @@ def cart(request):
     )
 
 
-@login_required
 def add_to_cart(request, variant_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "success": False,
+            "login_required": True,
+            "message": "Please login first.",
+        }, status=401)
     variant = get_object_or_404(
         Variant,
         id=variant_id,
@@ -386,8 +391,13 @@ def wishlist(request):
     )
 
 
-@login_required
 def add_to_wishlist(request, variant_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "success": False,
+            "login_required": True,
+            "message": "Please login first.",
+        }, status=401)
     variant = get_object_or_404(
         Variant,
         id=variant_id,

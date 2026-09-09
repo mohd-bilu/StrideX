@@ -23,7 +23,6 @@ def generate_otp():
 
     return otp
 
-
 @never_cache
 def signup(request):
     if request.user.is_authenticated:
@@ -35,6 +34,7 @@ def signup(request):
         password = request.POST.get("password", "")
         confirm_password = request.POST.get("confirm_password", "")
         agree = request.POST.get("agree")
+        referral_code = request.POST.get("referral_code", "").strip().upper()
 
         error = validate_signup(
             fullname,
@@ -55,13 +55,28 @@ def signup(request):
             messages.error(request, "Email already exists")
             return redirect("signup")
 
+        referrer = None
+
+        if referral_code:
+            referrer = User.objects.filter(
+                referral_code=referral_code,
+                is_active=True,
+                is_blocked=False
+            ).first()
+
+            if not referrer:
+                messages.error(request, "Invalid referral code.")
+                return redirect("signup")
+
         otp = generate_otp()
 
         request.session["signup_data"] = {
             "fullname": fullname,
             "email": email,
-            "password": password
+            "password": password,
+            "referral_code": referral_code,
         }
+
         request.session["otp"] = otp
         request.session["otp_created_at"] = timezone.now().timestamp()
 
@@ -70,9 +85,29 @@ def signup(request):
         messages.success(request, "OTP sent successfully.")
         return redirect("verify_otp")
 
-    return render(request, "Authentication/signup_page.html")
+    referral_code = request.GET.get("ref", "").strip().upper()
+
+    if referral_code:
+        referrer = User.objects.filter(
+            referral_code=referral_code,
+            is_active=True,
+            is_blocked=False
+        ).first()
+
+        if not referrer:
+            messages.error(request, "Invalid referral code.")
+            referral_code = ""
+
+    return render(
+        request,
+        "Authentication/signup_page.html",
+        {
+            "referral_code": referral_code,
+        }
+    )
 
 @never_cache
+@login_required(login_url="login")
 def verify_otp(request):
     if "signup_data" not in request.session:
         messages.error(request, "Session expired.")
@@ -112,12 +147,23 @@ def verify_otp(request):
 
         signup_data = request.session["signup_data"]
 
-        User.objects.create_user(
+        referral_code = signup_data.get("referral_code", "")
+        referrer = None
+
+        if referral_code:
+            referrer = User.objects.filter(
+                referral_code=referral_code,
+                is_active=True,
+                is_blocked=False
+            ).first()
+
+        user = User.objects.create_user(
             username=signup_data["email"],
             email=signup_data["email"],
             password=signup_data["password"],
             full_name=signup_data["fullname"],
-            is_active=True
+            is_active=True,
+            referred_by=referrer
         )
 
         request.session.pop("signup_data", None)
@@ -202,11 +248,10 @@ def logout_view(request):
         logout(request)
 
         messages.success(request, "Logged out successfully.")
-        return redirect("login")
+        return redirect("user_home")
 
     return redirect("home")
 
-@login_required(login_url="login")
 def user_home(request):
 
     categories = Category.objects.filter(
@@ -769,12 +814,19 @@ def address_list(request):
         "Authentication/address_list.html",
         {"addresses": addresses}
     )
-
-
 @login_required(login_url="login")
 def add_address(request):
     user = request.user
     next_url = request.GET.get("next") or request.POST.get("next")
+
+    if next_url in ("None", "null", ""):
+        next_url = None
+
+    if next_url and (
+        not next_url.startswith("/")
+        or next_url.startswith("//")
+    ):
+        next_url = None
 
     if request.method == "POST":
         pincode = request.POST.get("pincode", "").strip()
@@ -841,6 +893,27 @@ def edit_address(request, id):
 
     next_url = request.GET.get("next") or request.POST.get("next")
 
+    if next_url in ("None", "null", ""):
+        next_url = None
+
+    if next_url and (
+        not next_url.startswith("/")
+        or next_url.startswith("//")
+    ):
+        next_url = None
+
+    def redirect_after_error():
+        if next_url:
+            separator = "&" if "?" in next_url else "?"
+            return redirect(
+                f"{next_url}{separator}address={address.id}"
+            )
+
+        return redirect(
+            "edit_address",
+            id=id
+        )
+
     if request.method == "POST":
         pincode = request.POST.get("pincode", "").strip()
 
@@ -849,32 +922,14 @@ def edit_address(request, id):
                 request,
                 "Pincode must contain only numbers."
             )
-
-            if next_url:
-                return redirect(
-                    f"{next_url}&address={address.id}"
-                )
-
-            return redirect(
-                "edit_address",
-                id=id
-            )
+            return redirect_after_error()
 
         if len(pincode) != 6:
             messages.error(
                 request,
                 "Pincode must contain exactly 6 digits."
             )
-
-            if next_url:
-                return redirect(
-                    f"{next_url}&address={address.id}"
-                )
-
-            return redirect(
-                "edit_address",
-                id=id
-            )
+            return redirect_after_error()
 
         address.full_name = request.POST.get("full_name")
         address.phone_number = request.POST.get("phone_number")
@@ -963,4 +1018,5 @@ def make_default_address(request, id):
         request,
         "Default Address Updated."
     )
+
     return redirect("address_list")

@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from urllib3 import request
 
 from Admin_panel.category.models import Category
 from Admin_panel.coupon_offer.models import Offer
@@ -57,7 +58,6 @@ def get_best_offer(variant, now=None):
     return best_offer, best_discount
 
 
-@login_required(login_url="login")
 def category_list(request):
     categories = Category.objects.filter(
         is_active=True,
@@ -183,7 +183,6 @@ def product_list(request):
     )
 
 
-@login_required(login_url="login")
 def product_detail(request, product_id):
     product = get_object_or_404(
         Product.objects.select_related("category").prefetch_related(
@@ -283,14 +282,17 @@ def product_detail(request, product_id):
         )
     )
 
-    wishlist_variant_ids = list(
-        WishlistItem.objects.filter(
-            wishlist__user=request.user
-        ).values_list(
-            "variant_id",
-            flat=True,
+    wishlist_variant_ids = []
+
+    if request.user.is_authenticated:
+        wishlist_variant_ids = list(
+            WishlistItem.objects.filter(
+                wishlist__user=request.user
+            ).values_list(
+                "variant_id",
+                flat=True,
+            )
         )
-    )
 
     context = {
         "product": product,

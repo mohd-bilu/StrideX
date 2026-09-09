@@ -131,7 +131,7 @@ Checkout - StrideX
         min-width: 0;
     }
 
-    .checkout-item-info h3 {
+    .checkout-item-info h4 {
         margin: 0 0 8px;
         font-size: 14px;
         font-weight: 500;
@@ -752,6 +752,64 @@ Checkout - StrideX
         background: #ff8b20;
         border-color: #ff8b20;
     }
+    .original-price {
+        color: #666 !important;
+        text-decoration: line-through;
+    }
+
+    .offer-price {
+        color: #ff7900 !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+    }
+    .checkout-toast {
+        position: fixed;
+        top: 25px;
+        right: 25px;
+        z-index: 20000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 280px;
+        max-width: 380px;
+        padding: 13px 16px;
+        border: 1px solid rgba(230,107,107,.35);
+        border-radius: 9px;
+        background: #181818;
+        color: #fff;
+        box-shadow: 0 12px 35px rgba(0,0,0,.4);
+        font-size: 11px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-15px);
+        transition: .25s ease;
+    }
+
+    .checkout-toast.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .checkout-toast i {
+        color: #e66b6b;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .checkout-toast span {
+        line-height: 1.5;
+    }
+
+    @media (max-width:600px) {
+        .checkout-toast {
+            top: 15px;
+            right: 15px;
+            left: 15px;
+            min-width: 0;
+            max-width: none;
+        }
+    }
 
     @media (max-width:900px) {
         .checkout-page {
@@ -950,7 +1008,9 @@ Checkout - StrideX
                         {% else %}
                             <div class="empty-address">
                                 <p>No saved address found.</p>
-                                <a href="{% url 'address_list' %}">+ Add New Address</a>
+                               <a href="{% url 'add_address' %}?next={% url 'checkout:checkout' %}">
+                                    + Add New Address
+                                </a>
                             </div>
                         {% endif %}
                     </div>
@@ -1111,6 +1171,10 @@ Checkout - StrideX
         {% endif %}
     </div>
 </div>
+<div id="checkoutToast" class="checkout-toast">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span id="checkoutToastMessage"></span>
+</div>
 
 <div id="placeOrderModal" class="place-order-modal-overlay" onclick="closePlaceOrderModal(event)">
     <div class="place-order-modal" onclick="event.stopPropagation()">
@@ -1170,7 +1234,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let confirmationPending = false;
     let paymentStarting = false;
+    let toastTimeout;
 
+    function showCheckoutToast(message) {
+        const toast = document.getElementById("checkoutToast");
+        const toastMessage = document.getElementById("checkoutToastMessage");
+
+        if (!toast || !toastMessage) return;
+
+        clearTimeout(toastTimeout);
+
+        toastMessage.textContent = message;
+        toast.classList.add("active");
+
+        toastTimeout = setTimeout(function () {
+            toast.classList.remove("active");
+        }, 3000);
+    }
     function getCookie(name) {
         const cookies = document.cookie ? document.cookie.split(";") : [];
 
@@ -1348,6 +1428,17 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+    if (couponInput && couponButton) {
+        couponInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                if (!couponButton.disabled) {
+                    couponButton.click();
+                }
+            }
+        });
+    }
 
     if (removeCouponButton) {
         removeCouponButton.addEventListener("click", function () {
@@ -1425,7 +1516,17 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (!address) {
-            alert("Please select a delivery address.");
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "warning",
+                title: "Please select a delivery address.",
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+                background: "#21130e",
+                color: "#ffffff"
+            });
             return;
         }
 
@@ -1511,19 +1612,43 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
 
-            const razorpay = new Razorpay(options);
+            try {
+                const razorpay = new Razorpay(options);
+                    razorpay.on("payment.failed", function (response) {
+                        console.error(
+                            "Razorpay payment failed:",
+                            response
+                        );
 
-            razorpay.on("payment.failed", function (response) {
-                console.error(
-                    "Razorpay payment failed:",
-                    response
-                );
+                        paymentStarting = false;
 
-                window.location.href =
-                    "{% url 'checkout:razorpay_payment_failed' %}";
-            });
+                        window.location.href =
+                            "{% url 'checkout:razorpay_payment_failed' %}";
+                    });
 
-            razorpay.open();
+                razorpay.open();
+            } catch (error) {
+                console.error("Razorpay initialization error:", error);
+
+                paymentStarting = false;
+
+                if (placeOrderButton) {
+                    placeOrderButton.disabled = false;
+                    placeOrderButton.textContent = "Place Order";
+                }
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Unable to open Razorpay. Please try again.",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#ffffff"
+                });
+            }
         })
         .catch(error => {
             console.error("Razorpay error:", error);
@@ -1535,10 +1660,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 placeOrderButton.textContent = "Place Order";
             }
 
-            alert(
-                error.message ||
-                "Unable to start payment. Please try again."
-            );
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: error.message || "Unable to start payment. Please try again.",
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+                background: "#21130e",
+                color: "#ffffff"
+            });
         });
     }
 
@@ -1562,13 +1694,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!selectedAddress) {
                 event.preventDefault();
-                alert("Please select a delivery address.");
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please select a delivery address.",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#ffffff"
+                });
                 return;
             }
 
             if (!selectedPayment) {
                 event.preventDefault();
-                alert("Please select a payment method.");
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please select a payment method.",
+                    showConfirmButton: false,
+                    timer: 1800,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#ffffff"
+                });
+
                 return;
             }
 

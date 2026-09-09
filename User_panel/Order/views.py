@@ -14,11 +14,85 @@ from xhtml2pdf import pisa
 from types import SimpleNamespace
 from Admin_panel.coupon_offer.models import Coupon, CouponUsage, Offer
 from Admin_panel.product.models import Variant
-from User_panel.Authentication.models import Address
+from User_panel.Authentication.models import Address, User
 from User_panel.Cart.models import Cart
 from .models import Order, OrderItem
 
+REFERRAL_REWARD = Decimal("200.00")
 
+
+def reward_referrer_for_order(order):
+    user = order.user
+
+    if not user.referred_by_id:
+        return Decimal("0.00")
+
+    if user.referral_reward_given:
+        return Decimal("0.00")
+
+    if order.order_status != "DELIVERED":
+        return Decimal("0.00")
+
+    if order.payment_method == "COD":
+        order.payment_status = "PAID"
+        order.save(update_fields=["payment_status"])
+
+    if order.payment_status != "PAID":
+        return Decimal("0.00")
+
+    if Order.objects.filter(
+        user=user,
+        order_status="DELIVERED"
+    ).exclude(
+        id=order.id
+    ).exists():
+        return Decimal("0.00")
+
+    from User_panel.Wallet.models import Wallet, WalletTransaction
+
+    referrer = User.objects.select_for_update().get(
+        id=user.referred_by_id
+    )
+
+    wallet, created = Wallet.objects.select_for_update().get_or_create(
+        user=referrer,
+        defaults={"balance": Decimal("0.00")}
+    )
+
+    reference = f"REFERRAL-{order.order_id}"
+
+    existing_reward = WalletTransaction.objects.filter(
+        wallet=wallet,
+        reference=reference,
+        transaction_type="CREDIT"
+    ).exists()
+
+    if existing_reward:
+        user.referral_reward_given = True
+        user.save(update_fields=["referral_reward_given"])
+        return Decimal("0.00")
+
+    wallet.balance += REFERRAL_REWARD
+    wallet.save(
+        update_fields=["balance", "updated_at"]
+    )
+
+    WalletTransaction.objects.create(
+        wallet=wallet,
+        transaction_type="CREDIT",
+        amount=REFERRAL_REWARD,
+        description=f"Referral reward for order {order.order_id}",
+        reference=reference
+    )
+
+    user.referral_reward_given = True
+    user.save(
+        update_fields=["referral_reward_given"]
+    )
+
+    return REFERRAL_REWARD
+
+@login_required(login_url="login")
 def get_best_offer(variant, now=None):
     if now is None:
         now = timezone.now()
@@ -429,12 +503,6 @@ def place_order(request):
                 variant = calculation["variant"]
                 offer_item_total = calculation["offer_item_total"]
 
-                item_offer_share = (
-                    calculation["item_offer_discount"]
-                    if offer_discount_total > 0
-                    else Decimal("0.00")
-                )
-
                 item_coupon_discount = Decimal("0.00")
 
                 if coupon_discount > 0 and offer_adjusted_subtotal > 0:
@@ -688,7 +756,7 @@ def download_invoice(request, order_id):
 
     return response
 
-
+@login_required(login_url="login")
 def refund_order_item_to_wallet(
     request,
     order,
