@@ -405,48 +405,23 @@ Available Coupons
 </style>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".use-coupon-button:not(.disabled)");
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+    buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const code = button.dataset.code;
 
-        const buttons =
-            document.querySelectorAll(
-                ".use-coupon-button:not(.disabled)"
-            );
-
-        buttons.forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        const code =
-                            button.dataset.code;
-
-                        if (!code) {
-                            return;
-                        }
-
-                        window.location.href =
-                            "{% url 'checkout:checkout' %}"
-                            +
-                            "?coupon="
-                            +
-                            encodeURIComponent(
-                                code
-                            );
-
-                    }
-                );
-
+            if (!code) {
+                return;
             }
-        );
 
-    }
-);
+            sessionStorage.setItem("selected_coupon_code", code);
 
+            window.location.href = "{% url 'checkout:checkout' %}";
+        });
+    });
+});
 </script>
 
 {% endblock %}

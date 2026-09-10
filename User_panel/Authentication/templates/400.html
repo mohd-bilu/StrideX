@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bad Request | StrideX</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7f7f7;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111;
+            padding: 20px;
+        }
+
+        .error-container {
+            width: 100%;
+            max-width: 620px;
+            background: #fff;
+            text-align: center;
+            padding: 60px 35px;
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 35px;
+        }
+
+        .error-code {
+            font-size: 110px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 14px;
+        }
+
+        p {
+            max-width: 470px;
+            margin: 0 auto 32px;
+            color: #666;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #111;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-secondary {
+            border: 1px solid #111;
+            color: #111;
+            background: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #111;
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .error-container {
+                padding: 45px 22px;
+            }
+
+            .error-code {
+                font-size: 80px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="logo">StrideX</div>
+
+        <div class="error-code">400</div>
+
+        <h1>Bad Request</h1>
+
+        <p>
+            The request could not be understood or processed.
+            Please check your request and try again.
+        </p>
+
+        <div class="buttons">
+            <a href="{% url 'user_home' %}" class="btn btn-primary">
+                Go Home
+            </a>
+
+            <a href="{% url 'product:product_list' %}" class="btn btn-secondary">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</body>
+</html>

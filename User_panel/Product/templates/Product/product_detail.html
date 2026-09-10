@@ -1471,14 +1471,25 @@ button{
 
                     <div class="similar-image">
 
-                        {% if item.images.first %}
+                        {% with item.variants.first as similar_variant %}
 
-                        <img src="{{ item.images.first.image.url }}"
-                             alt="{{ item.product_name }}">
+                            {% if similar_variant and similar_variant.images.first %}
 
-                        
+                                <img
+                                    src="{{ similar_variant.images.first.image.url }}"
+                                    alt="{{ item.product_name }}"
+                                >
 
-                        {% endif %}
+                            {% else %}
+
+                                <img
+                                    src="{% static 'images/no-image.png' %}"
+                                    alt="No Image"
+                                >
+
+                            {% endif %}
+
+                        {% endwith %}
 
                     </div>
 
@@ -1963,10 +1974,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Request failed");
-                }
-
                 return response.json();
             })
             .then(data => {

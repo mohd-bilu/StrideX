@@ -97,8 +97,7 @@ def get_cart_totals(cart):
         offer_discount,
     )
 
-
-@login_required
+@login_required(login_url="login")
 def cart(request):
     cart = (
         Cart.objects.filter(
@@ -252,7 +251,7 @@ def add_to_cart(request, variant_id):
     return redirect("cart")
 
 
-@login_required
+@login_required(login_url="login")
 def update_cart(request, item_id):
     cart_item = get_object_or_404(
         CartItem,
@@ -329,9 +328,7 @@ def update_cart(request, item_id):
         ),
         "total": float(subtotal),
     })
-
-
-@login_required
+@login_required(login_url="login")
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(
         CartItem,
@@ -472,8 +469,7 @@ def add_to_wishlist(request, variant_id):
         )
     )
 
-
-@login_required
+@login_required(login_url="login")
 def remove_from_wishlist(request, item_id):
     item = get_object_or_404(
         WishlistItem,

@@ -57,25 +57,23 @@ body{
 ========================= */
 
 .left{
-
     width:50%;
-
-    background:
-    linear-gradient(
-        135deg,
-        #1a1d29,
-        #0d0f15
-    );
-
+    min-height:100vh;
     position:relative;
-
     display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
+    align-items:flex-start;
     overflow:hidden;
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.78) 0%,
+            rgba(0,0,0,.50) 55%,
+            rgba(0,0,0,.18) 100%
+        ),
+        url("{% static 'Authentication/images/change-email.png' %}");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
 }
 
 

@@ -1,5 +1,6 @@
 {% load static %}
 {% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,21 +10,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    
 </head>
 
 <body>
 
 <div class="container">
-
-    <!-- LEFT SECTION -->
 
     <div class="left">
 
@@ -43,13 +39,14 @@
             </p>
         </div>
 
-        <div class="signup-image">
-    <img src="{% static 'Authentication/images/sign-up-image.png' %}" alt="StrideX Shoe">
-</div>
+        <div class="sign-up-image">
+            <img
+                src="{% static 'Authentication/images/sign-up-image.png' %}"
+                alt="StrideX Shoe"
+            >
+        </div>
 
     </div>
-
-    <!-- RIGHT SECTION -->
 
     <div class="right">
 
@@ -61,44 +58,71 @@
                 Join our community and access exclusive sneaker collections.
             </p>
 
-            <form method="POST">
-
+            <form
+                method="POST"
+                id="signupForm"
+                novalidate
+            >
                 {% csrf_token %}
 
                 <div class="input-box">
-                    <label>Full Name</label>
+
+                    <label for="fullname">
+                        Full Name
+                    </label>
 
                     <div class="input-field">
                         <i class="fa-solid fa-user"></i>
 
                         <input
                             type="text"
+                            id="fullname"
                             name="fullname"
                             placeholder="John Doe"
                             value="{{ request.POST.fullname }}"
-                            required>
+                            maxlength="100"
+                            autocomplete="name"
+                            required
+                        >
                     </div>
+
+                    <small class="field-error" id="fullnameError"></small>
+
                 </div>
 
                 <div class="input-box">
-                    <label>Email Address</label>
+
+                    <label for="email">
+                        Email Address
+                    </label>
 
                     <div class="input-field">
                         <i class="fa-solid fa-envelope"></i>
 
                         <input
                             type="email"
+                            id="email"
                             name="email"
                             placeholder="name@example.com"
                             value="{{ request.POST.email }}"
-                            required>
+                            maxlength="254"
+                            autocomplete="email"
+                            required
+                        >
                     </div>
+
+                    <small class="field-error" id="emailError"></small>
+
                 </div>
 
-               <div class="input-box">
-                    <label>Password</label>
+                <div class="input-box">
+
+                    <label for="password">
+                        Password
+                    </label>
 
                     <div class="input-field">
+
                         <i class="fa-solid fa-lock"></i>
 
                         <input
@@ -106,6 +130,8 @@
                             id="password"
                             name="password"
                             placeholder="••••••••"
+                            maxlength="128"
+                            autocomplete="new-password"
                             required
                         >
 
@@ -113,14 +139,48 @@
                             class="fa-regular fa-eye password-eye"
                             onclick="togglePassword('password', this)"
                         ></i>
+
+                    </div>
+
+                    <small class="field-error" id="passwordError"></small>
+
+                </div>
+
+                <div class="password-rules">
+                    <div id="lengthRule">
+                        <i class="fa-solid fa-circle"></i>
+                        8–128 characters
+                    </div>
+
+                    <div id="uppercaseRule">
+                        <i class="fa-solid fa-circle"></i>
+                        One uppercase letter
+                    </div>
+
+                    <div id="lowercaseRule">
+                        <i class="fa-solid fa-circle"></i>
+                        One lowercase letter
+                    </div>
+
+                    <div id="numberRule">
+                        <i class="fa-solid fa-circle"></i>
+                        One number
+                    </div>
+
+                    <div id="specialRule">
+                        <i class="fa-solid fa-circle"></i>
+                        One special character
                     </div>
                 </div>
 
-
                 <div class="input-box">
-                    <label>Confirm Password</label>
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
 
                     <div class="input-field">
+
                         <i class="fa-solid fa-lock"></i>
 
                         <input
@@ -128,6 +188,8 @@
                             id="confirmPassword"
                             name="confirm_password"
                             placeholder="••••••••"
+                            maxlength="128"
+                            autocomplete="new-password"
                             required
                         >
 
@@ -135,50 +197,80 @@
                             class="fa-regular fa-eye password-eye"
                             onclick="togglePassword('confirmPassword', this)"
                         ></i>
+
                     </div>
+
+                    <small class="field-error" id="confirmPasswordError"></small>
+
                 </div>
+
                 <div class="input-box">
-                    <label>Referral Code <span style="font-weight:400;">(Optional)</span></label>
+
+                    <label for="referralCode">
+                        Referral Code
+                        <span style="font-weight:400;">(Optional)</span>
+                    </label>
+
                     <div class="input-field">
+
                         <i class="fa-solid fa-gift"></i>
+
                         <input
                             type="text"
+                            id="referralCode"
                             name="referral_code"
                             placeholder="Enter referral code"
                             value="{{ request.POST.referral_code|default:referral_code }}"
+                            maxlength="20"
+                            autocomplete="off"
                         >
+
                     </div>
+
+                    <small class="field-error" id="referralCodeError"></small>
+
                 </div>
+
                 <div class="checkbox">
 
                     <input
                         type="checkbox"
                         id="agree"
                         name="agree"
-                        {% if request.POST.agree %}checked{% endif %}>
+                        {% if request.POST.agree %}checked{% endif %}
+                    >
 
                     <label for="agree">
                         I agree to the
-                        <a href="#">Terms & Conditions</a>
+                        <a href="#">Terms &amp; Conditions</a>
                         and have read the
                         <a href="#">Privacy Policy</a>
                     </label>
 
                 </div>
 
-                    <button type="submit" class="signup-btn">
-                        Create Account
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                <small class="field-error checkbox-error" id="agreeError"></small>
+
+                <button
+                    type="submit"
+                    class="signup-btn"
+                    id="signupButton"
+                >
+                    Create Account
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
 
                 <div class="divider">
                     <span>CONTINUE WITH</span>
                 </div>
 
                 <div class="google-login">
+
                     <a href="{% provider_login_url 'google' process='login' %}">
-                         Continue with Google
+                        <i class="fa-brands fa-google"></i>
+                        Continue with Google
                     </a>
+
                 </div>
 
                 <p class="login">
@@ -193,272 +285,81 @@
     </div>
 
 </div>
+
 <style>
-    /* ===========================
-   GLOBAL
-=========================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-    background:#0f1117;
-    color:#fff;
-    overflow-x:hidden;
+body {
+    background: #0f1117;
+    color: #fff;
+    overflow-x: hidden;
 }
 
-a{
-    text-decoration:none;
+a {
+    text-decoration: none;
 }
 
-img{
-    max-width:100%;
-    display:block;
+img {
+    max-width: 100%;
+    display: block;
 }
 
-.container{
-    width:100%;
-    min-height:100vh;
-    display:flex;
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
 }
 
-/* ===========================
-   LEFT SECTION
-=========================== */
-
-.left{
-    width:50%;
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    background:linear-gradient(135deg,#1a1d29,#0d0f15);
-}
-
-.overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.25);
-}
-
-.left-content{
-    position:absolute;
-    top:70px;
-    left:60px;
-    z-index:10;
-}
-
-.left-content h1{
-    font-size:64px;
-    font-weight:800;
-    line-height:1.1;
-    letter-spacing:2px;
-}
-
-.left-content p{
-    margin-top:20px;
-    width:360px;
-    color:#d6d6d6;
-    font-size:18px;
-    line-height:1.8;
-}
-
-.shoe{
-    position:absolute;
-    bottom:40px;
-    left:50%;
-    transform:translateX(-50%);
-}
-
-.shoe img{
-    width:650px;
-    animation:float 5s ease-in-out infinite;
-}
-
-@keyframes float{
-
-    0%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-18px);
-    }
-
-    100%{
-        transform:translateY(0);
-    }
-
-}
-
-/* ===========================
-   RIGHT SECTION
-=========================== */
-
-.right{
-    width:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:40px;
-    background:#11151d;
-}
-
-.card{
-    width:470px;
-    padding:40px;
-    border-radius:24px;
-    background:rgba(255,255,255,.05);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 25px 60px rgba(0,0,0,.35);
-}
-
-.card h2{
-    font-size:34px;
-    font-weight:700;
-    margin-bottom:10px;
-}
-
-.subtitle{
-    color:#bdbdbd;
-    font-size:15px;
-    line-height:1.7;
-    margin-bottom:35px;
-}
-
-/* ===========================
-   INPUTS
-=========================== */
-
-.input-box{
-    margin-bottom:22px;
-}
-
-.input-box label{
-    display:block;
-    margin-bottom:8px;
-    color:#ddd;
-    font-size:14px;
-}
-
-.input-field{
-    height:58px;
-    display:flex;
-    align-items:center;
-    background:#1c212b;
-    border-radius:12px;
-    padding:0 18px;
-    border:1px solid transparent;
-    transition:.3s;
-}
-
-.input-field:hover{
-    border-color:#ff8a1d;
-}
-
-.input-field:focus-within{
-    border-color:#ff8a1d;
-    box-shadow:0 0 15px rgba(255,138,29,.2);
-}
-
-.input-field i{
-    color:#888;
-    margin-right:12px;
-}
-
-.input-field input{
-    width:100%;
-    border:none;
-    outline:none;
-    background:none;
-    color:#fff;
-    font-size:15px;
-}
-
-.input-field input::placeholder{
-    color:#777;
-}
-.password-eye{
-    margin-left:auto !important;
-    margin-right:0 !important;
-    color:#888;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.password-eye:hover{
-    color:#ff8a1d;
-}
-
-/* ===========================
-   CHECKBOX
-=========================== */
-
-.checkbox{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    margin:25px 0;
-    font-size:14px;
-    color:#c7c7c7;
-}
-
-.checkbox input{
-    margin-top:4px;
-    accent-color:#ff8a1d;
-    cursor:pointer;
-}
-
-.checkbox label{
-    line-height:1.6;
-}
-
-.checkbox a{
-    color:#ff8a1d;
-    transition:.3s;
-}
-
-.checkbox a:hover{
-    color:#ff7300;
-}
-
-/* ===========================
-   SIGNUP BUTTON
-=========================== */
-
-.signup-btn{
-    width:100%;
-    height:56px;
-    border:none;
-    outline:none;
-    border-radius:14px;
-    background:#ff8a1d;
-    color:#fff;
-    font-size:17px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.signup-btn:hover{
-    background:#ff7300;
-    transform:translateY(-2px);
-    box-shadow:0 15px 30px rgba(255,138,29,.35);
-}
-
-.signup-btn i{
-    margin-left:10px;
-}
-.sign-up-image {
+.left {
     width: 50%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1d29, #0d0f15);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .25);
+    z-index: 1;
+}
+
+.left-content {
+    position: absolute;
+    top: 70px;
+    left: 60px;
+    z-index: 10;
+}
+
+.left-content h1 {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 2px;
+}
+
+.left-content p {
+    margin-top: 20px;
+    width: 360px;
+    color: #d6d6d6;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.sign-up-image {
+    width: 100%;
     height: 100vh;
     overflow: hidden;
+    position: relative;
 }
 
 .sign-up-image img {
@@ -466,34 +367,221 @@ img{
     height: 100%;
     object-fit: cover;
 }
-/* ===========================
-   DIVIDER
-=========================== */
 
-.divider{
-    display:flex;
-    align-items:center;
-    margin:30px 0;
+.right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: #11151d;
+}
+
+.card {
+    width: 470px;
+    padding: 40px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, .08);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, .35);
+}
+
+.card h2 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #bdbdbd;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 35px;
+}
+
+.input-box {
+    margin-bottom: 22px;
+}
+
+.input-box label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.input-field {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    background: #1c212b;
+    border-radius: 12px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    transition: .3s;
+}
+
+.input-field:hover {
+    border-color: #ff8a1d;
+}
+
+.input-field:focus-within {
+    border-color: #ff8a1d;
+    box-shadow: 0 0 15px rgba(255, 138, 29, .2);
+}
+
+.input-field i {
+    color: #888;
+    margin-right: 12px;
+}
+
+.input-field input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: none;
+    color: #fff;
+    font-size: 15px;
+}
+
+.input-field input::placeholder {
+    color: #777;
+}
+
+.password-eye {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    color: #888;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.password-eye:hover {
+    color: #ff8a1d;
+}
+
+.field-error {
+    display: block;
+    min-height: 0;
+    margin-top: 6px;
+    color: #ff6b6b;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.password-rules {
+    margin-top: -10px;
+    margin-bottom: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px 12px;
+    color: #888;
+    font-size: 11px;
+}
+
+.password-rules div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.password-rules i {
+    font-size: 6px;
+    color: #777;
+}
+
+.password-rules .valid {
+    color: #63d471;
+}
+
+.password-rules .valid i {
+    color: #63d471;
+}
+
+.checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 25px 0 5px;
+    font-size: 14px;
+    color: #c7c7c7;
+}
+
+.checkbox input {
+    margin-top: 4px;
+    accent-color: #ff8a1d;
+    cursor: pointer;
+}
+
+.checkbox label {
+    line-height: 1.6;
+}
+
+.checkbox a {
+    color: #ff8a1d;
+    transition: .3s;
+}
+
+.checkbox a:hover {
+    color: #ff7300;
+}
+
+.checkbox-error {
+    margin-bottom: 15px;
+}
+
+.signup-btn {
+    width: 100%;
+    height: 56px;
+    border: none;
+    outline: none;
+    border-radius: 14px;
+    background: #ff8a1d;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.signup-btn:hover {
+    background: #ff7300;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(255, 138, 29, .35);
+}
+
+.signup-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.signup-btn i {
+    margin-left: 10px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
 }
 
 .divider::before,
-.divider::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:#333;
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #333;
 }
 
-.divider span{
-    margin:0 15px;
-    color:#aaa;
-    font-size:13px;
-    letter-spacing:1px;
+.divider span {
+    margin: 0 15px;
+    color: #aaa;
+    font-size: 13px;
+    letter-spacing: 1px;
 }
-
-/* ===========================
-   GOOGLE BUTTON
-=========================== */
 
 .google-login {
     margin-top: 18px;
@@ -511,122 +599,116 @@ img{
     border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
-    transition: 0.3s;
+    transition: .3s;
 }
 
 .google-login a:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
 }
 
 .google-login i {
     font-size: 20px;
-}
-/* ===========================
-   LOGIN
-=========================== */
-
-.login{
-    margin-top:30px;
-    text-align:center;
-    color:#bdbdbd;
-    font-size:15px;
+    margin: 0;
 }
 
-.login a{
-    color:#ff8a1d;
-    font-weight:600;
+.login {
+    margin-top: 30px;
+    text-align: center;
+    color: #bdbdbd;
+    font-size: 15px;
 }
 
-.login a:hover{
-    text-decoration:underline;
+.login a {
+    color: #ff8a1d;
+    font-weight: 600;
 }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
-
-@media(max-width:992px){
-
-.container{
-    flex-direction:column;
+.login a:hover {
+    text-decoration: underline;
 }
 
-.left,
-.right{
-    width:100%;
+@media(max-width: 992px) {
+
+    .container {
+        flex-direction: column;
+    }
+
+    .left,
+    .right {
+        width: 100%;
+    }
+
+    .left {
+        height: 450px;
+    }
+
+    .sign-up-image {
+        height: 450px;
+    }
+
+    .left-content {
+        top: 40px;
+        left: 35px;
+    }
+
+    .left-content h1 {
+        font-size: 46px;
+    }
+
+    .left-content p {
+        width: 300px;
+        font-size: 16px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 500px;
+    }
 }
 
-.left{
-    height:450px;
-}
+@media(max-width: 576px) {
 
-.left-content{
-    top:40px;
-    left:35px;
-}
+    .right {
+        padding: 20px;
+    }
 
-.left-content h1{
-    font-size:46px;
-}
+    .card {
+        padding: 25px;
+    }
 
-.left-content p{
-    width:300px;
-    font-size:16px;
-}
+    .left-content h1 {
+        font-size: 34px;
+    }
 
-.shoe img{
-    width:420px;
-}
+    .left-content p {
+        width: 250px;
+        font-size: 14px;
+    }
 
-.card{
-    width:100%;
-    max-width:500px;
-}
+    .card h2 {
+        font-size: 28px;
+    }
 
-}
+    .subtitle {
+        font-size: 14px;
+    }
 
-@media(max-width:576px){
+    .signup-btn,
+    .google-login a {
+        height: 52px;
+    }
 
-.right{
-    padding:20px;
-}
+    .input-field {
+        height: 54px;
+    }
 
-.card{
-    padding:25px;
-}
-
-.left-content h1{
-    font-size:34px;
-}
-
-.left-content p{
-    width:250px;
-    font-size:14px;
-}
-
-.card h2{
-    font-size:28px;
-}
-
-.subtitle{
-    font-size:14px;
-}
-
-.signup-btn,
-.google-btn{
-    height:52px;
-}
-
-.input-field{
-    height:54px;
-}
-
+    .password-rules {
+        grid-template-columns: 1fr;
+    }
 }
 
 </style>
-
-
 
 {% if messages %}
 <script>
@@ -635,7 +717,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Swal.fire({
         toast: true,
         position: "top-end",
-        icon: "{{ message.tags }}",
+        icon: "{% if 'error' in message.tags %}error{% elif 'success' in message.tags %}success{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}",
         title: "{{ message|escapejs }}",
         showConfirmButton: false,
         timer: 3000,
@@ -647,32 +729,310 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% endif %}
-<script>
-function togglePassword(inputId, icon){
 
+<script>
+function togglePassword(inputId, icon) {
     const input = document.getElementById(inputId);
 
-    if(input.type === "password"){
-
+    if (input.type === "password") {
         input.type = "text";
-
         icon.classList.remove("fa-eye");
         icon.classList.add("fa-eye-slash");
-
-    }else{
-
+    } else {
         input.type = "password";
-
         icon.classList.remove("fa-eye-slash");
         icon.classList.add("fa-eye");
-
     }
-
 }
 </script>
 
 <script>
-    window.history.forward();
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("signupForm");
+    const fullname = document.getElementById("fullname");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const referralCode = document.getElementById("referralCode");
+    const agree = document.getElementById("agree");
+
+    const fullnameError = document.getElementById("fullnameError");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const confirmPasswordError = document.getElementById("confirmPasswordError");
+    const agreeError = document.getElementById("agreeError");
+
+    const passwordRules = {
+        length: document.getElementById("lengthRule"),
+        uppercase: document.getElementById("uppercaseRule"),
+        lowercase: document.getElementById("lowercaseRule"),
+        number: document.getElementById("numberRule"),
+        special: document.getElementById("specialRule")
+    };
+
+    const namePattern = /^[A-Za-z][A-Za-z\s'-]*$/;
+
+    const passwordSpecialPattern =
+        /[!@#$%^&*(),.?":{}|<>\[\]\\\/+=~`;_-]/;
+
+    function clearErrors() {
+        fullnameError.textContent = "";
+        emailError.textContent = "";
+        passwordError.textContent = "";
+        confirmPasswordError.textContent = "";
+        agreeError.textContent = "";
+    }
+
+    function validateName() {
+        const value = fullname.value.trim();
+
+        if (!value) {
+            fullnameError.textContent = "Enter Full Name.";
+            return false;
+        }
+
+        if (value.length < 3) {
+            fullnameError.textContent =
+                "Name should contain minimum 3 characters.";
+            return false;
+        }
+
+        if (value.length > 100) {
+            fullnameError.textContent =
+                "Name cannot exceed 100 characters.";
+            return false;
+        }
+
+        if (!namePattern.test(value)) {
+            fullnameError.textContent =
+                "Name can contain only letters, spaces, apostrophes and hyphens.";
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateEmail() {
+        const value = email.value.trim().toLowerCase();
+
+        if (!value) {
+            emailError.textContent = "Enter Email.";
+            return false;
+        }
+
+        if (value.length > 254) {
+            emailError.textContent =
+                "Email Address cannot exceed 254 characters.";
+            return false;
+        }
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(value)) {
+            emailError.textContent = "Invalid Email Address.";
+            return false;
+        }
+
+        return true;
+    }
+
+    function updatePasswordRule(element, valid) {
+        if (valid) {
+            element.classList.add("valid");
+        } else {
+            element.classList.remove("valid");
+        }
+    }
+
+    function validatePassword() {
+        const value = password.value;
+
+        const lengthValid =
+            value.length >= 8 && value.length <= 128;
+
+        const uppercaseValid =
+            /[A-Z]/.test(value);
+
+        const lowercaseValid =
+            /[a-z]/.test(value);
+
+        const numberValid =
+            /\d/.test(value);
+
+        const specialValid =
+            passwordSpecialPattern.test(value);
+
+        updatePasswordRule(
+            passwordRules.length,
+            lengthValid
+        );
+
+        updatePasswordRule(
+            passwordRules.uppercase,
+            uppercaseValid
+        );
+
+        updatePasswordRule(
+            passwordRules.lowercase,
+            lowercaseValid
+        );
+
+        updatePasswordRule(
+            passwordRules.number,
+            numberValid
+        );
+
+        updatePasswordRule(
+            passwordRules.special,
+            specialValid
+        );
+
+        if (!value) {
+            passwordError.textContent =
+                "Password is required.";
+            return false;
+        }
+
+        if (value !== value.trim()) {
+            passwordError.textContent =
+                "Password cannot start or end with spaces.";
+            return false;
+        }
+
+        if (!lengthValid) {
+            passwordError.textContent =
+                "Password should contain 8–128 characters.";
+            return false;
+        }
+
+        if (!uppercaseValid) {
+            passwordError.textContent =
+                "Password should contain at least one uppercase letter.";
+            return false;
+        }
+
+        if (!lowercaseValid) {
+            passwordError.textContent =
+                "Password should contain at least one lowercase letter.";
+            return false;
+        }
+
+        if (!numberValid) {
+            passwordError.textContent =
+                "Password should contain at least one number.";
+            return false;
+        }
+
+        if (!specialValid) {
+            passwordError.textContent =
+                "Password should contain at least one special character.";
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateConfirmPassword() {
+        const value = confirmPassword.value;
+
+        if (!value) {
+            confirmPasswordError.textContent =
+                "Please confirm your password.";
+            return false;
+        }
+
+        if (value !== password.value) {
+            confirmPasswordError.textContent =
+                "Passwords do not match.";
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateAgreement() {
+        if (!agree.checked) {
+            agreeError.textContent =
+                "Accept Terms & Conditions.";
+            return false;
+        }
+
+        return true;
+    }
+
+    password.addEventListener("input", function () {
+        validatePassword();
+
+        if (confirmPassword.value) {
+            validateConfirmPassword();
+        }
+    });
+
+    confirmPassword.addEventListener("input", function () {
+        validateConfirmPassword();
+    });
+
+    fullname.addEventListener("blur", function () {
+        validateName();
+    });
+
+    email.addEventListener("blur", function () {
+        validateEmail();
+    });
+
+    agree.addEventListener("change", function () {
+        validateAgreement();
+    });
+
+    referralCode.addEventListener("input", function () {
+        referralCode.value =
+            referralCode.value.toUpperCase();
+    });
+
+    form.addEventListener("submit", function (event) {
+
+        clearErrors();
+
+        const nameValid = validateName();
+        const emailValid = validateEmail();
+        const passwordValid = validatePassword();
+        const confirmValid = validateConfirmPassword();
+        const agreementValid = validateAgreement();
+
+        if (
+            !nameValid ||
+            !emailValid ||
+            !passwordValid ||
+            !confirmValid ||
+            !agreementValid
+        ) {
+            event.preventDefault();
+
+            const firstError =
+                document.querySelector(
+                    ".field-error:not(:empty)"
+                );
+
+            if (firstError) {
+                const input =
+                    firstError.parentElement.querySelector("input");
+
+                if (input) {
+                    input.focus();
+                }
+            }
+
+            return;
+        }
+
+        referralCode.value =
+            referralCode.value.trim().toUpperCase();
+    });
+
+});
 </script>
+
 </body>
 </html>

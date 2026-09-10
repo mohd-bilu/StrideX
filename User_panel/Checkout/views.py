@@ -79,38 +79,60 @@ def get_best_offer_for_variant(variant):
             best_offer = offer
             best_discount = discount
     return best_offer, best_discount.quantize(Decimal("0.01"))
-
 def get_buy_now_item(request):
     if not request.session.get("buy_now"):
         return None
+
     variant_id = request.session.get("buy_now_variant_id")
     quantity = request.session.get("buy_now_quantity", 1)
+
     if not variant_id:
         return None
+
     try:
         quantity = int(quantity)
     except (TypeError, ValueError):
         quantity = 1
+
     quantity = max(quantity, 1)
+
     variant = get_object_or_404(
-        Variant.objects.select_related("product", "product__category").prefetch_related("images"),
+        Variant.objects.select_related(
+            "product",
+            "product__category",
+        ).prefetch_related("images"),
         id=variant_id,
         is_active=True,
         is_deleted=False,
         product__is_active=True,
         product__is_deleted=False,
     )
+
     if variant.stock < quantity:
-        raise ValueError("The selected quantity is no longer available.")
+        raise ValueError(
+            f"Only {variant.stock} quantity of "
+            f"{variant.product.product_name} is available."
+        )
+
     return variant, quantity
 
-def get_checkout_items(request):
-    buy_now_item = get_buy_now_item(request)
-    if buy_now_item:
+
+def get_checkout_items(request, force_buy_now=False):
+    if force_buy_now or request.session.get("buy_now"):
+        buy_now_item = get_buy_now_item(request)
+
+        if not buy_now_item:
+            raise ValueError(
+                "The selected Buy Now product is no longer available."
+            )
+
         return [buy_now_item], True
+
     cart = Cart.objects.filter(user=request.user).first()
+
     if not cart:
         raise ValueError("Your cart is empty.")
+
     cart_items = list(
         cart.items.select_related(
             "variant",
@@ -118,18 +140,34 @@ def get_checkout_items(request):
             "variant__product__category",
         ).prefetch_related("variant__images")
     )
+
     if not cart_items:
         raise ValueError("Your cart is empty.")
+
     items = []
+
     for item in cart_items:
         variant = item.variant
-        if not variant.is_active or variant.is_deleted or not variant.product.is_active or variant.product.is_deleted:
-            raise ValueError(f"{variant.product.product_name} is no longer available.")
-        if item.quantity > variant.stock:
-            raise ValueError(f"Only {variant.stock} quantity of {variant.product.product_name} is available.")
-        items.append((variant, item.quantity))
-    return items, False
 
+        if (
+            not variant.is_active
+            or variant.is_deleted
+            or not variant.product.is_active
+            or variant.product.is_deleted
+        ):
+            raise ValueError(
+                f"{variant.product.product_name} is no longer available."
+            )
+
+        if item.quantity > variant.stock:
+            raise ValueError(
+                f"Only {variant.stock} quantity of "
+                f"{variant.product.product_name} is available."
+            )
+
+        items.append((variant, item.quantity))
+
+    return items, False
 def calculate_checkout_totals(items):
     original_subtotal = Decimal("0.00")
     offer_discount = Decimal("0.00")
@@ -193,67 +231,122 @@ def clear_checkout_session(request, clear_buy_now=True):
         request.session.pop("buy_now_quantity", None)
     request.session.modified = True
 
-
 @login_required(login_url="login")
 def checkout(request):
     buy_now = request.GET.get("buy_now") == "1"
-    variant_id = request.GET.get("variant_id")
-    quantity = request.GET.get("quantity", "1")
+    selected_coupon_code = request.GET.get("coupon", "").strip().upper()
+
+    if selected_coupon_code:
+        request.session.pop("checkout_coupon_code", None)
+        request.session.modified = True
+
     if buy_now:
+        variant_id = request.GET.get("variant_id")
+        quantity = request.GET.get("quantity", "1")
+
         if not variant_id:
             messages.error(request, "Please select a product before checkout.")
             return redirect("product:product_list")
+
         try:
             quantity = max(int(quantity), 1)
         except (TypeError, ValueError):
             quantity = 1
+
         variant = get_object_or_404(
-            Variant.objects.select_related("product", "product__category").prefetch_related("images"),
+            Variant.objects.select_related(
+                "product",
+                "product__category",
+            ).prefetch_related("images"),
             id=variant_id,
             is_active=True,
             is_deleted=False,
             product__is_active=True,
             product__is_deleted=False,
         )
+
         if variant.stock < quantity:
-            messages.error(request, "The selected quantity is not available.")
-            return redirect("product:product_detail", product_id=variant.product.id)
+            messages.error(
+                request,
+                "The selected quantity is not available."
+            )
+            return redirect(
+                "product:product_detail",
+                product_id=variant.product.id,
+            )
+
         request.session["buy_now"] = True
         request.session["buy_now_variant_id"] = variant.id
         request.session["buy_now_quantity"] = quantity
+        request.session.pop("checkout_coupon_code", None)
+        request.session.pop("razorpay_checkout", None)
         request.session.modified = True
+
     else:
         request.session.pop("buy_now", None)
         request.session.pop("buy_now_variant_id", None)
         request.session.pop("buy_now_quantity", None)
+        request.session.pop("razorpay_checkout", None)
         request.session.modified = True
+
     try:
-        items, is_buy_now = get_checkout_items(request)
-    except ValueError as error:
-        messages.error(request, str(error))
-        return redirect("cart:cart")
-    original_subtotal, subtotal, offer_discount, item_calculations = calculate_checkout_totals(items)
+        items, is_buy_now = get_checkout_items(
+            request,
+            force_buy_now=buy_now,
+        )
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return redirect("product:product_list")
+
+    original_subtotal, offer_subtotal, offer_discount, item_calculations = (
+        calculate_checkout_totals(items)
+    )
+
     cart_items = []
+
     for calculation in item_calculations:
         variant = calculation["variant"]
+
         cart_items.append({
             "variant": variant,
             "quantity": calculation["quantity"],
             "original_price": variant.price,
             "offer": calculation["offer"],
             "offer_discount": calculation["offer_discount"],
-            "offer_price": variant.price - calculation["offer_discount"],
+            "offer_price": (
+                variant.price -
+                calculation["offer_discount"]
+            ),
             "item_subtotal": calculation["offer_item_total"],
         })
-    coupon, coupon_discount = get_coupon_for_checkout(request, subtotal)
+
+    coupon, coupon_discount = get_coupon_for_checkout(
+        request,
+        offer_subtotal,
+    )
+
     shipping = Decimal("0.00")
-    total = max(subtotal - coupon_discount + shipping, Decimal("0.00"))
-    addresses = Address.objects.filter(user=request.user).order_by("-is_default", "-id")
+
+    total = max(
+        original_subtotal -
+        offer_discount -
+        coupon_discount +
+        shipping,
+        Decimal("0.00"),
+    )
+
+    addresses = Address.objects.filter(
+        user=request.user
+    ).order_by(
+        "-is_default",
+        "-id",
+    )
+
     context = {
         "cart_items": cart_items,
         "addresses": addresses,
         "original_subtotal": original_subtotal,
-        "subtotal": subtotal,
+        "subtotal": original_subtotal,
         "offer_discount": offer_discount,
         "coupon": coupon,
         "coupon_discount": coupon_discount,
@@ -262,9 +355,12 @@ def checkout(request):
         "total": total,
         "buy_now": is_buy_now,
     }
-    return render(request, "Checkout/checkout.html", context)
 
-
+    return render(
+        request,
+        "Checkout/checkout.html",
+        context,
+    )
 @login_required(login_url="login")
 def apply_coupon(request):
     if request.method != "POST":

@@ -1,16 +1,24 @@
 import random
-
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Prefetch, Q, Sum
 from django.utils import timezone
+from Admin_panel.product.models import Product, Variant
 from Admin_panel.category.models import Category
-from Admin_panel.product.models import Product
 from .models import User, Address
-from .validators import validate_signup
+from .validators import (
+    validate_signup,
+    validate_address,
+    validate_password,
+    validate_name,
+    validate_email_address,
+    validate_phone_number,
+)
 from .utils import send_otp_email
 from User_panel.Cart.models import WishlistItem
 
@@ -105,9 +113,7 @@ def signup(request):
             "referral_code": referral_code,
         }
     )
-
 @never_cache
-@login_required(login_url="login")
 def verify_otp(request):
     if "signup_data" not in request.session:
         messages.error(request, "Session expired.")
@@ -251,13 +257,41 @@ def logout_view(request):
         return redirect("user_home")
 
     return redirect("home")
-
 def user_home(request):
 
-    categories = Category.objects.filter(
-        is_active=True,
-        is_deleted=False,
-    ).order_by("-id")[:4]
+    home_variants = (
+        Variant.objects.filter(
+            is_active=True,
+            is_deleted=False,
+            images__isnull=False,
+        )
+        .prefetch_related("images")
+        .distinct()
+        .order_by("-is_default", "id")
+    )
+
+    trending_categories = (
+        Category.objects.filter(
+            is_active=True,
+            is_deleted=False,
+        )
+        .annotate(
+            purchase_count=Sum(
+                "products__variants__order_items__quantity",
+                filter=Q(
+                    products__variants__order_items__order__order_status="DELIVERED",
+                    products__variants__order_items__status="DELIVERED",
+                ),
+            )
+        )
+        .filter(
+            purchase_count__gt=0,
+        )
+        .order_by(
+            "-purchase_count",
+            "category_name",
+        )[:4]
+    )
 
     products = (
         Product.objects.filter(
@@ -265,32 +299,35 @@ def user_home(request):
             is_deleted=False,
             category__is_active=True,
             category__is_deleted=False,
+            variants__is_active=True,
+            variants__is_deleted=False,
+            variants__images__isnull=False,
         )
         .prefetch_related(
-            "images",
-            "variants",
-            "variants__images",
+            "category",
+            Prefetch(
+                "variants",
+                queryset=home_variants,
+                to_attr="home_variants",
+            ),
         )
-        .order_by("-id")[:4]
+        .distinct()
+        .order_by("-created_at")[:4]
     )
-
     wishlist_variant_ids = []
 
     if request.user.is_authenticated:
-
         wishlist_variant_ids = list(
-
             WishlistItem.objects.filter(
                 wishlist__user=request.user
             ).values_list(
                 "variant_id",
                 flat=True,
             )
-
         )
 
     context = {
-        "categories": categories,
+        "categories": trending_categories,
         "products": products,
         "wishlist_variant_ids": wishlist_variant_ids,
     }
@@ -300,7 +337,6 @@ def user_home(request):
         "Authentication/home.html",
         context,
     )
-
 def forgot_password(request):
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
@@ -401,7 +437,7 @@ def resend_forgot_password_otp(request):
 
     messages.success(request, "New OTP sent successfully.")
     return redirect("forgot_password_verify_otp")
-
+@never_cache
 def reset_password(request):
     if "reset_email" not in request.session:
         messages.error(request, "Session expired.")
@@ -415,26 +451,19 @@ def reset_password(request):
         new_password = request.POST.get("new_password", "")
         confirm_password = request.POST.get("confirm_password", "")
 
-        if not new_password or not confirm_password:
-            messages.error(request, "All fields are required.")
-            return redirect("reset_password")
+        error = validate_password(
+            new_password,
+            confirm_password
+        )
 
-        if len(new_password) < 8:
-            messages.error(
-                request,
-                "Password must contain at least 8 characters."
-            )
-            return redirect("reset_password")
-
-        if new_password != confirm_password:
-            messages.error(request, "Passwords do not match.")
+        if error:
+            messages.error(request, error)
             return redirect("reset_password")
 
         email = request.session["reset_email"]
 
         try:
             user = User.objects.get(email=email)
-
         except User.DoesNotExist:
             messages.error(request, "User not found.")
             return redirect("forgot_password")
@@ -458,13 +487,13 @@ def reset_password(request):
             request,
             "Password reset successfully. Please login."
         )
+
         return redirect("login")
 
     return render(
         request,
         "Authentication/reset_password.html"
     )
-
 @never_cache
 @login_required(login_url="login")
 def profile(request):
@@ -481,29 +510,38 @@ def edit_profile(request):
 
     if request.method == "POST":
         full_name = request.POST.get(
-            "full_name","").strip()
+            "full_name",
+            ""
+        ).strip()
 
         phone_number = request.POST.get(
-            "phone_number","").strip()
-        print(phone_number)
-        if not  phone_number.isdigit():
-            print("NOT DIGITS")
-
-            messages.error(request,"Phone number must contain only digits.")
-            return redirect("edit_profile")
-        if len(phone_number) != 10:
-            messages.error(request,'Phone number should be 10 digits')
-        
-            return redirect("edit_profile") 
+            "phone_number",
+            ""
+        ).strip()
 
         date_of_birth = request.POST.get(
-            "date_of_birth","").strip()
+            "date_of_birth",
+            ""
+        ).strip()
 
         profile_photo = request.FILES.get("profile_photo")
         remove_photo = request.POST.get("remove_photo")
 
-        if not full_name:
-            messages.error(request,"Full name is required.")
+        error = validate_name(
+            full_name,
+            "Full name"
+        )
+
+        if error:
+            messages.error(request, error)
+            return redirect("edit_profile")
+
+        error = validate_phone_number(
+            phone_number
+        )
+
+        if error:
+            messages.error(request, error)
             return redirect("edit_profile")
 
         user.full_name = full_name
@@ -511,15 +549,12 @@ def edit_profile(request):
 
         if date_of_birth:
             user.date_of_birth = date_of_birth
-
         else:
             user.date_of_birth = None
 
         if remove_photo:
             if user.profile_photo:
-                user.profile_photo.delete(
-                    save=False
-                )
+                user.profile_photo.delete(save=False)
 
             user.profile_photo = None
 
@@ -527,7 +562,7 @@ def edit_profile(request):
             allowed_types = [
                 "image/jpeg",
                 "image/png",
-                "image/gif"
+                "image/gif",
             ]
 
             if profile_photo.content_type not in allowed_types:
@@ -545,15 +580,17 @@ def edit_profile(request):
                 return redirect("edit_profile")
 
             if user.profile_photo:
-                user.profile_photo.delete(
-                    save=False
-                )
+                user.profile_photo.delete(save=False)
 
             user.profile_photo = profile_photo
 
         user.save()
 
-        messages.success(request,"Profile updated successfully.")
+        messages.success(
+            request,
+            "Profile updated successfully."
+        )
+
         return redirect("profile")
 
     return render(
@@ -753,10 +790,25 @@ def change_password(request):
         new_password = request.POST.get("new_password", "")
         confirm_password = request.POST.get("confirm_password", "")
 
-        if (
-            not current_password or not new_password or not confirm_password
-        ):
-            messages.error(request, "All fields are required.")
+        if not current_password:
+            messages.error(
+                request,
+                "Current password is required."
+            )
+            return redirect("change_password")
+
+        if not new_password:
+            messages.error(
+                request,
+                "New password is required."
+            )
+            return redirect("change_password")
+
+        if not confirm_password:
+            messages.error(
+                request,
+                "Please confirm your new password."
+            )
             return redirect("change_password")
 
         if not user.check_password(current_password):
@@ -766,25 +818,20 @@ def change_password(request):
             )
             return redirect("change_password")
 
-        if new_password != confirm_password:
-            messages.error(
-                request,
-                "New passwords do not match."
-            )
-            return redirect("change_password")
-
-        if len(new_password) < 8:
-            messages.error(
-                request,
-                "Password must be at least 8 characters."
-            )
-            return redirect("change_password")
-
         if user.check_password(new_password):
             messages.error(
                 request,
                 "New password cannot be the same as current password."
             )
+            return redirect("change_password")
+
+        error = validate_password(
+            new_password,
+            confirm_password
+        )
+
+        if error:
+            messages.error(request, error)
             return redirect("change_password")
 
         user.set_password(new_password)
@@ -796,6 +843,7 @@ def change_password(request):
             request,
             "Password changed successfully."
         )
+
         return redirect("profile")
 
     return render(
@@ -803,8 +851,6 @@ def change_password(request):
         "Authentication/change_password.html",
         {"user": user}
     )
-
-
 @login_required(login_url="login")
 def address_list(request):
     addresses = Address.objects.filter(user=request.user)
@@ -817,6 +863,7 @@ def address_list(request):
 @login_required(login_url="login")
 def add_address(request):
     user = request.user
+
     next_url = request.GET.get("next") or request.POST.get("next")
 
     if next_url in ("None", "null", ""):
@@ -829,13 +876,28 @@ def add_address(request):
         next_url = None
 
     if request.method == "POST":
-        pincode = request.POST.get("pincode", "").strip()
+        data = {
+            "full_name": request.POST.get("full_name", ""),
+            "phone_number": request.POST.get("phone_number", ""),
+            "address_line1": request.POST.get("address_line1", ""),
+            "address_line2": request.POST.get("address_line2", ""),
+            "city": request.POST.get("city", ""),
+            "state": request.POST.get("state", ""),
+            "pincode": request.POST.get("pincode", ""),
+            "country": request.POST.get("country", ""),
+            "type": request.POST.get("type", ""),
+        }
 
-        if not pincode.isdigit() or len(pincode) != 6:
-            messages.error(
-                request,
-                "Pincode must contain exactly 6 digits."
-            )
+        error = validate_address(data)
+
+        if error:
+            messages.error(request, error)
+
+            if next_url:
+                return redirect(
+                    f"{request.path}?next={next_url}"
+                )
+
             return redirect("add_address")
 
         is_default = request.POST.get("is_default")
@@ -849,15 +911,15 @@ def add_address(request):
 
         address = Address.objects.create(
             user=user,
-            full_name=request.POST.get("full_name"),
-            phone_number=request.POST.get("phone_number"),
-            address_line1=request.POST.get("address_line1"),
-            address_line2=request.POST.get("address_line2"),
-            city=request.POST.get("city"),
-            state=request.POST.get("state"),
-            pincode=pincode,
-            country=request.POST.get("country"),
-            type=request.POST.get("type"),
+            full_name=data["full_name"].strip(),
+            phone_number=data["phone_number"].strip(),
+            address_line1=data["address_line1"].strip(),
+            address_line2=data["address_line2"].strip(),
+            city=data["city"].strip(),
+            state=data["state"].strip(),
+            pincode=data["pincode"].strip(),
+            country=data["country"].strip(),
+            type=data["type"].strip(),
             is_default=bool(is_default)
         )
 
@@ -882,7 +944,6 @@ def add_address(request):
             "next_url": next_url,
         }
     )
-
 @login_required(login_url="login")
 def edit_address(request, id):
     address = get_object_or_404(
@@ -904,9 +965,8 @@ def edit_address(request, id):
 
     def redirect_after_error():
         if next_url:
-            separator = "&" if "?" in next_url else "?"
             return redirect(
-                f"{next_url}{separator}address={address.id}"
+                f"{request.path}?next={next_url}"
             )
 
         return redirect(
@@ -915,31 +975,33 @@ def edit_address(request, id):
         )
 
     if request.method == "POST":
-        pincode = request.POST.get("pincode", "").strip()
+        data = {
+            "full_name": request.POST.get("full_name", ""),
+            "phone_number": request.POST.get("phone_number", ""),
+            "address_line1": request.POST.get("address_line1", ""),
+            "address_line2": request.POST.get("address_line2", ""),
+            "city": request.POST.get("city", ""),
+            "state": request.POST.get("state", ""),
+            "pincode": request.POST.get("pincode", ""),
+            "country": request.POST.get("country", ""),
+            "type": request.POST.get("type", ""),
+        }
 
-        if not pincode.isdigit():
-            messages.error(
-                request,
-                "Pincode must contain only numbers."
-            )
+        error = validate_address(data)
+
+        if error:
+            messages.error(request, error)
             return redirect_after_error()
 
-        if len(pincode) != 6:
-            messages.error(
-                request,
-                "Pincode must contain exactly 6 digits."
-            )
-            return redirect_after_error()
-
-        address.full_name = request.POST.get("full_name")
-        address.phone_number = request.POST.get("phone_number")
-        address.address_line1 = request.POST.get("address_line1")
-        address.address_line2 = request.POST.get("address_line2")
-        address.city = request.POST.get("city")
-        address.state = request.POST.get("state")
-        address.pincode = pincode
-        address.country = request.POST.get("country")
-        address.type = request.POST.get("type")
+        address.full_name = data["full_name"].strip()
+        address.phone_number = data["phone_number"].strip()
+        address.address_line1 = data["address_line1"].strip()
+        address.address_line2 = data["address_line2"].strip()
+        address.city = data["city"].strip()
+        address.state = data["state"].strip()
+        address.pincode = data["pincode"].strip()
+        address.country = data["country"].strip()
+        address.type = data["type"].strip()
 
         if request.POST.get("is_default"):
             Address.objects.filter(
@@ -951,6 +1013,9 @@ def edit_address(request, id):
             )
 
             address.is_default = True
+
+        else:
+            address.is_default = False
 
         address.save()
 
@@ -976,8 +1041,6 @@ def edit_address(request, id):
             "next_url": next_url,
         }
     )
-
-
 @login_required(login_url="login")
 def delete_address(request, id):
     address = get_object_or_404(

@@ -1,16 +1,23 @@
 from datetime import timedelta
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Count,Prefetch, Q, Sum
+from django.db.models.functions import TruncDate
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+
+from Admin_panel.category.models import Category
+from Admin_panel.product.models import Product, Variant
 from User_panel.Authentication.models import User
+from User_panel.Order.models import Order, OrderItem
+
 from .models import AdminPasswordResetOTP
 from .utils import generate_admin_otp, send_admin_otp_email
 
@@ -90,25 +97,370 @@ def admin_login(request):
         request,
         "Admin_account/admin_login.html"
     )
-
-
 @never_cache
 @login_required(login_url="admin_login")
 def admin_dashboard(request):
     if not request.user.is_staff:
         logout(request)
-
         messages.error(
             request,
             "You are not authorized to access the admin panel."
         )
         return redirect("admin_login")
 
-    return render(
-        request,
-        "Admin_account/admin_dashboard.html"
+    now = timezone.now()
+
+    delivered_orders = Order.objects.filter(
+        order_status="DELIVERED"
     )
 
+    total_sales = (
+        delivered_orders.aggregate(
+            total=Sum("total_amount")
+        )["total"]
+        or 0
+    )
+
+    current_start = now - timedelta(days=30)
+    previous_start = now - timedelta(days=60)
+
+    current_sales = (
+        delivered_orders.filter(
+            created_at__gte=current_start
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"]
+        or 0
+    )
+
+    previous_sales = (
+        delivered_orders.filter(
+            created_at__gte=previous_start,
+            created_at__lt=current_start
+        ).aggregate(
+            total=Sum("total_amount")
+        )["total"]
+        or 0
+    )
+
+    if previous_sales:
+        sales_growth = (
+            (current_sales - previous_sales)
+            / previous_sales
+        ) * 100
+    elif current_sales:
+        sales_growth = 100
+    else:
+        sales_growth = 0
+
+    active_orders = Order.objects.filter(
+        order_status__in=[
+            "PENDING",
+            "PROCESSING",
+            "SHIPPED",
+            "OUT_FOR_DELIVERY",
+        ]
+    ).count()
+
+    total_customers = User.objects.filter(
+        is_staff=False,
+        is_superuser=False,
+    ).count()
+
+    active_variants = Variant.objects.filter(
+        is_active=True,
+        is_deleted=False,
+    )
+
+    total_stock = (
+        active_variants.aggregate(
+            total=Sum("stock")
+        )["total"]
+        or 0
+    )
+
+    low_stock_count = active_variants.filter(
+        stock__gt=0,
+        stock__lte=5,
+    ).count()
+
+    out_of_stock_count = active_variants.filter(
+        stock=0
+    ).count()
+
+    variant_count = active_variants.count()
+
+    if variant_count:
+        available_variants = active_variants.filter(
+            stock__gt=0
+        ).count()
+
+        stock_level = (
+            available_variants / variant_count
+        ) * 100
+    else:
+        stock_level = 0
+
+    recent_orders = (
+        Order.objects
+        .select_related("user")
+        .prefetch_related(
+            "items__variant__product"
+        )
+        .order_by("-created_at")[:5]
+    )
+
+    hottest_products = (
+        Product.objects
+        .filter(
+            is_active=True,
+            is_deleted=False,
+            variants__is_active=True,
+            variants__is_deleted=False,
+            variants__order_items__order__order_status="DELIVERED",
+        )
+        .annotate(
+            sold_quantity=Sum(
+                "variants__order_items__quantity",
+                filter=Q(
+                    variants__order_items__order__order_status="DELIVERED"
+                ),
+            ),
+            revenue=Sum(
+                "variants__order_items__total_price",
+                filter=Q(
+                    variants__order_items__order__order_status="DELIVERED"
+                ),
+            ),
+        )
+        .filter(
+            sold_quantity__gt=0
+        )
+        .prefetch_related(
+            Prefetch(
+                "variants",
+                queryset=Variant.objects.filter(
+                    is_active=True,
+                    is_deleted=False,
+                ).prefetch_related("images"),
+                to_attr="dashboard_variants",
+            )
+        )
+        .order_by(
+            "-sold_quantity",
+            "product_name",
+        )[:5]
+    )
+
+    hottest_releases = []
+
+    for product in hottest_products:
+        image_url = ""
+
+        variants = getattr(
+            product,
+            "dashboard_variants",
+            []
+        )
+
+        for variant in variants:
+            image = variant.images.first()
+
+            if image and image.image:
+                image_url = image.image.url
+                break
+
+        hottest_releases.append({
+            "product_name": product.product_name,
+            "sold_quantity": product.sold_quantity or 0,
+            "revenue": product.revenue or 0,
+            "image_url": image_url,
+        })
+
+    category_data = (
+        Category.objects
+        .filter(
+            is_active=True,
+            is_deleted=False,
+        )
+        .annotate(
+            inventory_quantity=Sum(
+                "products__variants__stock",
+                filter=Q(
+                    products__is_active=True,
+                    products__is_deleted=False,
+                    products__variants__is_active=True,
+                    products__variants__is_deleted=False,
+                ),
+            )
+        )
+        .filter(
+            inventory_quantity__gt=0
+        )
+        .order_by(
+            "-inventory_quantity",
+            "category_name",
+        )
+    )
+
+    category_data = list(category_data)
+
+    total_inventory = sum(
+        category.inventory_quantity or 0
+        for category in category_data
+    )
+
+    category_distribution = []
+
+    for category in category_data:
+        inventory_quantity = (
+            category.inventory_quantity
+            or 0
+        )
+
+        if total_inventory:
+            percentage = (
+                inventory_quantity
+                / total_inventory
+            ) * 100
+        else:
+            percentage = 0
+
+        category_distribution.append({
+            "name": category.category_name,
+            "count": inventory_quantity,
+            "percentage": round(
+                percentage,
+                1
+            ),
+        })
+
+    sales_end = now.replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
+    sales_start = sales_end - timedelta(days=29)
+
+    daily_sales = (
+        delivered_orders
+        .filter(
+            created_at__gte=sales_start,
+            created_at__lt=(
+                sales_end
+                + timedelta(days=1)
+            ),
+        )
+        .annotate(
+            day=TruncDate("created_at")
+        )
+        .values("day")
+        .annotate(
+            revenue=Sum("total_amount"),
+            orders=Count("id"),
+        )
+        .order_by("day")
+    )
+
+    daily_sales = {
+        row["day"]: row
+        for row in daily_sales
+    }
+
+    sales_trajectory = []
+
+    for day_number in range(30):
+        current_day = (
+            sales_start.date()
+            + timedelta(days=day_number)
+        )
+
+        row = daily_sales.get(
+            current_day,
+            {
+                "revenue": 0,
+                "orders": 0,
+            }
+        )
+
+        sales_trajectory.append({
+            "date": current_day,
+            "label": current_day.strftime("%d %b"),
+            "short_label": current_day.strftime("%d"),
+            "revenue": row["revenue"] or 0,
+            "orders": row["orders"] or 0,
+        })
+
+    max_revenue = max(
+        (
+            float(row["revenue"] or 0)
+            for row in sales_trajectory
+        ),
+        default=0,
+    )
+
+    max_orders = max(
+        (
+            int(row["orders"] or 0)
+            for row in sales_trajectory
+        ),
+        default=0,
+    )
+
+    for row in sales_trajectory:
+        revenue = float(
+            row["revenue"] or 0
+        )
+
+        orders = int(
+            row["orders"] or 0
+        )
+
+        if max_revenue:
+            row["revenue_percentage"] = round(
+                (revenue / max_revenue) * 100,
+                1,
+            )
+        else:
+            row["revenue_percentage"] = 0
+
+        if max_orders:
+            row["orders_percentage"] = round(
+                (orders / max_orders) * 100,
+                1,
+            )
+        else:
+            row["orders_percentage"] = 0
+
+    context = {
+        "total_sales": total_sales,
+        "sales_growth": round(
+            sales_growth,
+            1
+        ),
+        "current_sales": current_sales,
+        "active_orders": active_orders,
+        "total_customers": total_customers,
+        "stock_level": round(
+            stock_level,
+            1
+        ),
+        "low_stock_count": low_stock_count,
+        "out_of_stock_count": out_of_stock_count,
+        "total_stock": total_stock,
+        "recent_orders": recent_orders,
+        "hottest_releases": hottest_releases,
+        "category_distribution": category_distribution,
+        "sales_trajectory": sales_trajectory,
+    }
+
+    return render(
+        request,
+        "Admin_account/admin_dashboard.html",
+        context,
+    )
 
 @never_cache
 @login_required(login_url="admin_login")

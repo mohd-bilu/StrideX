@@ -5,7 +5,6 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from urllib3 import request
 
 from Admin_panel.category.models import Category
 from Admin_panel.coupon_offer.models import Offer
@@ -20,7 +19,7 @@ def get_best_offer(variant, now=None):
     offers = Offer.objects.filter(
         is_active=True,
         start_date__lte=now,
-        expiry_date__gte=now,
+        expiry_date__gt=now,
     ).filter(
         Q(
             offer_type="PRODUCT",

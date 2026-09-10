@@ -1,3 +1,4 @@
+import io
 from decimal import Decimal
 
 from django.contrib import messages
@@ -91,8 +92,6 @@ def reward_referrer_for_order(order):
     )
 
     return REFERRAL_REWARD
-
-@login_required(login_url="login")
 def get_best_offer(variant, now=None):
     if now is None:
         now = timezone.now()
@@ -118,7 +117,8 @@ def get_best_offer(variant, now=None):
     for offer in offers:
         if offer.discount_type == "PERCENTAGE":
             discount = (
-                variant.price * offer.discount_value
+                variant.price
+                * offer.discount_value
             ) / Decimal("100")
         else:
             discount = min(
@@ -128,7 +128,10 @@ def get_best_offer(variant, now=None):
 
         discount = max(
             Decimal("0.00"),
-            min(discount, variant.price),
+            min(
+                discount,
+                variant.price,
+            ),
         )
 
         if discount > best_discount:
@@ -136,7 +139,6 @@ def get_best_offer(variant, now=None):
             best_discount = discount
 
     return best_offer, best_discount
-
 
 def calculate_coupon_discount(coupon, amount):
     if not coupon or amount <= 0:
@@ -328,20 +330,26 @@ def calculate_order_totals(request, cart_items, variants):
         "coupon": coupon,
         "item_calculations": item_calculations,
     }
-@login_required
+@login_required(login_url="login")
 def place_order(request):
     if request.method != "POST":
         return redirect("checkout:checkout")
 
     address_id = request.POST.get("address")
-    payment_method = request.POST.get("payment_method", "COD").strip().upper()
+    payment_method = request.POST.get(
+        "payment_method",
+        "COD",
+    ).strip().upper()
 
     if payment_method not in ["COD", "WALLET"]:
         messages.error(request, "Invalid payment method.")
         return redirect("checkout:checkout")
 
     if not address_id:
-        messages.error(request, "Please select a delivery address.")
+        messages.error(
+            request,
+            "Please select a delivery address.",
+        )
         return redirect("checkout:checkout")
 
     address = get_object_or_404(
@@ -350,21 +358,44 @@ def place_order(request):
         user=request.user,
     )
 
-    buy_now = request.session.get("buy_now", False)
-    buy_now_variant_id = request.session.get("buy_now_variant_id")
-    buy_now_quantity = request.session.get("buy_now_quantity", 1)
+    buy_now = bool(
+        request.session.get("buy_now")
+    )
 
-    if buy_now and buy_now_variant_id:
+    buy_now_variant_id = request.session.get(
+        "buy_now_variant_id"
+    )
+
+    buy_now_quantity = request.session.get(
+        "buy_now_quantity",
+        1,
+    )
+
+    if buy_now:
+        if not buy_now_variant_id:
+            messages.error(
+                request,
+                "The Buy Now product could not be found.",
+            )
+            return redirect("product:product_list")
+
         try:
-            buy_now_quantity = int(buy_now_quantity)
+            buy_now_quantity = int(
+                buy_now_quantity
+            )
         except (TypeError, ValueError):
             buy_now_quantity = 1
 
-        if buy_now_quantity < 1:
-            buy_now_quantity = 1
+        buy_now_quantity = max(
+            buy_now_quantity,
+            1,
+        )
 
         variant = get_object_or_404(
-            Variant,
+            Variant.objects.select_related(
+                "product",
+                "product__category",
+            ),
             id=buy_now_variant_id,
             is_active=True,
             is_deleted=False,
@@ -373,8 +404,15 @@ def place_order(request):
         )
 
         if variant.stock < buy_now_quantity:
-            messages.error(request, "The selected quantity is no longer available.")
-            return redirect("checkout:checkout")
+            messages.error(
+                request,
+                f"Only {variant.stock} quantity of "
+                f"{variant.product.product_name} is available.",
+            )
+            return redirect(
+                "product:product_detail",
+                product_id=variant.product.id,
+            )
 
         cart_items = [
             SimpleNamespace(
@@ -387,11 +425,16 @@ def place_order(request):
         is_buy_now = True
 
     else:
-        cart = Cart.objects.filter(user=request.user).first()
+        cart = Cart.objects.filter(
+            user=request.user
+        ).first()
 
         if not cart:
-            messages.error(request, "Your cart is empty.")
-            return redirect("cart")
+            messages.error(
+                request,
+                "Your cart is empty.",
+            )
+            return redirect("product:product_list")
 
         cart_items = list(
             cart.items.select_related(
@@ -402,19 +445,27 @@ def place_order(request):
         )
 
         if not cart_items:
-            messages.error(request, "Your cart is empty.")
-            return redirect("cart")
+            messages.error(
+                request,
+                "Your cart is empty.",
+            )
+            return redirect("product:product_list")
 
         is_buy_now = False
 
     try:
         with transaction.atomic():
-            variant_ids = [item.variant_id for item in cart_items]
+            variant_ids = [
+                item.variant_id
+                for item in cart_items
+            ]
 
             locked_variants = (
                 Variant.objects
                 .select_for_update()
-                .filter(id__in=variant_ids)
+                .filter(
+                    id__in=variant_ids
+                )
                 .select_related(
                     "product",
                     "product__category",
@@ -427,15 +478,32 @@ def place_order(request):
             }
 
             for item in cart_items:
-                if item.variant_id not in variants:
-                    raise ValueError("One of the selected products is no longer available.")
+                variant = variants.get(
+                    item.variant_id
+                )
 
-                if not variants[item.variant_id].is_active or variants[item.variant_id].is_deleted:
-                    raise ValueError("One of the selected products is no longer available.")
-
-                if variants[item.variant_id].stock < item.quantity:
+                if not variant:
                     raise ValueError(
-                        f"Insufficient stock for {variants[item.variant_id].product.product_name}."
+                        "One of the selected products "
+                        "is no longer available."
+                    )
+
+                if (
+                    not variant.is_active
+                    or variant.is_deleted
+                    or not variant.product.is_active
+                    or variant.product.is_deleted
+                ):
+                    raise ValueError(
+                        f"{variant.product.product_name} "
+                        "is no longer available."
+                    )
+
+                if variant.stock < item.quantity:
+                    raise ValueError(
+                        f"Only {variant.stock} quantity of "
+                        f"{variant.product.product_name} "
+                        "is available."
                     )
 
             totals = calculate_order_totals(
@@ -444,12 +512,27 @@ def place_order(request):
                 variants,
             )
 
-            subtotal = totals["original_subtotal"]
-            total_discount = totals["total_discount"]
-            shipping = totals["shipping"]
-            total_amount = totals["total_amount"]
+            subtotal = totals[
+                "original_subtotal"
+            ]
+
+            total_discount = totals[
+                "total_discount"
+            ]
+
+            shipping = totals[
+                "shipping"
+            ]
+
+            total_amount = totals[
+                "total_amount"
+            ]
+
             coupon = totals["coupon"]
-            item_calculations = totals["item_calculations"]
+
+            item_calculations = totals[
+                "item_calculations"
+            ]
 
             wallet = None
 
@@ -459,18 +542,30 @@ def place_order(request):
                 wallet = (
                     Wallet.objects
                     .select_for_update()
-                    .filter(user=request.user)
+                    .filter(
+                        user=request.user
+                    )
                     .first()
                 )
 
                 if not wallet:
-                    raise ValueError("You do not have a wallet yet.")
+                    raise ValueError(
+                        "You do not have a wallet yet."
+                    )
 
                 if wallet.balance < total_amount:
-                    raise ValueError("Insufficient wallet balance.")
+                    raise ValueError(
+                        "Insufficient wallet balance."
+                    )
 
                 wallet.balance -= total_amount
-                wallet.save(update_fields=["balance", "updated_at"])
+
+                wallet.save(
+                    update_fields=[
+                        "balance",
+                        "updated_at",
+                    ]
+                )
 
             order = Order.objects.create(
                 user=request.user,
@@ -485,7 +580,11 @@ def place_order(request):
                 address_country=address.country,
                 address_type=address.type,
                 payment_method=payment_method,
-                payment_status="PAID" if payment_method == "WALLET" else "PENDING",
+                payment_status=(
+                    "PAID"
+                    if payment_method == "WALLET"
+                    else "PENDING"
+                ),
                 coupon=coupon,
                 subtotal=subtotal,
                 discount=total_discount,
@@ -494,18 +593,29 @@ def place_order(request):
                 order_status="PENDING",
             )
 
-            offer_discount_total = totals["offer_discount"]
-            coupon_discount = totals["coupon_discount"]
-            offer_adjusted_subtotal = totals["offer_adjusted_subtotal"]
+            coupon_discount = totals[
+                "coupon_discount"
+            ]
+
+            offer_adjusted_subtotal = totals[
+                "offer_adjusted_subtotal"
+            ]
 
             for calculation in item_calculations:
                 item = calculation["item"]
                 variant = calculation["variant"]
-                offer_item_total = calculation["offer_item_total"]
+                offer_item_total = calculation[
+                    "offer_item_total"
+                ]
 
-                item_coupon_discount = Decimal("0.00")
+                item_coupon_discount = Decimal(
+                    "0.00"
+                )
 
-                if coupon_discount > 0 and offer_adjusted_subtotal > 0:
+                if (
+                    coupon_discount > 0
+                    and offer_adjusted_subtotal > 0
+                ):
                     item_coupon_discount = (
                         coupon_discount
                         * offer_item_total
@@ -514,10 +624,14 @@ def place_order(request):
 
                 final_item_total = max(
                     Decimal("0.00"),
-                    offer_item_total - item_coupon_discount,
+                    offer_item_total
+                    - item_coupon_discount,
                 )
 
-                final_unit_price = final_item_total / item.quantity
+                final_unit_price = (
+                    final_item_total
+                    / item.quantity
+                )
 
                 OrderItem.objects.create(
                     order=order,
@@ -529,11 +643,17 @@ def place_order(request):
                 )
 
                 variant.stock -= item.quantity
-                variant.save(update_fields=["stock"])
+
+                variant.save(
+                    update_fields=["stock"]
+                )
 
             if coupon:
                 coupon.used_count += 1
-                coupon.save(update_fields=["used_count", "updated_at"])
+
+                coupon.save(
+                    update_fields=["used_count"]
+                )
 
                 CouponUsage.objects.create(
                     coupon=coupon,
@@ -542,23 +662,44 @@ def place_order(request):
                 )
 
             if payment_method == "WALLET":
-                from User_panel.Wallet.models import WalletTransaction
+                from User_panel.Wallet.models import (
+                    WalletTransaction,
+                )
 
                 WalletTransaction.objects.create(
                     wallet=wallet,
                     transaction_type="DEBIT",
                     amount=total_amount,
-                    description=f"Payment for order {order.order_id}",
+                    description=(
+                        f"Payment for order "
+                        f"{order.order_id}"
+                    ),
                     reference=order.order_id,
                 )
 
             if not is_buy_now:
                 cart.items.all().delete()
 
-            request.session.pop("checkout_coupon_code", None)
-            request.session.pop("buy_now", None)
-            request.session.pop("buy_now_variant_id", None)
-            request.session.pop("buy_now_quantity", None)
+            request.session.pop(
+                "checkout_coupon_code",
+                None,
+            )
+
+            request.session.pop(
+                "buy_now",
+                None,
+            )
+
+            request.session.pop(
+                "buy_now_variant_id",
+                None,
+            )
+
+            request.session.pop(
+                "buy_now_quantity",
+                None,
+            )
+
             request.session.modified = True
 
         messages.success(
@@ -572,14 +713,23 @@ def place_order(request):
         )
 
     except ValueError as error:
-        messages.error(request, str(error))
+        messages.error(
+            request,
+            str(error),
+        )
         return redirect("checkout:checkout")
 
-    except Exception:
+    except Exception as error:
+        print(
+            "PLACE ORDER ERROR:",
+            repr(error),
+        )
+
         messages.error(
             request,
             "Unable to place the order. Please try again.",
         )
+
         return redirect("checkout:checkout")
 
 @login_required
@@ -678,84 +828,46 @@ def order_detail(request, order_id):
             "has_returnable_items": has_returnable_items,
         },
     )
-
-
 @login_required(login_url="login")
 def download_invoice(request, order_id):
     order = get_object_or_404(
         Order.objects.prefetch_related(
-            "items__variant__product",
-            "items__variant__images",
+            "items__variant__product__category"
         ),
         order_id=order_id,
         user=request.user,
+        order_status__in=["DELIVERED", "RETURNED"],
     )
 
-    invoice_items = order.items.all()
+    from django.template.loader import get_template
 
-    returned_items = invoice_items.filter(
-        status="RETURNED",
-    )
+    template = get_template("user_order/invoice_pdf.html")
 
-    return_requested_items = invoice_items.filter(
-        status="RETURN_REQUESTED",
-    )
-
-    rejected_items = invoice_items.filter(
-        status="REJECTED",
-    )
-
-    context = {
+    html = template.render({
         "order": order,
-        "invoice_items": invoice_items,
-        "returned_items": returned_items,
-        "return_requested_items": return_requested_items,
-        "rejected_items": rejected_items,
-        "has_return_information": (
-            returned_items.exists()
-            or return_requested_items.exists()
-            or rejected_items.exists()
-        ),
-        "returned_amount": sum(
-            item.total_price
-            for item in returned_items
-        ),
-        "return_requested_amount": sum(
-            item.total_price
-            for item in return_requested_items
-        ),
-    }
-
-    template = get_template(
-        "user_order/invoice_pdf.html"
-    )
-
-    html = template.render(
-        context,
-        request,
-    )
+    })
 
     response = HttpResponse(
-        content_type="application/pdf",
+        content_type="application/pdf"
     )
 
     response["Content-Disposition"] = (
-        f'attachment; filename="Invoice-{order.order_id}.pdf"'
+        f'attachment; filename="StrideX-Invoice-{order.order_id}.pdf"'
     )
 
-    pisa_status = pisa.CreatePDF(
-        html,
+    pdf = pisa.CreatePDF(
+        io.BytesIO(html.encode("UTF-8")),
         dest=response,
+        encoding="UTF-8",
     )
 
-    if pisa_status.err:
+    if pdf.err:
         return HttpResponse(
-            "Error generating invoice.",
+            "Unable to generate invoice.",
             status=500,
         )
 
     return response
-
 @login_required(login_url="login")
 def refund_order_item_to_wallet(
     request,

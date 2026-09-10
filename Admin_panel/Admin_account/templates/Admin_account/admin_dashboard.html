@@ -4,26 +4,21 @@
 {% block title %}
 Admin Dashboard - StrideX
 {% endblock %}
+
 {% block extra_css %}
-
 <style>
-
-/* =================================
-   CONTENT
-================================= */
 .dashboard-content {
     max-width: 1250px;
     margin: 0 auto;
 }
+
 .page-title {
     font-size: 26px;
     font-weight: 800;
     margin-bottom: 28px;
     letter-spacing: -1px;
 }
-/* =================================
-   TOTAL SALES
-================================= */
+
 .total-sales-card {
     background: #ffffff;
     border-radius: 10px;
@@ -31,22 +26,26 @@ Admin Dashboard - StrideX
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     margin-bottom: 25px;
 }
+
 .card-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
+
 .small-title {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.5px;
     color: #5e554e;
 }
+
 .total-amount {
     font-size: 32px;
     font-weight: 800;
     margin-top: 15px;
 }
+
 .growth {
     background: #dcfae6;
     color: #199c5b;
@@ -55,20 +54,29 @@ Admin Dashboard - StrideX
     font-size: 9px;
     font-weight: 700;
 }
+
+.growth.negative {
+    background: #fde4e4;
+    color: #c0392b;
+}
+
 .trend-icon {
     color: #2fba7c;
     margin-top: 18px;
     text-align: right;
 }
-/* =================================
-   STATS GRID
-================================= */
+
+.trend-icon.negative {
+    color: #c0392b;
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
     margin-bottom: 25px;
 }
+
 .stat-card {
     min-height: 170px;
     background: #ffffff;
@@ -76,17 +84,20 @@ Admin Dashboard - StrideX
     padding: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
+
 .stat-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
+
 .stat-title {
     font-size: 10px;
     line-height: 1.5;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
+
 .badge {
     padding: 7px 10px;
     border-radius: 15px;
@@ -95,38 +106,38 @@ Admin Dashboard - StrideX
     background: #f4ede6;
     color: #a96a35;
 }
+
 .badge.gray {
     background: #eeeeee;
     color: #777777;
 }
+
 .stat-value {
     font-size: 40px;
     font-weight: 800;
     margin-top: 35px;
     letter-spacing: -2px;
 }
+
 .warning {
     color: #d69224;
     font-size: 14px;
 }
-/* =================================
-   MIDDLE GRID
-================================= */
+
 .middle-grid {
     display: grid;
     grid-template-columns: 2.2fr 1fr;
     gap: 25px;
     margin-bottom: 25px;
 }
-/* =================================
-   PANELS
-================================= */
+
 .panel {
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     overflow: hidden;
 }
+
 .panel-header {
     min-height: 70px;
     padding: 0 22px;
@@ -135,23 +146,26 @@ Admin Dashboard - StrideX
     align-items: center;
     border-bottom: 1px solid #eeeeee;
 }
+
 .panel-title {
     font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.7px;
+    margin: 0;
 }
+
 .view-all {
     font-size: 10px;
     text-decoration: underline;
     font-weight: 600;
+    color: inherit;
 }
-/* =================================
-   ORDER TABLE
-================================= */
+
 .order-table {
     width: 100%;
     border-collapse: collapse;
 }
+
 .order-table th {
     text-align: left;
     padding: 16px 12px;
@@ -160,18 +174,22 @@ Admin Dashboard - StrideX
     font-weight: 700;
     border-bottom: 1px solid #ded5ce;
 }
+
 .order-table td {
     padding: 17px 12px;
     font-size: 11px;
     line-height: 1.5;
     border-bottom: 1px solid #eeeeee;
 }
+
 .order-table tr:last-child td {
     border-bottom: none;
 }
+
 .order-id {
     font-weight: 700;
 }
+
 .status {
     display: inline-block;
     padding: 7px 9px;
@@ -179,34 +197,58 @@ Admin Dashboard - StrideX
     font-size: 7px;
     font-weight: 700;
 }
+
 .delivered {
     color: #159b5d;
     background: #dcf8e8;
 }
+
 .processing {
     color: #6f6257;
     background: #eeeeee;
 }
+
 .shipped {
     color: #3971bf;
     background: #e3edff;
 }
+
 .pending {
     color: #b77915;
     background: #fff1ce;
 }
-/* =================================
-   HOT RELEASES
-================================= */
+
+.out-for-delivery {
+    color: #3971bf;
+    background: #e3edff;
+}
+
+.cancelled {
+    color: #c0392b;
+    background: #fde4e4;
+}
+
+.return-requested {
+    color: #8e44ad;
+    background: #f3e5f5;
+}
+
+.returned {
+    color: #159b5d;
+    background: #dcf8e8;
+}
+
 .release-list {
     padding: 20px;
 }
+
 .release-item {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
 }
+
 .release-image {
     width: 52px;
     height: 52px;
@@ -217,24 +259,40 @@ Admin Dashboard - StrideX
     justify-content: center;
     color: #aaa5d2;
     font-size: 18px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
+
+.release-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .release-info {
     flex: 1;
+    min-width: 0;
 }
+
 .release-name {
     font-size: 11px;
     font-weight: 700;
     line-height: 1.3;
 }
+
 .release-sold {
     font-size: 8px;
     margin-top: 3px;
     color: #555555;
 }
+
 .release-price {
     font-size: 11px;
     font-weight: 700;
+    white-space: nowrap;
 }
+
 .report-button {
     width: 100%;
     height: 60px;
@@ -247,14 +305,13 @@ Admin Dashboard - StrideX
     letter-spacing: 1px;
     cursor: pointer;
 }
-/* =================================
-   BOTTOM GRID
-================================= */
+
 .bottom-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
 }
+
 .bottom-card {
     min-height: 330px;
     background: #ffffff;
@@ -262,22 +319,27 @@ Admin Dashboard - StrideX
     padding: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
+
 .bottom-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
+
 .bottom-title {
     font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.7px;
+    margin: 0;
 }
+
 .bottom-description {
     font-size: 11px;
     color: #777777;
     margin-top: 6px;
     line-height: 1.5;
 }
+
 .season-select {
     border: none;
     background: #f5f5f5;
@@ -285,9 +347,7 @@ Admin Dashboard - StrideX
     font-size: 9px;
     outline: none;
 }
-/* =================================
-   CATEGORY CHART
-================================= */
+
 .category-content {
     display: flex;
     align-items: center;
@@ -295,18 +355,16 @@ Admin Dashboard - StrideX
     gap: 35px;
     margin-top: 35px;
 }
+
 .donut {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background:
-        conic-gradient(
-            #1a1a1a 0 42%,
-            #bdbdbd 42% 73%,
-            #eeeeee 73% 100%
-        );
+    background: #eeeeee;
     position: relative;
+    flex-shrink: 0;
 }
+
 .donut::after {
     content: "";
     position: absolute;
@@ -318,6 +376,7 @@ Admin Dashboard - StrideX
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 .donut-center {
     position: absolute;
     z-index: 2;
@@ -325,15 +384,24 @@ Admin Dashboard - StrideX
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    width: 90px;
 }
+
 .donut-percent {
     font-size: 30px;
     font-weight: 800;
 }
+
 .donut-label {
     font-size: 9px;
     margin-top: 2px;
+    text-transform: uppercase;
 }
+
+.legend {
+    min-width: 135px;
+}
+
 .legend-item {
     display: flex;
     align-items: center;
@@ -341,25 +409,55 @@ Admin Dashboard - StrideX
     margin-bottom: 15px;
     font-size: 10px;
 }
+
+.legend-item strong {
+    margin-left: auto;
+    font-weight: 700;
+}
+
 .legend-dot {
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: #1a1a1a;
+    flex-shrink: 0;
 }
-.legend-dot.second {
-    background: #bdbdbd;
+
+.legend-dot-1 {
+    background: #171717;
 }
-.legend-dot.third {
-    background: #eeeeee;
-    border: 1px solid #dddddd;
+
+.legend-dot-2 {
+    background: #8f9db2;
 }
-/* =================================
-   SALES CHART
-================================= */
+
+.legend-dot-3 {
+    background: #c8d0da;
+}
+
+.legend-dot-4 {
+    background: #dfe4ea;
+}
+
+.legend-dot-5 {
+    background: #b5bec9;
+}
+
+.legend-dot-6 {
+    background: #6f7b8c;
+}
+
+.legend-dot-7 {
+    background: #aeb7c2;
+}
+
+.legend-dot-8 {
+    background: #d3d9df;
+}
+
 .chart-tabs {
     display: flex;
 }
+
 .chart-tab {
     padding: 9px 14px;
     border: none;
@@ -367,45 +465,85 @@ Admin Dashboard - StrideX
     font-size: 8px;
     cursor: pointer;
 }
+
+.chart-tab:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.chart-tab:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
 .chart-tab.active {
     background: #171717;
     color: #ffffff;
 }
+
 .bar-chart {
     height: 210px;
     display: flex;
     align-items: flex-end;
-    justify-content: center;
-    gap: 8px;
+    justify-content: flex-start;
+    gap: 5px;
     margin-top: 30px;
     border-bottom: 1px solid #eeeeee;
+    padding: 0 5px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
+
+.bar-wrapper {
+    height: 100%;
+    min-width: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 .bar {
-    width: 42px;
+    width: 18px;
+    min-height: 0;
     background: #e9e9e9;
+    transition: height 0.25s ease;
+    border-radius: 3px 3px 0 0;
 }
-.bar:nth-child(1) {
-    height: 65px;
-}
-.bar:nth-child(2) {
-    height: 95px;
-}
-.bar:nth-child(3) {
-    height: 125px;
-}
-.bar:nth-child(4) {
-    height: 180px;
+
+.bar.current {
     background: #171717;
 }
-.bar:nth-child(5) {
-    height: 145px;
+
+.bar-label {
+    font-size: 7px;
+    margin-top: 8px;
+    color: #666666;
+    white-space: nowrap;
+    transform: rotate(-45deg);
+    transform-origin: center;
 }
-.bar:nth-child(6) {
-    height: 105px;
+
+.empty-message {
+    text-align: center;
+    padding: 30px 20px;
+    color: #888888;
+    font-size: 10px;
 }
-/* =================================
-   RESPONSIVE
-================================= */
+
+@media (max-width: 1000px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .middle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 700px) {
     .sidebar {
         display: none;
@@ -428,6 +566,10 @@ Admin Dashboard - StrideX
         width: 200px;
     }
 
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
     .order-table {
         min-width: 650px;
     }
@@ -435,357 +577,529 @@ Admin Dashboard - StrideX
     .panel {
         overflow-x: auto;
     }
-}
-@media (max-width: 700px) {
 
-    .order-table {
-        min-width: 650px;
+    .category-content {
+        flex-direction: column;
+        gap: 25px;
     }
-    .panel {
-        overflow-x: auto;
+
+    .bottom-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .chart-tabs {
+        align-self: flex-end;
     }
 }
 </style>
-
 {% endblock %}
 
 {% block content %}
-    <div class="dashboard-content">
+<div class="dashboard-content">
 
-        <h1 class="page-title">
-            Admin Dashboard
-        </h1>
-        <!-- =================================
-             TOTAL SALES
-        ================================= -->
-        <section class="total-sales-card">
-            <div class="card-top">
-                <div>
-                    <div class="small-title">
-                        TOTAL SALES
-                    </div>
-                    <div class="total-amount">
-                        ₹35,00,000
-                    </div>
+    <h1 class="page-title">
+        Admin Dashboard
+    </h1>
+
+    <!-- TOTAL SALES -->
+    <section class="total-sales-card">
+        <div class="card-top">
+            <div>
+                <div class="small-title">
+                    TOTAL SALES
                 </div>
-                <div>
+
+                <div class="total-amount">
+                    ₹{{ total_sales|floatformat:2 }}
+                </div>
+            </div>
+
+            <div>
+                {% if sales_growth >= 0 %}
                     <span class="growth">
-                        +12.5%
+                        +{{ sales_growth|floatformat:1 }}%
                     </span>
+
                     <div class="trend-icon">
                         <i class="fa-solid fa-arrow-trend-up"></i>
                     </div>
-                </div>
-            </div>
-        </section>
-        <!-- =================================
-             STATS
-        ================================= -->
-        <section class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">
-                        STOCK<br>
-                        LEVELS
-                    </div>
-                    <span class="badge">
-                        Low Stock
+                {% else %}
+                    <span class="growth negative">
+                        {{ sales_growth|floatformat:1 }}%
                     </span>
+
+                    <div class="trend-icon negative">
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">
+                    STOCK<br>
+                    LEVELS
                 </div>
-                <div class="stat-value">
-                    92.4%
+
+                {% if low_stock_count %}
+                    <span class="badge">
+                        {{ low_stock_count }} Low Stock
+                    </span>
+                {% elif out_of_stock_count %}
+                    <span class="badge">
+                        {{ out_of_stock_count }} Out of Stock
+                    </span>
+                {% else %}
+                    <span class="badge">
+                        Stock Healthy
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="stat-value">
+                {{ stock_level|floatformat:1 }}%
+
+                {% if low_stock_count or out_of_stock_count %}
                     <span class="warning">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </span>
-                </div>
+                {% endif %}
             </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">
-                        ACTIVE<br>
-                        ORDERS
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">
+                    ACTIVE<br>
+                    ORDERS
+                </div>
+
+                <span class="badge gray">
+                    Active
+                </span>
+            </div>
+
+            <div class="stat-value">
+                {{ active_orders }}
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">
+                    CUSTOMERS
+                </div>
+
+                <span class="badge gray">
+                    Total
+                </span>
+            </div>
+
+            <div class="stat-value">
+                {{ total_customers }}
+            </div>
+        </div>
+
+    </section>
+
+    <!-- MIDDLE SECTION -->
+    <section class="middle-grid">
+
+        <!-- RECENT ORDERS -->
+        <div class="panel">
+
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    Recent Orders
+                </h2>
+
+                <a href="{% url 'admin_order:order_list' %}" class="view-all">
+                    View All
+                </a>
+            </div>
+
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>ORDER ID</th>
+                        <th>CUSTOMER</th>
+                        <th>SNEAKER MODEL</th>
+                        <th>AMOUNT</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in recent_orders %}
+                        {% with first_item=order.items.all|first %}
+
+                        <tr>
+                            <td class="order-id">
+                                #{{ order.order_id }}
+                            </td>
+
+                            <td>
+                                {% if order.user.full_name %}
+                                    {{ order.user.full_name }}
+                                {% else %}
+                                    {{ order.user.email }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if first_item %}
+                                    {{ first_item.variant.product.product_name }}
+
+                                    {% if order.items.count > 1 %}
+                                        <br>
+                                        <span style="font-size:9px;color:#777;">
+                                            +{{ order.items.count|add:"-1" }} more item{% if order.items.count|add:"-1" != 1 %}s{% endif %}
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                ₹{{ order.total_amount|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                <span class="status {{ order.order_status|lower|slugify }}">
+                                    {{ order.get_order_status_display|upper }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        {% endwith %}
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-message">
+                                    No orders found.
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- HOTTEST RELEASES -->
+        <div class="panel">
+
+            <div class="panel-header">
+                <h2 class="panel-title">
+                    Hottest Releases
+                </h2>
+            </div>
+
+            <div class="release-list">
+
+                {% for release in hottest_releases %}
+
+                    <div class="release-item">
+
+                        <div class="release-image">
+                            {% if release.image_url %}
+                                <img
+                                    src="{{ release.image_url }}"
+                                    alt="{{ release.product_name }}"
+                                >
+                            {% else %}
+                                <i class="fa-solid fa-shoe-prints"></i>
+                            {% endif %}
+                        </div>
+
+                        <div class="release-info">
+
+                            <div class="release-name">
+                                {{ release.product_name }}
+                            </div>
+
+                            <div class="release-sold">
+                                {{ release.sold_quantity }} SOLD
+                            </div>
+
+                        </div>
+
+                        <div class="release-price">
+                            ₹{{ release.revenue|floatformat:2 }}
+                        </div>
+
                     </div>
-                    <span class="badge gray">
-                        Today
-                    </span>
-                </div>
-                <div class="stat-value">
-                    1,240
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-title">
-                        CUSTOMERS
+
+                {% empty %}
+
+                    <div class="empty-message">
+                        No delivered product sales yet.
                     </div>
-                    <span class="growth">
-                        +18.1%
-                    </span>
-                </div>
-                <div class="stat-value">
-                    856
-                </div>
+
+                {% endfor %}
+
+                <button type="button" class="report-button">
+                    STOCK REPLENISHMENT REPORT
+                </button>
+
             </div>
-        </section>
-        <!-- =================================
-             MIDDLE SECTION
-        ================================= -->
-        <section class="middle-grid">
-            <!-- RECENT ORDERS -->
-            <div class="panel">
-                <div class="panel-header">
-                    <h2 class="panel-title">
-                        Recent Orders
+        </div>
+
+    </section>
+
+    <!-- BOTTOM SECTION -->
+    <section class="bottom-grid">
+
+        <!-- CATEGORY DISTRIBUTION -->
+        <div class="bottom-card">
+
+            <div class="bottom-header">
+
+                <div>
+                    <h2 class="bottom-title">
+                        Category Distribution
                     </h2>
-                    <a href="#" class="view-all">
-                        View All
-                    </a>
+
+                    <p class="bottom-description">
+                        Inventory volume by sneaker line
+                    </p>
                 </div>
-                <table class="order-table">
-                    <thead>
-                        <tr>
-                            <th>ORDER ID</th>
-                            <th>CUSTOMER</th>
-                            <th>SNEAKER MODEL</th>
-                            <th>AMOUNT</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="order-id">
-                                #NK-8821
-                            </td>
-                            <td>
-                                John Doe
-                            </td>
-                            <td>
-                                Air Jordan 1
-                                <br>
-                                Retro High OG
-                            </td>
-                            <td>
-                                ₹20,999
-                            </td>
-                            <td>
-                                <span class="status delivered">
-                                    DELIVERED
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="order-id">
-                                #NK-8822
-                            </td>
-                            <td>
-                                Sarah
-                                <br>
-                                Jenkins
-                            </td>
-                            <td>
-                                Nike Air Max
-                                <br>
-                                270 'Volt'
-                            </td>
-                            <td>
-                                ₹12,999
-                            </td>
-                            <td>
-                                <span class="status processing">
-                                    PROCESSING
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="order-id">
-                                #NK-8823
-                            </td>
-                            <td>
-                                Mike Ross
-                            </td>
-                            <td>
-                                Nike Dunk Low
-                                <br>
-                                Panda
-                            </td>
-                            <td>
-                                ₹9,999
-                            </td>
-                            <td>
-                                <span class="status shipped">
-                                    SHIPPED
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="order-id">
-                                #NK-8824
-                            </td>
-                            <td>
-                                Harvey
-                                <br>
-                                Specter
-                            </td>
-                            <td>
-                                Air Jordan 4
-                                <br>
-                                Military Black
-                            </td>
-                            <td>
-                                ₹18,499
-                            </td>
-                            <td>
-                                <span class="status pending">
-                                    PENDING
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                <select class="season-select">
+                    <option>
+                        Current Season
+                    </option>
+                </select>
+
             </div>
-            <!-- =================================
-                 HOTTEST RELEASES
-            ================================= -->
-            <div class="panel">
-                <div class="panel-header">
-                    <h2 class="panel-title">
-                        Hottest Releases
-                    </h2>
+
+            <div class="category-content">
+
+                <div
+                    class="donut"
+                    id="categoryDonut"
+                >
+                    <div class="donut-center">
+
+                        {% if category_distribution %}
+                            <div class="donut-percent">
+                                {{ category_distribution.0.percentage|floatformat:1 }}%
+                            </div>
+
+                            <div class="donut-label">
+                                {{ category_distribution.0.name }}
+                            </div>
+                        {% else %}
+                            <div class="donut-percent">
+                                0%
+                            </div>
+
+                            <div class="donut-label">
+                                NO DATA
+                            </div>
+                        {% endif %}
+
+                    </div>
                 </div>
-                <div class="release-list">
-                    <div class="release-item">
-                        <div class="release-image">
-                            <i class="fa-solid fa-shoe-prints"></i>
+
+                <div class="legend">
+
+                    {% for category in category_distribution %}
+
+                        <div class="legend-item">
+
+                            <span class="legend-dot legend-dot-{{ forloop.counter }}"></span>
+
+                            <span>
+                                {{ category.name }}
+                            </span>
+
+                            <strong>
+                                {{ category.percentage|floatformat:1 }}%
+                            </strong>
+
                         </div>
-                        <div class="release-info">
-                            <div class="release-name">
-                                Nike Air Max 270
-                            </div>
-                            <div class="release-sold">
-                                850 SOLD THIS WEEK
-                            </div>
+
+                    {% empty %}
+
+                        <div class="empty-message">
+                            No category data available.
                         </div>
-                        <div class="release-price">
-                            ₹12,999
-                        </div>
-                    </div>
-                    <div class="release-item">
-                        <div class="release-image">
-                            <i class="fa-solid fa-shoe-prints"></i>
-                        </div>
-                        <div class="release-info">
-                            <div class="release-name">
-                                Nike Dunk Low
-                            </div>
-                            <div class="release-sold">
-                                724 SOLD THIS WEEK
-                            </div>
-                        </div>
-                        <div class="release-price">
-                            ₹9,999
-                        </div>
-                    </div>
-                    <div class="release-item">
-                        <div class="release-image">
-                            <i class="fa-solid fa-shoe-prints"></i>
-                        </div>
-                        <div class="release-info">
-                            <div class="release-name">
-                                Air Jordan 1 High
-                            </div>
-                            <div class="release-sold">
-                                612 SOLD THIS WEEK
-                            </div>
-                        </div>
-                        <div class="release-price">
-                            ₹18,499
-                        </div>
-                    </div>
-                    <button class="report-button">
-                        STOCK REPLENISHMENT REPORT
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SALES TRAJECTORY -->
+       <div class="bottom-card">
+            <div class="bottom-header">
+                <div>
+                    <h2 class="bottom-title" id="salesChartTitle">
+                        Sales Trajectory
+                    </h2>
+
+                    <p class="bottom-description" id="salesChartDescription">
+                        Daily revenue performance in ₹
+                    </p>
+                </div>
+
+                <div class="chart-tabs">
+                    <button
+                        type="button"
+                        class="chart-tab active"
+                        data-chart="revenue"
+                    >
+                        Revenue
+                    </button>
+
+                    <button
+                        type="button"
+                        class="chart-tab"
+                        data-chart="orders"
+                    >
+                        Orders
                     </button>
                 </div>
             </div>
-        </section>
-        <!-- =================================
-             BOTTOM SECTION
-        ================================= -->
-        <section class="bottom-grid">
-            <!-- CATEGORY DISTRIBUTION -->
-            <div class="bottom-card">
-                <div class="bottom-header">
-                    <div>
-                        <h2 class="bottom-title">
-                            Category Distribution
-                        </h2>
-                        <p class="bottom-description">
-                            Inventory volume by sneaker line
-                        </p>
+
+            <div class="bar-chart" id="salesChart">
+
+                {% for row in sales_trajectory %}
+
+                    <div
+                        class="bar-wrapper"
+                        data-revenue="{{ row.revenue|default:0 }}"
+                        data-orders="{{ row.orders|default:0 }}"
+                        title="{{ row.label }}"
+                    >
+                        <div
+                            class="bar {% if forloop.last %}current{% endif %}"
+                            style="height:{{ row.revenue_percentage }}%;"
+                        ></div>
+
+                        <span class="bar-label">
+                            {{ row.short_label }}
+                        </span>
                     </div>
-                    <select class="season-select">
-                        <option>
-                            Current Season
-                        </option>
-                    </select>
-                </div>
-                <div class="category-content">
-                    <div class="donut">
-                        <div class="donut-center">
-                            <div class="donut-percent">
-                                42%
-                            </div>
-                            <div class="donut-label">
-                                RUNNING
-                            </div>
-                        </div>
+
+                {% empty %}
+
+                    <div class="empty-message">
+                        No sales data available.
                     </div>
-                    <div class="legend">
-                        <div class="legend-item">
-                            <span class="legend-dot"></span>
-                            Lifestyle (42%)
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot second"></span>
-                            Jordan (31%)
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot third"></span>
-                            Performance (27%)
-                        </div>
-                    </div>
-                </div>
+
+                {% endfor %}
+
             </div>
-            <!-- SALES TRAJECTORY -->
-            <div class="bottom-card">
-                <div class="bottom-header">
-                    <div>
-                        <h2 class="bottom-title">
-                            Sales Trajectory
-                        </h2>
-                        <p class="bottom-description">
-                            Quarterly revenue performance in ₹
-                        </p>
-                    </div>
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">
-                            Revenue
-                        </button>
-                        <button class="chart-tab">
-                            Orders
-                        </button>
-                    </div>
-                </div>
-                <div class="bar-chart">
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                </div>
-            </div>
-        </section>
-    </div>
+        </div/>
+    </section>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chartTabs = document.querySelectorAll(".chart-tab");
+    const chartBars = document.querySelectorAll(".bar-wrapper");
+    const chartTitle = document.getElementById("salesChartTitle");
+    const chartDescription = document.getElementById("salesChartDescription");
+
+    function updateSalesChart(type) {
+        let maxValue = 0;
+
+        chartBars.forEach(function (wrapper) {
+            const value = Number(
+                wrapper.dataset[type]
+            ) || 0;
+
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        });
+
+        chartBars.forEach(function (wrapper, index) {
+            const bar = wrapper.querySelector(".bar");
+
+            if (!bar) {
+                return;
+            }
+
+            const value = Number(
+                wrapper.dataset[type]
+            ) || 0;
+
+            let percentage = 0;
+
+            if (maxValue > 0) {
+                percentage = (
+                    value / maxValue
+                ) * 100;
+            }
+
+            bar.style.height = percentage + "%";
+
+            if (index === chartBars.length - 1) {
+                bar.classList.add("current");
+            } else {
+                bar.classList.remove("current");
+            }
+
+            if (type === "revenue") {
+                wrapper.title =
+                    "Revenue: ₹" +
+                    value.toFixed(2);
+            } else {
+                wrapper.title =
+                    "Orders: " +
+                    value;
+            }
+        });
+
+        if (type === "revenue") {
+            chartTitle.textContent =
+                "Sales Trajectory";
+
+            chartDescription.textContent =
+                "Daily revenue performance in ₹";
+        } else {
+            chartTitle.textContent =
+                "Order Trajectory";
+
+            chartDescription.textContent =
+                "Daily order performance";
+        }
+    }
+
+    chartTabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            const type =
+                tab.dataset.chart;
+
+            chartTabs.forEach(function (button) {
+                button.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+            updateSalesChart(type);
+        });
+    });
+
+    updateSalesChart("revenue");
+});
+</script>
 
 {% endblock %}
-

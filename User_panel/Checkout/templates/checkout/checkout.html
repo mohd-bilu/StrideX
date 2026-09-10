@@ -1364,11 +1364,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (couponButton && couponInput) {
-        const params = new URLSearchParams(window.location.search);
-        const selectedCoupon = params.get("coupon");
+        const selectedCoupon = sessionStorage.getItem("selected_coupon_code");
 
         if (selectedCoupon && !couponInput.disabled) {
             couponInput.value = selectedCoupon.toUpperCase();
+            sessionStorage.removeItem("selected_coupon_code");
         }
 
         couponButton.addEventListener("click", function () {

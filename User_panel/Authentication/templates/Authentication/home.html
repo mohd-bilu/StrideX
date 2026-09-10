@@ -1589,108 +1589,72 @@
 </section>
 
 
-
 <!-- ========================================
      TRENDING CATEGORIES
 ======================================== -->
 
-
 <section class="section categories-section">
-
 
     <div class="section-header">
 
-
         <div>
-
             <p class="section-label">
-
                 EXPLORE COLLECTION
-
             </p>
 
-
             <h2 class="section-title">
-
                 Trending Categories
-
             </h2>
-
         </div>
 
-
-       <a href="{% url 'product:product_list' %}">
-
+        <a href="{% url 'product:category_list' %}">
             VIEW ALL
-
             <i class="fa-solid fa-arrow-right"></i>
-
         </a>
-
 
     </div>
 
-
-
     <div class="category-grid">
 
-    {% for category in categories %}
+        {% for category in categories %}
 
-        <a href="{% url 'product:product_list' %}?category={{ category.id }}"
-           class="category-card">
+            <a href="{% url 'product:product_list' %}?category={{ category.id }}"
+               class="category-card">
 
-            {% if category.image %}
+                {% if category.image %}
+                    <img
+                        src="{{ category.image.url }}"
+                        alt="{{ category.category_name }}"
+                        class="category-image">
+                {% endif %}
 
-                <img
-                    src="{{ category.image.url }}"
-                    alt="{{ category.category_name }}"
-                    class="category-image">
+                <div class="category-overlay"></div>
 
-            {% else %}
+                <div class="category-info">
 
-                <div class="category-icon">
+                    <h3>
+                        {{ category.category_name }}
+                    </h3>
 
-                    <i class="fa-solid fa-shoe-prints"></i>
+                    <p>
+                        Explore Collection
+                    </p>
 
                 </div>
 
-            {% endif %}
+            </a>
 
-            <div class="category-overlay"></div>
+        {% empty %}
 
-            <div class="category-info">
+            <p>No categories found.</p>
 
-                <h3>
+        {% endfor %}
 
-                    {{ category.category_name }}
-
-                </h3>
-
-                <p>
-
-                    Explore Collection
-
-                </p>
-
-            </div>
-
-        </a>
-
-    {% empty %}
-
-        <p>No categories found.</p>
-
-    {% endfor %}
-
-</div>
-
+    </div>
 
 </section>
-
-
-
 <!-- ========================================
-     TRENDING PRODUCTS
+     NEW ARRIVALS
 ======================================== -->
 
 <section class="section products-section">
@@ -1725,102 +1689,76 @@
 
         {% for product in products %}
 
-            {% with product.variants.first as variant %}
+            {% with variant=product.home_variants.0 %}
 
-            <div class="product-card">
+                {% with thumbnail=variant.images.first %}
 
-                <div class="product-image">
+                    <div class="product-card">
 
-                    <a href="{% url 'product:product_detail' product.id %}">
+                        <div class="product-image">
 
-                        {% if variant and variant.images.first %}
+                            <a href="{% url 'product:product_detail' product.id %}">
 
-                            <img
-                                src="{{ variant.images.first.image.url }}"
-                                alt="{{ product.product_name }}"
-                                class="product-photo">
+                                <img
+                                    src="{{ thumbnail.image.url }}"
+                                    alt="{{ product.product_name }}"
+                                    class="product-photo">
 
-                        {% else %}
+                            </a>
 
-                            <i class="fa-solid fa-shoe-prints"></i>
+                        </div>
 
-                        {% endif %}
+                        <div class="product-details">
 
-                    </a>
+                            <span class="product-category">
+                                {{ product.category.category_name|upper }}
+                            </span>
 
-                </div>
+                            <h3>
+                                <a href="{% url 'product:product_detail' product.id %}">
+                                    {{ product.product_name }}
+                                </a>
+                            </h3>
 
-                <div class="product-details">
+                            <div class="rating">
 
-                    <span class="product-category">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
 
-                        {{ product.category.category_name|upper }}
+                                <span>
+                                    (Coming Soon)
+                                </span>
 
-                    </span>
+                            </div>
 
-                    <h3>
+                            <div class="price-row">
 
-                        <a href="{% url 'product:product_detail' product.id %}">
+                                <span class="price">
+                                    ₹{{ variant.price }}
+                                </span>
 
-                            {{ product.product_name }}
+                            </div>
 
-                        </a>
-
-                    </h3>
-
-                    <div class="rating">
-
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-
-                        <span>
-                            (Coming Soon)
-                        </span>
+                        </div>
 
                     </div>
 
-                    <div class="price-row">
-
-                        {% if variant %}
-
-                            <span class="price">
-
-                                ₹{{ variant.price }}
-
-                            </span>
-
-                        {% else %}
-
-                            <span class="price">
-
-                                Price Not Available
-
-                            </span>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
+                {% endwith %}
 
             {% endwith %}
 
         {% empty %}
 
-            <p>
-                No products available.
-            </p>
+            <p>No products available.</p>
 
         {% endfor %}
 
     </div>
 
-</section>              
+</section>
 <!-- ========================================
      PROMO
 ======================================== -->

@@ -308,6 +308,34 @@
     border-radius:14px;
 }
 
+.invoice-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:44px;
+    padding:10px 18px;
+    border:1px solid #a44a0c;
+    border-radius:8px;
+    background:#a44a0c;
+    color:#fff;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.invoice-btn i{
+    font-size:13px;
+}
+
+.invoice-btn:hover{
+    background:#7c3507;
+    border-color:#7c3507;
+    color:#fff;
+}
+
 @media(max-width:768px){
     .stride-order-detail{
         padding:30px 15px 50px;
@@ -575,12 +603,12 @@
 
    <div class="stride-order-actions">
 
-    <a
-        href="{% url 'order:download_invoice' order.order_id %}"
-        class="stride-btn-primary"
-    >
-        Download Invoice
-    </a>
+    {% if order.order_status == "DELIVERED" or order.order_status == "RETURNED" %}
+        <a href="{% url 'order:download_invoice' order.order_id %}" class="invoice-btn">
+            <i class="fa-solid fa-download"></i>
+            Download Invoice
+        </a>
+        {% endif %}
 
         {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
             <form
