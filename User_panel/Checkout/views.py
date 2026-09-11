@@ -358,7 +358,7 @@ def checkout(request):
 
     return render(
         request,
-        "Checkout/checkout.html",
+        "checkout/checkout.html",
         context,
     )
 @login_required(login_url="login")
