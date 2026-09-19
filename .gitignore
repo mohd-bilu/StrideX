@@ -27,3 +27,6 @@ media/*
 
 # Collected static files
 staticfiles/
+
+# Database backups
+*.sql
