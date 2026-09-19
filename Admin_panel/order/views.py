@@ -96,13 +96,14 @@ def order_list(request):
         Order.objects
         .select_related(
             "user",
-            "address",
+            "coupon",
+            
         )
         .prefetch_related(
             "items__variant__product",
             "items__variant__images",
         )
-    )
+    ) 
 
     if search:
         orders = orders.filter(
@@ -194,7 +195,6 @@ def return_list(request):
         .select_related(
             "order",
             "order__user",
-            "order__address",
             "variant",
             "variant__product",
         )
@@ -290,7 +290,7 @@ def order_detail(request, order_id):
         Order.objects
         .select_related(
             "user",
-            "address",
+            "coupon",
         )
         .prefetch_related(
             "items__variant__product",

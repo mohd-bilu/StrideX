@@ -8,6 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Prefetch, Q, Sum
 from django.utils import timezone
+from django.db.models import ProtectedError
 from Admin_panel.product.models import Product, Variant
 from Admin_panel.category.models import Category
 from .models import User, Address
@@ -536,13 +537,12 @@ def edit_profile(request):
             messages.error(request, error)
             return redirect("edit_profile")
 
-        error = validate_phone_number(
-            phone_number
-        )
+        if phone_number:
+            error = validate_phone_number(phone_number)
 
-        if error:
-            messages.error(request, error)
-            return redirect("edit_profile")
+            if error:
+                messages.error(request, error)
+                return redirect("edit_profile")
 
         user.full_name = full_name
         user.phone_number = phone_number

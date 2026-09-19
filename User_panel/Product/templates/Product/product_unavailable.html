@@ -1,0 +1,134 @@
+{% extends "user_base.html" %}
+
+{% block title %}
+Product Unavailable - StrideX
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.unavailable-section{
+    min-height:75vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:80px 20px;
+    background:#050505;
+}
+
+.unavailable-container{
+    width:100%;
+    max-width:650px;
+    text-align:center;
+    padding:60px 40px;
+    background:#111111;
+    border:1px solid #252525;
+    border-radius:20px;
+}
+
+.unavailable-icon{
+    width:90px;
+    height:90px;
+    margin:0 auto 28px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#211813;
+    border:1px solid rgba(255,122,0,.25);
+}
+
+.unavailable-icon i{
+    font-size:38px;
+    color:#ff7a00;
+}
+
+.unavailable-container h1{
+    margin:0 0 18px;
+    color:#ffffff;
+    font-size:34px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.unavailable-container p{
+    margin:0 auto 32px;
+    max-width:500px;
+    color:#999999;
+    font-size:15px;
+    line-height:1.8;
+}
+
+.shop-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-width:190px;
+    height:52px;
+    padding:0 25px;
+    background:#ff7a00;
+    color:#ffffff;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.shop-button:hover{
+    background:#ff922d;
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(255,122,0,.25);
+}
+
+@media(max-width:600px){
+    .unavailable-section{
+        min-height:70vh;
+        padding:50px 15px;
+    }
+
+    .unavailable-container{
+        padding:45px 22px;
+    }
+
+    .unavailable-container h1{
+        font-size:27px;
+    }
+
+    .unavailable-container p{
+        font-size:14px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="unavailable-section">
+    <div class="unavailable-container">
+
+        <div class="unavailable-icon">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+
+        <h1>
+            Product No Longer Available
+        </h1>
+
+        <p>
+            Sorry, this product is no longer available.
+            It may have been removed from our store or is
+            currently unavailable.
+        </p>
+
+        <a
+            href="{% url 'product:product_list' %}"
+            class="shop-button"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
+            Continue Shopping
+        </a>
+
+    </div>
+</section>
+
+{% endblock %}

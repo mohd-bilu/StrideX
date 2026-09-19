@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 from Admin_panel.product.models import Variant
 from Admin_panel.coupon_offer.models import Coupon
-from User_panel.Authentication.models import Address
 
 
 class Order(models.Model):
@@ -32,7 +31,6 @@ class Order(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders")
     order_id = models.CharField(max_length=25, unique=True, blank=True)
-    address = models.ForeignKey(Address, on_delete=models.PROTECT, related_name="orders")
     address_full_name = models.CharField(max_length=100, null=True, blank=True)
     address_phone_number = models.CharField(max_length=15, null=True, blank=True)
     address_line1 = models.CharField(max_length=255, null=True, blank=True)

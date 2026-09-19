@@ -257,6 +257,12 @@ def update_cart(request, item_id):
         CartItem,
         id=item_id,
         cart__user=request.user,
+        variant__is_active=True,
+        variant__is_deleted=False,
+        variant__product__is_active=True,
+        variant__product__is_deleted=False,
+        variant__product__category__is_active=True,
+        variant__product__category__is_deleted=False,
     )
 
     action = request.GET.get("action")
@@ -400,6 +406,10 @@ def add_to_wishlist(request, variant_id):
         id=variant_id,
         is_active=True,
         is_deleted=False,
+        product__is_active=True,
+        product__is_deleted=False,
+        product__category__is_active=True,
+        product__category__is_deleted=False,
     )
 
     wishlist, created = (

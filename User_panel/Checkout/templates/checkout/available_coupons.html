@@ -15,7 +15,7 @@ Available Coupons
         </div>
 
         <a
-            href="{% url 'checkout:checkout' %}"
+            href="{{ next_url|default:'/' }}"
             class="back-button"
         >
             ← Back to Checkout
@@ -418,7 +418,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             sessionStorage.setItem("selected_coupon_code", code);
 
-            window.location.href = "{% url 'checkout:checkout' %}";
+            const nextUrl = "{{ next_url|escapejs }}";
+
+            if (nextUrl) {
+                window.location.href = nextUrl;
+            } else {
+                window.location.href = "{% url 'checkout:checkout' %}";
+            }
         });
     });
 });

@@ -485,9 +485,7 @@
                         class="form-control"
                         value="{{ address.phone_number }}"
                         inputmode="numeric"
-                        maxlength="10"
                         autocomplete="tel"
-                        required
                     >
                 </div>
 
@@ -606,7 +604,6 @@
 
 </div>
 {% endblock %}
-
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -637,7 +634,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const namePattern = /^[A-Za-z][A-Za-z\s'-]*$/;
         const textPattern = /^[A-Za-z][A-Za-z\s'-]*$/;
-        const phonePattern = /^[6-9]\d{9}$/;
         const pincodePattern = /^\d{6}$/;
 
         let errorMessage = "";
@@ -664,14 +660,22 @@ document.addEventListener("DOMContentLoaded", function () {
             errorMessage = "State is required.";
         } else if (!textPattern.test(stateValue)) {
             errorMessage = "State can contain only letters, spaces, apostrophes and hyphens.";
+        } else if (!pincodeValue) {
+            errorMessage = "Pincode is required.";
         } else if (!pincodePattern.test(pincodeValue)) {
             errorMessage = "Pincode must contain exactly 6 digits.";
         } else if (!countryValue) {
             errorMessage = "Country is required.";
         } else if (!textPattern.test(countryValue)) {
             errorMessage = "Country can contain only letters, spaces, apostrophes and hyphens.";
-        } else if (!phonePattern.test(phoneValue)) {
-            errorMessage = "Phone number must be a valid 10-digit mobile number.";
+        } else if (!phoneValue) {
+            errorMessage = "Phone number is required.";
+        } else if (!/^\d+$/.test(phoneValue)) {
+            errorMessage = "Phone number must contain only digits.";
+        } else if (phoneValue.length !== 10) {
+            errorMessage = "Phone number must contain exactly 10 digits.";
+        } else if (!/^[6-9]/.test(phoneValue)) {
+            errorMessage = "Indian mobile number must start with 6, 7, 8 or 9.";
         } else if (!document.querySelector('input[name="type"]:checked')) {
             errorMessage = "Please select an address type.";
         }
@@ -680,15 +684,15 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
 
             Swal.fire({
-                toast:true,
-                position:"top-end",
-                icon:"error",
-                title:errorMessage,
-                showConfirmButton:false,
-                timer:3000,
-                timerProgressBar:true,
-                background:"#21130e",
-                color:"#fff"
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: errorMessage,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: "#21130e",
+                color: "#fff"
             });
 
             return;
@@ -708,9 +712,15 @@ document.addEventListener("DOMContentLoaded", function () {
         this.value = this.value.replace(/\D/g, "").slice(0, 6);
     });
 
-    phoneNumber.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, "").slice(0, 10);
-    });
+    if (!phoneValue) {
+        errorMessage = "Phone number is required.";
+    } else if (!/^\d+$/.test(phoneValue)) {
+        errorMessage = "Phone number must contain only digits.";
+    } else if (phoneValue.length !== 10) {
+        errorMessage = "Phone number must contain exactly 10 digits.";
+    } else if (!/^[6-9]/.test(phoneValue)) {
+        errorMessage = "Indian mobile number must start with 6, 7, 8 or 9.";
+    }
 });
 
 function goBack() {

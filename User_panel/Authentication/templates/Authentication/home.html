@@ -1227,7 +1227,12 @@
             font-size:12px;
         }
 
-
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
 
         /* ========================================
            RESPONSIVE
@@ -1728,10 +1733,6 @@
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
 
-                                <span>
-                                    (Coming Soon)
-                                </span>
-
                             </div>
 
                             <div class="price-row">
@@ -1798,12 +1799,12 @@
         </p>
 
 
-        <button type="button"
-                class="primary-btn">
+        <a href="{% url 'product:product_list' %}"
+            class="primary-btn">
 
             EXPLORE COLLECTION
 
-        </button>
+        </a>
 
 
     </div>

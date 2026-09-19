@@ -72,6 +72,17 @@ Categories - StrideX
     box-shadow:0 18px 35px rgba(0,0,0,.35);
 }
 
+.category-card.unavailable-category{
+    cursor:not-allowed;
+    opacity:.65;
+}
+
+.category-card.unavailable-category:hover{
+    transform:none;
+    border-color:rgba(255,255,255,.08);
+    box-shadow:none;
+}
+
 .category-thumbnail{
     position:absolute;
     inset:0;
@@ -83,6 +94,10 @@ Categories - StrideX
 
 .category-card:hover .category-thumbnail{
     transform:scale(1.06);
+}
+
+.category-card.unavailable-category:hover .category-thumbnail{
+    transform:none;
 }
 
 .category-overlay{
@@ -113,6 +128,11 @@ Categories - StrideX
     font-size:21px;
 }
 
+.category-card.unavailable-category .category-icon{
+    color:#ff8d8d;
+    border-color:rgba(255,141,141,.35);
+}
+
 .category-content{
     position:relative;
     z-index:3;
@@ -140,6 +160,20 @@ Categories - StrideX
     gap:12px;
 }
 
+.category-unavailable-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    width:max-content;
+    margin-bottom:10px;
+    padding:7px 12px;
+    border-radius:20px;
+    background:#4a1616;
+    color:#ff8d8d;
+    font-size:11px;
+    font-weight:700;
+}
+
 .category-placeholder{
     position:absolute;
     inset:0;
@@ -151,21 +185,8 @@ Categories - StrideX
     font-size:70px;
 }
 
-.category-name{
-    color:#ffffff;
-    font-size:25px;
-    font-weight:800;
-    margin-bottom:8px;
-}
-
-.category-link{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    color:#ff7a00;
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:1px;
+.category-card.unavailable-category .category-placeholder{
+    color:#777;
 }
 
 .empty-categories{
@@ -269,51 +290,97 @@ Categories - StrideX
 
                 {% for category in categories %}
 
-                    <a
-                        href="{% url 'product:product_list' %}?category={{ category.id }}"
-                        class="category-card"
-                    >
+                    {% if category.is_active %}
 
-                        {% if category.image %}
+                        <a
+                            href="{% url 'product:product_list' %}?category={{ category.id }}"
+                            class="category-card"
+                        >
 
-                            <img
-                                src="{{ category.image.url }}"
-                                alt="{{ category.category_name }}"
-                                class="category-thumbnail"
-                            >
+                            {% if category.image %}
 
-                        {% else %}
+                                <img
+                                    src="{{ category.image.url }}"
+                                    alt="{{ category.category_name }}"
+                                    class="category-thumbnail"
+                                >
 
-                            <div class="category-placeholder">
-                                <i class="fa-solid fa-shoe-prints"></i>
+                            {% else %}
+
+                                <div class="category-placeholder">
+                                    <i class="fa-solid fa-shoe-prints"></i>
+                                </div>
+
+                            {% endif %}
+
+                            <div class="category-overlay"></div>
+
+                            <div class="category-icon">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </div>
 
-                        {% endif %}
+                            <div class="category-content">
 
-                        <div class="category-overlay"></div>
+                                <div class="category-name">
+                                    {{ category.category_name }}
+                                </div>
 
-                        <div class="category-icon">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                <div class="category-link">
+                                    VIEW PRODUCTS
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    {% else %}
+
+                        <div class="category-card unavailable-category">
+
+                            {% if category.image %}
+
+                                <img
+                                    src="{{ category.image.url }}"
+                                    alt="{{ category.category_name }}"
+                                    class="category-thumbnail"
+                                >
+
+                            {% else %}
+
+                                <div class="category-placeholder">
+                                    <i class="fa-solid fa-shoe-prints"></i>
+                                </div>
+
+                            {% endif %}
+
+                            <div class="category-overlay"></div>
+
+                            <div class="category-icon">
+                                <i class="fa-solid fa-ban"></i>
+                            </div>
+
+                            <div class="category-content">
+
+                                <div class="category-unavailable-badge">
+                                    <i class="fa-solid fa-ban"></i>
+                                    Category Not Available
+                                </div>
+
+                                <div class="category-name">
+                                    {{ category.category_name }}
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        <div class="category-content">
-
-                            <div class="category-name">
-                                {{ category.category_name }}
-                            </div>
-
-                            <div class="category-link">
-                                VIEW PRODUCTS
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </div>
-
-                        </div>
-
-                    </a>
+                    {% endif %}
 
                 {% endfor %}
 
             </div>
+
             {% if page_obj.has_other_pages %}
 
                 <div class="pagination">
