@@ -517,7 +517,6 @@ def update_order_status(request, order_id):
         order_id=order.order_id,
     )
 
-
 @never_cache
 @login_required(login_url="admin_login")
 @staff_member_required
@@ -675,6 +674,32 @@ def update_return_status(request, item_id):
                 request,
                 f"Return approved for "
                 f"{item.variant.product.product_name}.",
+            )
+
+        all_items = list(
+            order.items.all()
+        )
+
+        if (
+            any(
+                order_item.status == "RETURNED"
+                for order_item in all_items
+            )
+            and all(
+                order_item.status in [
+                    "RETURNED",
+                    "CANCELLED",
+                ]
+                for order_item in all_items
+            )
+        ):
+            order.order_status = "RETURNED"
+
+            order.save(
+                update_fields=[
+                    "order_status",
+                    "updated_at",
+                ]
             )
 
     elif new_status == "REJECTED":

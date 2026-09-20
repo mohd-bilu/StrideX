@@ -990,15 +990,7 @@ def cancel_order(request, order_id):
         "",
     ).strip()
 
-    if not cancel_reason:
-        messages.error(
-            request,
-            "Please provide a cancellation reason.",
-        )
-        return redirect(
-            "order:order_detail",
-            order_id=order.order_id,
-        )
+    
 
     items_to_cancel = list(
         order.items.filter(
@@ -1128,15 +1120,7 @@ def cancel_order_item(request, order_id, item_id):
         "",
     ).strip()
 
-    if not cancel_reason:
-        messages.error(
-            request,
-            "Please provide a cancellation reason.",
-        )
-        return redirect(
-            "order:order_detail",
-            order_id=order.order_id,
-        )
+    
 
     variant = (
         Variant.objects

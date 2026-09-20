@@ -475,6 +475,7 @@
             {% endwith %}
 
             <div class="stride-product-details">
+
                 <h3>
                     {{ item.variant.product.product_name }}
                 </h3>
@@ -487,7 +488,6 @@
                     {% if item.variant.color %}
                         <span>Color: {{ item.variant.color }}</span>
                     {% endif %}
-
                 </div>
 
                 <p>
@@ -525,15 +525,17 @@
                     {% elif item.status == 'REJECTED' %}
                         status-rejected
                     {% endif %}">
+
                     {% if item.status == "RETURN_REQUESTED" %}
                         PENDING
                     {% elif item.status == "RETURNED" %}
-                        APPROVED
+                        RETURNED
                     {% elif item.status == "REJECTED" %}
                         REJECTED
                     {% else %}
                         {{ item.get_status_display }}
                     {% endif %}
+
                 </span>
 
                 <div class="stride-order-actions">
@@ -548,7 +550,7 @@
 
                                 <textarea
                                     name="cancel_reason"
-                                    placeholder="Enter cancellation reason"
+                                    placeholder="Enter cancellation reason (optional)"
                                 ></textarea>
 
                                 <button
@@ -565,6 +567,7 @@
                         <form
                             method="POST"
                             action="{% url 'order:request_return' order.order_id %}"
+                            class="return-form"
                         >
                             {% csrf_token %}
 
@@ -577,13 +580,11 @@
                             <textarea
                                 name="return_reason"
                                 placeholder="Enter return reason"
-                                required
                             ></textarea>
 
                             <button
                                 type="submit"
                                 class="stride-btn-secondary"
-                                onclick="return confirm('Are you sure you want to request a return for this item?');"
                             >
                                 Request Return
                             </button>
@@ -593,33 +594,40 @@
                 </div>
             </div>
         </div>
+
     {% empty %}
+
         <div class="stride-empty">
             No products found for this order.
         </div>
+
     {% endfor %}
 
     <hr>
 
-   <div class="stride-order-actions">
+    <div class="stride-order-actions">
 
-    {% if order.order_status == "DELIVERED" or order.order_status == "RETURNED" %}
-        <a href="{% url 'order:download_invoice' order.order_id %}" class="invoice-btn">
-            <i class="fa-solid fa-download"></i>
-            Download Invoice
-        </a>
+        {% if order.order_status == "DELIVERED" or order.order_status == "RETURNED" %}
+            <a
+                href="{% url 'order:download_invoice' order.order_id %}"
+                class="invoice-btn"
+            >
+                <i class="fa-solid fa-download"></i>
+                Download Invoice
+            </a>
         {% endif %}
 
         {% if order.order_status == "PENDING" or order.order_status == "PROCESSING" %}
             <form
                 method="POST"
                 action="{% url 'order:cancel_order' order.order_id %}"
+                class="cancel-order-form"
             >
                 {% csrf_token %}
 
                 <textarea
                     name="cancel_reason"
-                    placeholder="Enter cancellation reason"
+                    placeholder="Enter cancellation reason (optional)"
                 ></textarea>
 
                 <button
@@ -630,44 +638,34 @@
                 </button>
             </form>
         {% endif %}
-    <a
-        href="{% url 'order:order_list' %}"
-        class="stride-btn-secondary"
-    >
-        Back to Orders
-    </a>
+
+        <a
+            href="{% url 'order:order_list' %}"
+            class="stride-btn-secondary"
+        >
+            Back to Orders
+        </a>
+
+    </div>
 
 </div>
 {% endblock %}
+
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    document.querySelectorAll('form[action*="cancel-item"], form[action*="cancel/"]').forEach(function (form) {
+    document.querySelectorAll(
+        'form[action*="cancel-item"], form[action*="cancel/"]'
+    ).forEach(function (form) {
 
         form.addEventListener("submit", function (event) {
             event.preventDefault();
 
-            const reason = form.querySelector('textarea[name="cancel_reason"]');
-
-            if (reason && !reason.value.trim()) {
-                Swal.fire({
-                    toast: true,
-                    position: "top-end",
-                    icon: "warning",
-                    title: "Please provide a cancellation reason.",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-
-                reason.focus();
-                return;
-            }
-
-            const isItemCancellation = form.action.includes("cancel-item");
+            const isItemCancellation =
+                form.action.includes("cancel-item");
 
             Swal.fire({
                 title: isItemCancellation
@@ -684,9 +682,64 @@ document.addEventListener("DOMContentLoaded", function () {
                 cancelButtonText: "No",
                 reverseButtons: true
             }).then(function (result) {
+
                 if (result.isConfirmed) {
                     form.submit();
                 }
+
+            });
+        });
+
+    });
+
+    document.querySelectorAll(
+        "form.return-form"
+    ).forEach(function (form) {
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const reason = form.querySelector(
+                'textarea[name="return_reason"]'
+            );
+
+            if (!reason || !reason.value.trim()) {
+
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "warning",
+                    title: "Please provide a return reason.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: "#1d222d",
+                    color: "#ffffff"
+                });
+
+                if (reason) {
+                    reason.focus();
+                }
+
+                return;
+            }
+
+            Swal.fire({
+                title: "Request Return?",
+                text: "Are you sure you want to request a return for this item?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#7c3aed",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, request return",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then(function (result) {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
             });
         });
 
@@ -694,15 +747,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     {% if messages %}
         {% for message in messages %}
+
             Swal.fire({
                 toast: true,
                 position: "top-end",
                 icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}",
                 title: "{{ message|escapejs }}",
                 showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
+                timer: 3500,
+                timerProgressBar: true,
+                background: "#1d222d",
+                color: "#ffffff"
             });
+
         {% endfor %}
     {% endif %}
 
