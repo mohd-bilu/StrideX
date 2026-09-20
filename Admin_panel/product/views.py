@@ -70,7 +70,7 @@ def product_list(request):
         "new_arrivals": new_arrivals,
     }
 
-    return render(request, "Product/product_list.html", context)
+    return render(request, "product/product_list.html", context)
 def add_product(request):
 
     if request.method == "POST":
