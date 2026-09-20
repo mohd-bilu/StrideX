@@ -72,13 +72,13 @@ def validate_email_address(email):
 
 
 def validate_phone_number(phone_number):
-    phone_number = phone_number.strip()
+    phone_number = str(phone_number or "").strip()
 
     if not phone_number:
         return "Phone number is required."
 
-    if not re.fullmatch(r"^[6-9]\d{9}$", phone_number):
-        return "Phone number must be a valid 10-digit mobile number."
+    if not re.fullmatch(r"[6-9]\d{9}", phone_number):
+        return "Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9."
 
     return None
 

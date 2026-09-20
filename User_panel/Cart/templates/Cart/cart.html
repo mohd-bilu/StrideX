@@ -330,6 +330,13 @@ Cart
 .cart-details h3{
     word-break:break-word;
 }
+.unavailable-text{
+    color:#ef7777 !important;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-top:12px;
+}
 
 @media(max-width:1200px){
 
@@ -589,6 +596,18 @@ Cart
                         <h3>{{ item.variant.product.product_name }}</h3>
                         <p>Color : {{ item.variant.color }}</p>
                         <p>Size : {{ item.variant.size }}</p>
+
+                        {% if item.is_unavailable %}
+                            <p class="unavailable-text">
+                                <i class="fa-solid fa-ban"></i>
+                                PRODUCT UNAVAILABLE
+                            </p>
+                        {% elif item.variant.stock <= 0 %}
+                            <p class="unavailable-text">
+                                <i class="fa-solid fa-box-open"></i>
+                                OUT OF STOCK
+                            </p>
+                        {% endif %}
                     </div>
 
                     <div class="cart-price">
@@ -597,27 +616,53 @@ Cart
 
                     <div class="cart-quantity">
 
-                        <button
-                            type="button"
-                            class="qty-btn ajax-qty"
-                            data-action="decrease"
-                            data-url="{% url 'update_cart' item.id %}?action=decrease">
-                            −
-                        </button>
+                        {% if item.is_unavailable or item.variant.stock <= 0 %}
 
-                        <input
-                            class="qty-input"
-                            type="text"
-                            value="{{ item.quantity }}"
-                            readonly>
+                            <button
+                                type="button"
+                                class="qty-disabled"
+                                disabled>
+                                −
+                            </button>
 
-                        <button
-                            type="button"
-                            class="qty-btn ajax-qty"
-                            data-action="increase"
-                            data-url="{% url 'update_cart' item.id %}?action=increase">
-                            +
-                        </button>
+                            <input
+                                class="qty-input"
+                                type="text"
+                                value="{{ item.quantity }}"
+                                readonly>
+
+                            <button
+                                type="button"
+                                class="qty-disabled"
+                                disabled>
+                                +
+                            </button>
+
+                        {% else %}
+
+                            <button
+                                type="button"
+                                class="qty-btn ajax-qty"
+                                data-action="decrease"
+                                data-url="{% url 'update_cart' item.id %}?action=decrease">
+                                −
+                            </button>
+
+                            <input
+                                class="qty-input"
+                                type="text"
+                                value="{{ item.quantity }}"
+                                readonly>
+
+                            <button
+                                type="button"
+                                class="qty-btn ajax-qty"
+                                data-action="increase"
+                                data-url="{% url 'update_cart' item.id %}?action=increase">
+                                +
+                            </button>
+
+                        {% endif %}
 
                     </div>
 
@@ -681,15 +726,28 @@ Cart
                     </span>
                 </div>
 
-                {% if cart and cart.items.exists %}
+               {% if cart and cart.items.exists %}
 
-                    <a
-                        href="{% url 'checkout:checkout' %}"
-                        class="checkout-btn">
-                        Proceed to Checkout
-                    </a>
+                    {% if unavailable_count > 0 %}
+
+                        <button
+                            type="button"
+                            class="checkout-btn"
+                            disabled>
+                            Product Unavailable
+                        </button>
 
                     {% else %}
+
+                        <a
+                            href="{% url 'checkout:checkout' %}"
+                            class="checkout-btn">
+                            Proceed to Checkout
+                        </a>
+
+                    {% endif %}
+
+                {% else %}
 
                     <button
                         type="button"
@@ -698,7 +756,7 @@ Cart
                         Cart is Empty
                     </button>
 
-                    {% endif %}
+                {% endif %}
 
             </div>
 

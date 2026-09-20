@@ -1,14 +1,14 @@
 from decimal import Decimal
 
 import razorpay
-
+from django.views.decorators.cache import never_cache
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import  redirect, render
 from django.utils import timezone
 
 from Admin_panel.product.models import Variant
@@ -96,17 +96,29 @@ def get_buy_now_item(request):
 
     quantity = max(quantity, 1)
 
-    variant = get_object_or_404(
-        Variant.objects.select_related(
+    variant = (
+        Variant.objects
+        .select_related(
             "product",
             "product__category",
-        ).prefetch_related("images"),
-        id=variant_id,
-        is_active=True,
-        is_deleted=False,
-        product__is_active=True,
-        product__is_deleted=False,
+        )
+        .prefetch_related("images")
+        .filter(
+            id=variant_id,
+            is_active=True,
+            is_deleted=False,
+            product__is_active=True,
+            product__is_deleted=False,
+            product__category__is_active=True,
+            product__category__is_deleted=False,
+        )
+        .first()
     )
+
+    if variant is None:
+        raise ValueError(
+            "The selected product is no longer available."
+        )
 
     if variant.stock < quantity:
         raise ValueError(
@@ -148,16 +160,6 @@ def get_checkout_items(request, force_buy_now=False):
 
     for item in cart_items:
         variant = item.variant
-
-        if (
-            not variant.is_active
-            or variant.is_deleted
-            or not variant.product.is_active
-            or variant.product.is_deleted
-        ):
-            raise ValueError(
-                f"{variant.product.product_name} is no longer available."
-            )
 
         if item.quantity > variant.stock:
             raise ValueError(
@@ -231,8 +233,17 @@ def clear_checkout_session(request, clear_buy_now=True):
         request.session.pop("buy_now_quantity", None)
     request.session.modified = True
 
+@never_cache
 @login_required(login_url="login")
 def checkout(request):
+    if request.session.get("checkout_completed"):
+        request.session.pop("checkout_completed", None)
+        request.session.modified = True
+        messages.info(
+            request,
+            "This order has already been placed successfully."
+        )
+        return redirect("order:order_list")   
     buy_now = request.GET.get("buy_now") == "1"
     selected_coupon_code = request.GET.get("coupon", "").strip().upper()
 
@@ -253,17 +264,28 @@ def checkout(request):
         except (TypeError, ValueError):
             quantity = 1
 
-        variant = get_object_or_404(
-            Variant.objects.select_related(
+        variant = (
+            Variant.objects
+            .select_related(
                 "product",
                 "product__category",
-            ).prefetch_related("images"),
-            id=variant_id,
-            is_active=True,
-            is_deleted=False,
-            product__is_active=True,
-            product__is_deleted=False,
+            )
+            .prefetch_related("images")
+            .filter(
+                id=variant_id,
+                is_active=True,
+                is_deleted=False,
+                product__is_active=True,
+                product__is_deleted=False,
+                product__category__is_active=True,
+                product__category__is_deleted=False,
+            )
+            .first()
         )
+
+        if variant is None:
+            messages.error(request, "The selected product is no longer available.")
+            return redirect("product:product_list")
 
         if variant.stock < quantity:
             messages.error(
@@ -297,6 +319,30 @@ def checkout(request):
     except ValueError as exc:
         messages.error(request, str(exc))
         return redirect("product:product_list")
+
+    if not is_buy_now:
+        unavailable_item = next(
+            (
+                variant
+                for variant, quantity in items
+                if (
+                    not variant.is_active
+                    or variant.is_deleted
+                    or not variant.product.is_active
+                    or variant.product.is_deleted
+                    or not variant.product.category.is_active
+                    or variant.product.category.is_deleted
+                )
+            ),
+            None,
+        )
+
+        if unavailable_item:
+            messages.error(
+                request,
+                "One or more products in your cart are no longer available."
+            )
+            return redirect("cart")
 
     original_subtotal, offer_subtotal, offer_discount, item_calculations = (
         calculate_checkout_totals(items)
@@ -335,16 +381,31 @@ def checkout(request):
         Decimal("0.00"),
     )
 
-    addresses = Address.objects.filter(
-        user=request.user
-    ).order_by(
-        "-is_default",
-        "-id",
+    addresses = list(
+        Address.objects.filter(
+            user=request.user
+        ).order_by(
+            "-is_default",
+            "-id",
+        )
     )
+
+    selected_address = None
+
+    if addresses:
+        selected_address = next(
+            (
+                address
+                for address in addresses
+                if address.is_default
+            ),
+            addresses[0],
+        )
 
     context = {
         "cart_items": cart_items,
         "addresses": addresses,
+        "selected_address": selected_address,
         "original_subtotal": original_subtotal,
         "subtotal": original_subtotal,
         "offer_discount": offer_discount,
@@ -429,18 +490,53 @@ def remove_coupon(request):
 @login_required
 def available_coupons(request):
     now = timezone.localtime(timezone.now())
-    used_coupon_ids = CouponUsage.objects.filter(user=request.user).values_list("coupon_id", flat=True)
+
+    next_url = request.GET.get("next", "").strip()
+
+    if next_url in ("None", "null", ""):
+        next_url = None
+
+    if next_url and (
+        not next_url.startswith("/")
+        or next_url.startswith("//")
+    ):
+        next_url = None
+
+    used_coupon_ids = CouponUsage.objects.filter(
+        user=request.user
+    ).values_list(
+        "coupon_id",
+        flat=True
+    )
+
     coupons = Coupon.objects.filter(
         is_active=True,
         start_date__lte=now,
         expiry_date__gt=now,
-    ).exclude(id__in=used_coupon_ids).order_by("expiry_date", "-created_at")
+    ).exclude(
+        id__in=used_coupon_ids
+    ).order_by(
+        "expiry_date",
+        "-created_at"
+    )
+
     for coupon in coupons:
-        if coupon.usage_limit is not None and coupon.used_count >= coupon.usage_limit:
+        if (
+            coupon.usage_limit is not None
+            and coupon.used_count >= coupon.usage_limit
+        ):
             coupon.display_status = "EXHAUSTED"
         else:
             coupon.display_status = "ACTIVE"
-    return render(request, "Checkout/available_coupons.html", {"coupons": coupons})
+
+    return render(
+        request,
+        "checkout/available_coupons.html",
+        {
+            "coupons": coupons,
+            "next_url": next_url,
+        },
+    )
 
 
 @login_required
@@ -524,98 +620,241 @@ def razorpay_payment_failed(request):
     expected_amount = Decimal(checkout_data.get("amount", "0.00"))
     return render(request, "checkout/payment_failed.html", {"amount": expected_amount})
 
-
 @login_required
 @transaction.atomic
 def razorpay_payment_success(request):
     if request.method != "POST":
         return redirect("checkout:checkout")
+
     razorpay_payment_id = request.POST.get("razorpay_payment_id", "").strip()
     razorpay_order_id = request.POST.get("razorpay_order_id", "").strip()
     razorpay_signature = request.POST.get("razorpay_signature", "").strip()
     checkout_data = request.session.get("razorpay_checkout")
+
     if not checkout_data:
         messages.error(request, "Payment session expired. Please try again.")
         return redirect("checkout:checkout")
+
     if checkout_data.get("razorpay_order_id") != razorpay_order_id:
         messages.error(request, "Invalid payment order.")
         return redirect("checkout:checkout")
-    if not all([razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+
+    if not all([
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature,
+    ]):
         messages.error(request, "Payment verification data is missing.")
         return redirect("checkout:checkout")
-    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+    client = razorpay.Client(
+        auth=(
+            settings.RAZORPAY_KEY_ID,
+            settings.RAZORPAY_KEY_SECRET,
+        )
+    )
+
     try:
         client.utility.verify_payment_signature({
             "razorpay_order_id": razorpay_order_id,
             "razorpay_payment_id": razorpay_payment_id,
             "razorpay_signature": razorpay_signature,
         })
+
         payment = client.payment.fetch(razorpay_payment_id)
+
     except Exception as error:
         print("RAZORPAY PAYMENT VERIFICATION ERROR:", error)
         messages.error(request, "Payment verification failed.")
         return redirect("checkout:checkout")
+
     if payment.get("status") != "captured":
         messages.error(request, "Payment was not completed.")
         return redirect("checkout:checkout")
-    paid_amount = Decimal(str(payment.get("amount", 0))) / Decimal("100")
-    expected_amount = Decimal(checkout_data.get("amount", "0.00"))
+
+    paid_amount = (
+        Decimal(str(payment.get("amount", 0)))
+        / Decimal("100")
+    )
+
+    expected_amount = Decimal(
+        checkout_data.get("amount", "0.00")
+    )
+
     if paid_amount != expected_amount:
-        messages.error(request, "Payment amount verification failed.")
+        messages.error(
+            request,
+            "Payment amount verification failed."
+        )
         return redirect("checkout:checkout")
-    address = Address.objects.filter(id=checkout_data.get("address_id"), user=request.user).first()
+
+    address = Address.objects.filter(
+        id=checkout_data.get("address_id"),
+        user=request.user,
+    ).first()
+
     if not address:
-        messages.error(request, "Delivery address not found.")
+        messages.error(
+            request,
+            "Delivery address not found."
+        )
         return redirect("checkout:checkout")
+
     try:
         if checkout_data.get("buy_now"):
-            variant_id = checkout_data.get("buy_now_variant_id")
-            quantity = max(int(checkout_data.get("buy_now_quantity", 1)), 1)
+            variant_id = checkout_data.get(
+                "buy_now_variant_id"
+            )
+
+            quantity = max(
+                int(
+                    checkout_data.get(
+                        "buy_now_quantity",
+                        1
+                    )
+                ),
+                1,
+            )
+
             variant = get_object_or_404(
-                Variant.objects.select_related("product", "product__category"),
+                Variant.objects.select_related(
+                    "product",
+                    "product__category",
+                ),
                 id=variant_id,
                 is_active=True,
                 is_deleted=False,
                 product__is_active=True,
                 product__is_deleted=False,
+                product__category__is_active=True,
+                product__category__is_deleted=False,
             )
-            items = [(variant, quantity)]
+
+            items = [
+                (variant, quantity)
+            ]
+
         else:
-            cart = Cart.objects.filter(user=request.user).first()
+            cart = Cart.objects.filter(
+                user=request.user
+            ).first()
+
             if not cart:
-                messages.error(request, "Your cart is empty.")
+                messages.error(
+                    request,
+                    "Your cart is empty."
+                )
                 return redirect("cart:cart")
-            cart_items = list(cart.items.select_related("variant", "variant__product", "variant__product__category"))
+
+            cart_items = list(
+                cart.items.select_related(
+                    "variant",
+                    "variant__product",
+                    "variant__product__category",
+                )
+            )
+
             if not cart_items:
-                messages.error(request, "Your cart is empty.")
+                messages.error(
+                    request,
+                    "Your cart is empty."
+                )
                 return redirect("cart:cart")
-            items = [(item.variant, item.quantity) for item in cart_items]
-        locked_ids = [variant.id for variant, _ in items]
+
+            items = [
+                (item.variant, item.quantity)
+                for item in cart_items
+            ]
+
+        locked_ids = [
+            variant.id
+            for variant, _ in items
+        ]
+
         locked_variants = {
             variant.id: variant
-            for variant in Variant.objects.select_for_update().filter(id__in=locked_ids).select_related("product", "product__category")
+            for variant in Variant.objects.select_for_update()
+            .filter(id__in=locked_ids)
+            .select_related(
+                "product",
+                "product__category",
+            )
         }
+
         locked_items = []
+
         for variant, quantity in items:
-            variant = locked_variants.get(variant.id)
+            variant = locked_variants.get(
+                variant.id
+            )
+
             if not variant:
-                raise ValueError("One of the products is no longer available.")
-            if not variant.is_active or variant.is_deleted or not variant.product.is_active or variant.product.is_deleted:
-                raise ValueError(f"{variant.product.product_name} is no longer available.")
+                raise ValueError(
+                    "One of the products is no longer available."
+                )
+
+            if (
+                not variant.is_active
+                or variant.is_deleted
+                or not variant.product.is_active
+                or variant.product.is_deleted
+                or not variant.product.category.is_active
+                or variant.product.category.is_deleted
+            ):
+                raise ValueError(
+                    f"{variant.product.product_name} "
+                    f"is no longer available."
+                )
+
             if variant.stock < quantity:
-                raise ValueError(f"Only {variant.stock} quantity of {variant.product.product_name} is available.")
-            locked_items.append((variant, quantity))
-        subtotal, offer_subtotal, offer_discount, calculations = calculate_checkout_totals(locked_items)
-        coupon, coupon_discount = get_coupon_for_checkout(request, offer_subtotal)
-        total_discount = offer_discount + coupon_discount
+                raise ValueError(
+                    f"Only {variant.stock} quantity of "
+                    f"{variant.product.product_name} "
+                    f"is available."
+                )
+
+            locked_items.append(
+                (variant, quantity)
+            )
+
+        (
+            subtotal,
+            offer_subtotal,
+            offer_discount,
+            calculations,
+        ) = calculate_checkout_totals(
+            locked_items
+        )
+
+        coupon, coupon_discount = get_coupon_for_checkout(
+            request,
+            offer_subtotal,
+        )
+
+        total_discount = (
+            offer_discount
+            + coupon_discount
+        )
+
         shipping = Decimal("0.00")
-        total_amount = max(subtotal - total_discount + shipping, Decimal("0.00"))
+
+        total_amount = max(
+            subtotal
+            - total_discount
+            + shipping,
+            Decimal("0.00"),
+        )
+
         if total_amount != expected_amount:
-            messages.error(request, "Order amount changed while payment was being completed. Please try again.")
+            messages.error(
+                request,
+                "Order amount changed while payment "
+                "was being completed. Please try again."
+            )
             return redirect("checkout:checkout")
+
         order = Order.objects.create(
             user=request.user,
-            address=address,
             address_full_name=address.full_name,
             address_phone_number=address.phone_number,
             address_line1=address.address_line1,
@@ -634,15 +873,37 @@ def razorpay_payment_success(request):
             total_amount=total_amount,
             order_status="PENDING",
         )
+
         for calculation in calculations:
             variant = calculation["variant"]
             quantity = calculation["quantity"]
-            offer_item_total = calculation["offer_item_total"]
+            offer_item_total = calculation[
+                "offer_item_total"
+            ]
+
             item_coupon_discount = Decimal("0.00")
-            if coupon_discount > 0 and offer_subtotal > 0:
-                item_coupon_discount = coupon_discount * offer_item_total / offer_subtotal
-            final_item_total = max(Decimal("0.00"), offer_item_total - item_coupon_discount)
-            final_unit_price = final_item_total / quantity
+
+            if (
+                coupon_discount > 0
+                and offer_subtotal > 0
+            ):
+                item_coupon_discount = (
+                    coupon_discount
+                    * offer_item_total
+                    / offer_subtotal
+                )
+
+            final_item_total = max(
+                Decimal("0.00"),
+                offer_item_total
+                - item_coupon_discount,
+            )
+
+            final_unit_price = (
+                final_item_total
+                / quantity
+            )
+
             OrderItem.objects.create(
                 order=order,
                 variant=variant,
@@ -651,23 +912,67 @@ def razorpay_payment_success(request):
                 total_price=final_item_total,
                 status="PENDING",
             )
+
             variant.stock -= quantity
-            variant.save(update_fields=["stock"])
+
+            variant.save(
+                update_fields=["stock"]
+            )
+
         if coupon:
-            CouponUsage.objects.create(coupon=coupon, user=request.user, order=order)
+            CouponUsage.objects.create(
+                coupon=coupon,
+                user=request.user,
+                order=order,
+            )
+
             coupon.used_count += 1
-            coupon.save(update_fields=["used_count"])
+
+            coupon.save(
+                update_fields=["used_count"]
+            )
+
         if not checkout_data.get("buy_now"):
-            cart = Cart.objects.filter(user=request.user).first()
+            cart = Cart.objects.filter(
+                user=request.user
+            ).first()
+
             if cart:
                 cart.items.all().delete()
-        clear_checkout_session(request, clear_buy_now=True)
-        messages.success(request, "Your order has been placed successfully.")
-        return redirect("order:order_success", order_id=order.order_id)
+
+        clear_checkout_session(
+            request,
+            clear_buy_now=True,
+        )
+
+        request.session["checkout_completed"] = True
+        request.session.modified = True
+
+        messages.success(
+            request,
+            "Your order has been placed successfully."
+        )
+
+        return redirect(
+            "order:order_success",
+            order_id=order.order_id,
+        )
+
     except ValueError as error:
-        messages.error(request, str(error))
+        messages.error(
+            request,
+            str(error)
+        )
         return redirect("checkout:checkout")
+
     except Exception as error:
-        print("RAZORPAY ORDER CREATION ERROR:", error)
-        messages.error(request, "Unable to complete the order. Please try again.")
+        print(
+            "RAZORPAY ORDER CREATION ERROR:",
+            error
+        )
+        messages.error(
+            request,
+            "Unable to complete the order. "
+            "Please try again."
+        )
         return redirect("checkout:checkout")

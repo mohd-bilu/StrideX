@@ -799,6 +799,9 @@
             border-color:rgba(255,122,0,.45);
             box-shadow:0 18px 35px rgba(0,0,0,.25);
         }
+        .clickable-card{
+            cursor:pointer;
+        }
 
         .product-image{
             width:100%;
@@ -1227,7 +1230,12 @@
             font-size:12px;
         }
 
-
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
 
         /* ========================================
            RESPONSIVE
@@ -1693,7 +1701,9 @@
 
                 {% with thumbnail=variant.images.first %}
 
-                    <div class="product-card">
+                    <div
+                        class="product-card clickable-card"
+                        data-product-url="{% url 'product:product_detail' product.id %}">
 
                         <div class="product-image">
 
@@ -1727,10 +1737,6 @@
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
                                 <i class="fa-solid fa-star"></i>
-
-                                <span>
-                                    (Coming Soon)
-                                </span>
 
                             </div>
 
@@ -1798,12 +1804,12 @@
         </p>
 
 
-        <button type="button"
-                class="primary-btn">
+        <a href="{% url 'product:product_list' %}"
+            class="primary-btn">
 
             EXPLORE COLLECTION
 
-        </button>
+        </a>
 
 
     </div>
@@ -1812,9 +1818,7 @@
 </section>
 
 {% endblock %}
-
 {% block extra_js %}
-{% if messages %}
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -1839,6 +1843,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     {% endif %}
 
+    document.querySelectorAll(".clickable-card").forEach(function(card){
+
+        card.addEventListener("click", function(event){
+
+            if(event.target.closest("a, button")){
+                return;
+            }
+
+            const productUrl = this.dataset.productUrl;
+
+            if(productUrl){
+                window.location.href = productUrl;
+            }
+
+        });
+
+    });
 
     document.querySelectorAll(".ajax-cart").forEach(function(button){
 
@@ -1861,7 +1882,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if(data.success){
 
                     Swal.fire({
-
                         toast:true,
                         position:"top-end",
                         icon:"success",
@@ -1869,7 +1889,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         showConfirmButton:false,
                         timer:1800,
                         timerProgressBar:true
-
                     });
 
                     const cartCount = document.getElementById("cartCount");
@@ -1884,14 +1903,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }else{
 
                     Swal.fire({
-
                         toast:true,
                         position:"top-end",
                         icon:"warning",
                         title:data.message,
                         showConfirmButton:false,
                         timer:1800
-
                     });
 
                 }
@@ -1901,14 +1918,12 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(function(){
 
                 Swal.fire({
-
                     toast:true,
                     position:"top-end",
                     icon:"error",
                     title:"Something went wrong",
                     showConfirmButton:false,
                     timer:1800
-
                 });
 
             });
@@ -1920,5 +1935,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-{% endif %}
 {% endblock %}

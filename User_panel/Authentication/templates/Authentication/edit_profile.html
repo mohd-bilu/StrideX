@@ -314,7 +314,7 @@ gap:25px;
 
         <section class="edit-card">
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" id="profileForm">
 
                 {% csrf_token %}
 
@@ -503,117 +503,142 @@ gap:25px;
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-const photoInput = document.getElementById("profilePhotoInput");
-const preview = document.getElementById("profilePreview");
-const defaultPhoto = document.getElementById("defaultPhoto");
-const removePhoto = document.getElementById("removePhoto");
+document.addEventListener("DOMContentLoaded", function () {
+    const profileForm = document.getElementById("profileForm");
+    const photoInput = document.getElementById("profilePhotoInput");
+    const preview = document.getElementById("profilePreview");
+    const defaultPhoto = document.getElementById("defaultPhoto");
+    const removePhoto = document.getElementById("removePhoto");
+    const profilePhone = document.querySelector('input[name="phone_number"]');
 
-photoInput.addEventListener("change", function () {
+    if (profileForm && profilePhone) {
+        profileForm.addEventListener("submit", function (event) {
+            const phoneValue = profilePhone.value.trim();
+            const phonePattern = /^[6-9]\d{9}$/;
 
-    const file = this.files[0];
+            if (phoneValue && !phonePattern.test(phoneValue)) {
+                event.preventDefault();
 
-    if (!file) {
-        return;
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#fff"
+                });
+
+                return;
+            }
+
+            profilePhone.value = phoneValue;
+        });
     }
 
-    if (file.size > 1024 * 1024) {
+    if (photoInput) {
+        photoInput.addEventListener("change", function () {
+            const file = this.files[0];
 
-        Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "error",
-            title: "Maximum image size is 1MB.",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            background: "#21130e",
-            color: "#fff"
+            if (!file) {
+                return;
+            }
+
+            if (file.size > 1024 * 1024) {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Maximum image size is 1MB.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#fff"
+                });
+
+                this.value = "";
+                return;
+            }
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif"
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: "Only JPG, PNG or GIF images are allowed.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: "#21130e",
+                    color: "#fff"
+                });
+
+                this.value = "";
+                return;
+            }
+
+            if (removePhoto) {
+                removePhoto.checked = false;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                if (preview) {
+                    preview.src = event.target.result;
+                    preview.style.display = "block";
+                }
+
+                if (defaultPhoto) {
+                    defaultPhoto.style.display = "none";
+                }
+            };
+
+            reader.readAsDataURL(file);
         });
-
-        this.value = "";
-        return;
-    }
-
-    const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif"
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-
-        Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "error",
-            title: "Only JPG, PNG or GIF images are allowed.",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            background: "#21130e",
-            color: "#fff"
-        });
-
-        this.value = "";
-        return;
     }
 
     if (removePhoto) {
-        removePhoto.checked = false;
+        removePhoto.addEventListener("change", function () {
+            if (this.checked) {
+                if (photoInput) {
+                    photoInput.value = "";
+                }
+
+                if (preview) {
+                    preview.style.display = "none";
+                }
+
+                if (defaultPhoto) {
+                    defaultPhoto.style.display = "flex";
+                }
+            } else {
+                if (preview) {
+                    preview.style.display = "block";
+                }
+
+                if (defaultPhoto) {
+                    defaultPhoto.style.display = "none";
+                }
+            }
+        });
     }
-
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-
-        preview.src = event.target.result;
-        preview.style.display = "block";
-
-        if (defaultPhoto) {
-            defaultPhoto.style.display = "none";
-        }
-
-    };
-
-    reader.readAsDataURL(file);
-
 });
-
-if (removePhoto) {
-
-    removePhoto.addEventListener("change", function () {
-
-        if (this.checked) {
-
-            photoInput.value = "";
-            preview.style.display = "none";
-
-            if (defaultPhoto) {
-                defaultPhoto.style.display = "flex";
-            }
-
-        } else {
-
-            preview.style.display = "block";
-
-            if (defaultPhoto) {
-                defaultPhoto.style.display = "none";
-            }
-
-        }
-
-    });
-
-}
 </script>
 
 {% if messages %}
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
     {% for message in messages %}
-
     Swal.fire({
         toast: true,
         position: "top-end",
@@ -625,16 +650,9 @@ document.addEventListener("DOMContentLoaded", function () {
         background: "#21130e",
         color: "#fff"
     });
-
     {% endfor %}
-
 });
 </script>
-
 {% endif %}
-
-<script>
-window.history.forward();
-</script>
 
 {% endblock %}

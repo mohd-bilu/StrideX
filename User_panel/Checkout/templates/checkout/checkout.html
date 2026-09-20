@@ -206,6 +206,9 @@ Checkout - StrideX
     .address-label:hover {
         border-color: #444;
     }
+    .address-label.single-address {
+        padding-left: 18px;
+    }
 
     .address-option input[type="radio"]:checked + .address-label {
         border-color: #ff7900;
@@ -800,6 +803,11 @@ Checkout - StrideX
     .checkout-toast span {
         line-height: 1.5;
     }
+    @media (max-width:600px) {
+        .address-label.single-address {
+            padding-left: 15px;
+        }
+    }
 
     @media (max-width:600px) {
         .checkout-toast {
@@ -879,7 +887,6 @@ Checkout - StrideX
     }
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="checkout-page">
     <div class="checkout-container">
@@ -925,6 +932,7 @@ Checkout - StrideX
                                     {% if item.offer_discount > 0 %}
                                         <p class="original-price">₹{{ item.original_price }}</p>
                                         <p class="offer-price">₹{{ item.offer_price }}</p>
+
                                         {% if item.offer %}
                                             <p>{{ item.offer.name }}</p>
                                         {% endif %}
@@ -945,135 +953,258 @@ Checkout - StrideX
                                 <h2>Shipping Address</h2>
                             </div>
 
-                            <a href="{% url 'add_address' %}?next={% url 'checkout:checkout' %}" class="add-address-link">
+                            <a
+                                href="{% url 'add_address' %}?next={{ request.get_full_path|urlencode }}"
+                                class="add-address-link"
+                            >
                                 Add Address
                             </a>
                         </div>
 
                         {% if addresses %}
-                            <div class="choose-address-title">Choose Address</div>
+
+                            {% if addresses|length > 1 %}
+                                <div class="choose-address-title">
+                                    Choose Address
+                                </div>
+                            {% endif %}
 
                             <div class="address-list">
+
                                 {% for address in addresses %}
-                                <div class="address-option">
-                                    <input
-                                        type="radio"
-                                        name="address"
-                                        id="address-{{ address.id }}"
-                                        value="{{ address.id }}"
-                                        {% if selected_address and address.id == selected_address.id %}checked{% endif %}
-                                        required
-                                    >
 
-                                    <label for="address-{{ address.id }}" class="address-label">
-                                        <span class="address-radio"></span>
+                                    <div class="address-option">
 
-                                        <div class="address-content">
-                                            <div class="address-top">
-                                                <span class="address-name">{{ address.full_name }}</span>
+                                        {% if addresses|length > 1 %}
 
-                                                {% if address.is_default %}
-                                                    <span class="default-badge">Default</span>
-                                                {% endif %}
+                                            <input
+                                                type="radio"
+                                                name="address"
+                                                id="address-{{ address.id }}"
+                                                value="{{ address.id }}"
+                                                {% if address.id == selected_address.id %}checked{% endif %}
+                                                required
+                                            >
+
+                                        {% else %}
+
+                                            <input
+                                                type="hidden"
+                                                name="address"
+                                                value="{{ address.id }}"
+                                            >
+
+                                        {% endif %}
+
+                                        <label
+                                            {% if addresses|length > 1 %}
+                                                for="address-{{ address.id }}"
+                                            {% endif %}
+                                            class="address-label{% if addresses|length == 1 %} single-address{% endif %}"
+                                        >
+
+                                            {% if addresses|length > 1 %}
+                                                <span class="address-radio"></span>
+                                            {% endif %}
+
+                                            <div class="address-content">
+
+                                                <div class="address-top">
+
+                                                    <span class="address-name">
+                                                        {{ address.full_name }}
+                                                    </span>
+
+                                                    {% if address.is_default %}
+                                                        <span class="default-badge">
+                                                            Default
+                                                        </span>
+                                                    {% endif %}
+
+                                                </div>
+
+                                                <p class="address-line">
+                                                    {{ address.address_line1 }}
+
+                                                    {% if address.address_line2 %}
+                                                        , {{ address.address_line2 }}
+                                                    {% endif %}
+                                                </p>
+
+                                                <p class="address-line">
+                                                    {{ address.city }},
+                                                    {{ address.state }}
+                                                    - {{ address.pincode }}
+                                                </p>
+
+                                                <p class="address-line">
+                                                    {{ address.country }}
+                                                </p>
+
+                                                <p class="address-phone">
+                                                    <i class="fa-solid fa-phone"></i>
+                                                    {{ address.phone_number }}
+                                                </p>
+
                                             </div>
 
-                                            <p class="address-line">
-                                                {{ address.address_line1 }}
-                                                {% if address.address_line2 %}, {{ address.address_line2 }}{% endif %}
-                                            </p>
+                                            <a
+                                                href="{% url 'edit_address' address.id %}?next={{ request.get_full_path|urlencode }}"
+                                                class="edit-address"
+                                                onclick="event.stopPropagation();"
+                                            >
+                                                Edit
+                                            </a>
 
-                                            <p class="address-line">
-                                                {{ address.city }}, {{ address.state }} - {{ address.pincode }}
-                                            </p>
+                                        </label>
 
-                                            <p class="address-line">{{ address.country }}</p>
+                                    </div>
 
-                                            <p class="address-phone">
-                                                <i class="fa-solid fa-phone"></i>
-                                                {{ address.phone_number }}
-                                            </p>
-                                        </div>
-
-                                        <a
-                                            href="{% url 'edit_address' address.id %}?next={% url 'checkout:checkout' %}"
-                                            class="edit-address"
-                                            onclick="event.stopPropagation();"
-                                        >
-                                            Edit
-                                        </a>
-                                    </label>
-                                </div>
                                 {% endfor %}
+
                             </div>
+
                         {% else %}
+
                             <div class="empty-address">
                                 <p>No saved address found.</p>
-                               <a href="{% url 'add_address' %}?next={% url 'checkout:checkout' %}">
+
+                                <a
+                                    href="{% url 'add_address' %}?next={{ request.get_full_path|urlencode }}"
+                                >
                                     + Add New Address
                                 </a>
                             </div>
+
                         {% endif %}
+
                     </div>
                 </div>
 
                 <div class="checkout-right">
+
                     <div class="payment-card">
+
                         <div class="payment-title">
                             <i class="fa-regular fa-credit-card"></i>
                             <h2>Payment<br>Method</h2>
                         </div>
 
                         <div class="payment-option">
-                            <input type="radio" name="payment_method" id="payment-razorpay" value="RAZORPAY">
-                            <label for="payment-razorpay" class="payment-label">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                id="payment-razorpay"
+                                value="RAZORPAY"
+                            >
+
+                            <label
+                                for="payment-razorpay"
+                                class="payment-label"
+                            >
                                 <span class="payment-radio"></span>
+
                                 <span class="payment-icon">
                                     <i class="fa-regular fa-credit-card"></i>
                                 </span>
-                                <span class="payment-details">
-                                    <span class="payment-name">Razorpay</span>
-                                    <span class="payment-description">UPI, Cards, Netbanking</span>
-                                </span>
-                            </label>
-                        </div>
 
-                        <div class="payment-option">
-                            <input type="radio" name="payment_method" id="payment-wallet" value="WALLET">
-                            <label for="payment-wallet" class="payment-label">
-                                <span class="payment-radio"></span>
-                                <span class="payment-icon">
-                                    <i class="fa-solid fa-wallet"></i>
-                                </span>
                                 <span class="payment-details">
-                                    <span class="payment-name">Wallet</span>
+                                    <span class="payment-name">
+                                        Razorpay
+                                    </span>
+
                                     <span class="payment-description">
-                                        Available Balance: ₹{{ wallet.balance|default:"0.00"|floatformat:2 }}
+                                        UPI, Cards, Netbanking
                                     </span>
                                 </span>
                             </label>
+
                         </div>
 
                         <div class="payment-option">
-                            <input type="radio" name="payment_method" id="payment-cod" value="COD" checked>
-                            <label for="payment-cod" class="payment-label">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                id="payment-wallet"
+                                value="WALLET"
+                            >
+
+                            <label
+                                for="payment-wallet"
+                                class="payment-label"
+                            >
                                 <span class="payment-radio"></span>
+
+                                <span class="payment-icon">
+                                    <i class="fa-solid fa-wallet"></i>
+                                </span>
+
+                                <span class="payment-details">
+
+                                    <span class="payment-name">
+                                        Wallet
+                                    </span>
+
+                                    <span class="payment-description">
+                                        Available Balance:
+                                        ₹{{ wallet.balance|default:"0.00"|floatformat:2 }}
+                                    </span>
+
+                                </span>
+                            </label>
+
+                        </div>
+
+                        <div class="payment-option">
+
+                            <input
+                                type="radio"
+                                name="payment_method"
+                                id="payment-cod"
+                                value="COD"
+                                checked
+                            >
+
+                            <label
+                                for="payment-cod"
+                                class="payment-label"
+                            >
+                                <span class="payment-radio"></span>
+
                                 <span class="payment-icon">
                                     <i class="fa-solid fa-money-bill-wave"></i>
                                 </span>
+
                                 <span class="payment-details">
-                                    <span class="payment-name">COD</span>
-                                    <span class="payment-description">Pay on delivery</span>
+
+                                    <span class="payment-name">
+                                        COD
+                                    </span>
+
+                                    <span class="payment-description">
+                                        Pay on delivery
+                                    </span>
+
                                 </span>
                             </label>
+
                         </div>
+
                     </div>
 
                     <div class="summary-card">
-                        <h2 class="summary-title">Price Summary</h2>
+
+                        <h2 class="summary-title">
+                            Price Summary
+                        </h2>
 
                         <div class="summary-row">
                             <span>Subtotal</span>
-                            <strong id="checkout-subtotal">₹{{ subtotal }}</strong>
+                            <strong id="checkout-subtotal">
+                                ₹{{ subtotal }}
+                            </strong>
                         </div>
 
                         <div
@@ -1082,7 +1213,10 @@ Checkout - StrideX
                             {% if offer_discount <= 0 %}style="display:none;"{% endif %}
                         >
                             <span>Offer Discount</span>
-                            <strong id="checkout-offer-discount">-₹{{ offer_discount|default:0|floatformat:2 }}</strong>
+
+                            <strong id="checkout-offer-discount">
+                                -₹{{ offer_discount|default:0|floatformat:2 }}
+                            </strong>
                         </div>
 
                         <div
@@ -1091,21 +1225,30 @@ Checkout - StrideX
                             {% if coupon_discount <= 0 %}style="display:none;"{% endif %}
                         >
                             <span>Coupon Discount</span>
-                            <strong id="checkout-coupon-discount">-₹{{ coupon_discount|default:0|floatformat:2 }}</strong>
+
+                            <strong id="checkout-coupon-discount">
+                                -₹{{ coupon_discount|default:0|floatformat:2 }}
+                            </strong>
                         </div>
 
                         <div class="summary-row summary-shipping">
+
                             <span>Shipping Estimate</span>
+
                             <strong id="checkout-shipping">
+
                                 {% if shipping == 0 %}
                                     FREE
                                 {% else %}
                                     ₹{{ shipping }}
                                 {% endif %}
+
                             </strong>
+
                         </div>
 
                         <div class="coupon-box">
+
                             <input
                                 type="text"
                                 id="coupon-code"
@@ -1116,69 +1259,148 @@ Checkout - StrideX
                                 {% if coupon %}disabled{% endif %}
                             >
 
-                            <button type="button" id="coupon-action-button">
-                                {% if coupon %}Applied{% else %}Apply{% endif %}
+                            <button
+                                type="button"
+                                id="coupon-action-button"
+                            >
+                                {% if coupon %}
+                                    Applied
+                                {% else %}
+                                    Apply
+                                {% endif %}
                             </button>
+
                         </div>
 
-                        <div id="coupon-message" class="coupon-message" aria-live="polite"></div>
+                        <div
+                            id="coupon-message"
+                            class="coupon-message"
+                            aria-live="polite"
+                        ></div>
 
-                        <div id="coupon-applied" class="coupon-applied {% if coupon %}active{% endif %}">
+                        <div
+                            id="coupon-applied"
+                            class="coupon-applied {% if coupon %}active{% endif %}"
+                        >
+
                             <div class="coupon-applied-info">
+
                                 <i class="fa-solid fa-ticket"></i>
 
                                 <div>
-                                    <div class="coupon-applied-code" id="coupon-applied-code">
-                                        {% if coupon %}{{ coupon.code }}{% endif %}
+
+                                    <div
+                                        class="coupon-applied-code"
+                                        id="coupon-applied-code"
+                                    >
+                                        {% if coupon %}
+                                            {{ coupon.code }}
+                                        {% endif %}
                                     </div>
 
-                                    <div class="coupon-applied-label">Coupon applied</div>
+                                    <div class="coupon-applied-label">
+                                        Coupon applied
+                                    </div>
+
                                 </div>
+
                             </div>
 
-                            <button type="button" class="remove-coupon-button" id="remove-coupon-button">
+                            <button
+                                type="button"
+                                class="remove-coupon-button"
+                                id="remove-coupon-button"
+                            >
                                 Remove
                             </button>
+
                         </div>
 
-                        <a href="{% url 'checkout:available_coupons' %}" class="available-coupons">
+                        <a
+                            href="{% url 'checkout:available_coupons' %}?next={{ request.get_full_path|urlencode }}"
+                            class="available-coupons"
+                        >
                             VIEW ALL AVAILABLE COUPONS
                         </a>
 
                         <div class="summary-total">
+
                             <span>Total Amount</span>
-                            <strong id="checkout-total">₹{{ total }}</strong>
+
+                            <strong id="checkout-total">
+                                ₹{{ total }}
+                            </strong>
+
                         </div>
 
-                        <button type="submit" class="place-order-button" id="place-order-button">
+                        <button
+                            type="submit"
+                            class="place-order-button"
+                            id="place-order-button"
+                        >
                             Place Order
                         </button>
 
-                        <p class="checkout-note" id="payment-method-note">
+                        <p
+                            class="checkout-note"
+                            id="payment-method-note"
+                        >
                             Your order will be placed using Cash on Delivery.
                         </p>
+
                     </div>
+
                 </div>
+
             </div>
         </form>
+
         {% else %}
+
             <div class="checkout-card">
+
                 <div class="empty-address">
+
                     <p>Your cart is empty.</p>
-                    <a href="{% url 'product:product_list' %}">Continue Shopping</a>
+
+                    <a href="{% url 'product:product_list' %}">
+                        Continue Shopping
+                    </a>
+
                 </div>
+
             </div>
+
         {% endif %}
+
     </div>
 </div>
+
 <div id="checkoutToast" class="checkout-toast">
+
     <i class="fa-solid fa-circle-exclamation"></i>
+
     <span id="checkoutToastMessage"></span>
+
 </div>
 
-<div id="placeOrderModal" class="place-order-modal-overlay" onclick="closePlaceOrderModal(event)">
-    <div class="place-order-modal" onclick="event.stopPropagation()">
-        <button type="button" class="place-order-modal-close" onclick="closePlaceOrderModal()" aria-label="Close">
+<div
+    id="placeOrderModal"
+    class="place-order-modal-overlay"
+    onclick="closePlaceOrderModal(event)"
+>
+
+    <div
+        class="place-order-modal"
+        onclick="event.stopPropagation()"
+    >
+
+        <button
+            type="button"
+            class="place-order-modal-close"
+            onclick="closePlaceOrderModal()"
+            aria-label="Close"
+        >
             <i class="fa-solid fa-xmark"></i>
         </button>
 
@@ -1194,23 +1416,39 @@ Checkout - StrideX
         </p>
 
         <div class="place-order-modal-actions">
-            <button type="button" class="place-order-modal-cancel" onclick="closePlaceOrderModal()">
+
+            <button
+                type="button"
+                class="place-order-modal-cancel"
+                onclick="closePlaceOrderModal()"
+            >
                 Go Back
             </button>
 
-            <button type="button" class="place-order-modal-confirm" id="confirmPlaceOrderButton">
+            <button
+                type="button"
+                class="place-order-modal-confirm"
+                id="confirmPlaceOrderButton"
+            >
                 Confirm Place Order
             </button>
+
         </div>
+
     </div>
+
 </div>
 {% endblock %}
-
 {% block extra_js %}
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    });
     const checkoutForm = document.getElementById("place-order-form");
     const modal = document.getElementById("placeOrderModal");
     const confirmButton = document.getElementById("confirmPlaceOrderButton");
@@ -1513,6 +1751,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const address = document.querySelector(
             'input[name="address"]:checked'
+        ) || document.querySelector(
+            'input[name="address"][type="hidden"]'
         );
 
         if (!address) {
@@ -1686,6 +1926,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const selectedAddress = document.querySelector(
                 'input[name="address"]:checked'
+            ) || document.querySelector(
+                'input[name="address"][type="hidden"]'
             );
 
             const selectedPayment = document.querySelector(
@@ -1756,4 +1998,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
 {% endblock %}

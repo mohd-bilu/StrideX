@@ -1140,8 +1140,8 @@ Oldest
 </option>
 
 <option
-value="a_z"
-{% if selected_sort == "a_z" %}
+value="az"
+{% if selected_sort == "az" %}
 selected
 {% endif %}
 >
@@ -1149,8 +1149,8 @@ A-Z
 </option>
 
 <option
-value="z_a"
-{% if selected_sort == "z_a" %}
+value="za"
+{% if selected_sort == "za" %}
 selected
 {% endif %}
 >
@@ -1403,15 +1403,9 @@ Products
 <div class="pagination">
 
 {% if page_obj.has_previous %}
-
-<a
-href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}"
->
-
-<i class="fa-solid fa-chevron-left"></i>
-
+<a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}{% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+    <i class="fa-solid fa-chevron-left"></i>
 </a>
-
 {% endif %}
 
 {% for page in page_obj.paginator.page_range %}
@@ -1419,19 +1413,13 @@ href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}"
 {% if page == page_obj.number %}
 
 <span class="current-page">
-
-{{ page }}
-
+    {{ page }}
 </span>
 
 {% else %}
 
-<a
-href="?page={{ page }}&search={{ search_query }}"
->
-
-{{ page }}
-
+<a href="?page={{ page }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}{% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+    {{ page }}
 </a>
 
 {% endif %}
@@ -1439,15 +1427,9 @@ href="?page={{ page }}&search={{ search_query }}"
 {% endfor %}
 
 {% if page_obj.has_next %}
-
-<a
-href="?page={{ page_obj.next_page_number }}&search={{ search_query }}"
->
-
-<i class="fa-solid fa-chevron-right"></i>
-
+<a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% if selected_category %}&category={{ selected_category|urlencode }}{% endif %}{% if selected_sort %}&sort={{ selected_sort|urlencode }}{% endif %}">
+    <i class="fa-solid fa-chevron-right"></i>
 </a>
-
 {% endif %}
 
 </div>

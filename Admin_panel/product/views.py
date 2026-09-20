@@ -295,6 +295,7 @@ def edit_variant(request, variant_id):
     variant = get_object_or_404(
         Variant,
         id=variant_id,
+        is_deleted=False,
     )
 
     if request.method == "POST":
@@ -307,8 +308,6 @@ def edit_variant(request, variant_id):
         images = request.FILES.getlist("images")  
 
         if form.is_valid():
-            print("FORM VALID:", form.is_valid())
-            print(form.errors)
             variant = form.save(commit=False)
 
             variant.is_active = (
@@ -316,15 +315,11 @@ def edit_variant(request, variant_id):
             )
 
             variant.save()
-            print("Variant Saved")
             if images:
 
                 total_images = (
                     variant.images.count() + len(images)
                 )
-                print("Current Images:",variant.images.count())
-                print("New Images:",len(images))
-                print("Total Images:",variant.images.count()+len(images))
                 if total_images > 6:
 
                     messages.error(
@@ -340,9 +335,7 @@ def edit_variant(request, variant_id):
                 has_primary = variant.images.filter(
                     is_primary=True
                 ).exists()
-                print("Starting Image Loop")
                 for index, image in enumerate(images):
-                    print("Saving:",image.name)
                     VariantImage.objects.create(
                         variant=variant,
                         image=image,
@@ -350,12 +343,10 @@ def edit_variant(request, variant_id):
                             not has_primary and index == 0
                         ),
                     )
-                print("Image Loop Finished")
             messages.success(
                 request,
                 "Variant updated successfully.",
             )
-            print("RETURNING TO VARIANT LIST")
             return redirect(
                 "variant_list",
                 variant.product.id,
@@ -410,9 +401,10 @@ def delete_variant_image(request,image_id):
             "success":False
         },status=400)
 
-    image=get_object_or_404(
+    image = get_object_or_404(
         VariantImage,
-        id=image_id
+        id=image_id,
+        variant__is_deleted=False,
     )
 
     variant=image.variant
@@ -437,9 +429,10 @@ def make_primary_image(request,image_id):
     if request.method!="POST":
         return JsonResponse({"success":False},status=400)
 
-    image=get_object_or_404(
+    image = get_object_or_404(
         VariantImage,
         id=image_id,
+        variant__is_deleted=False,
     )
 
     variant=image.variant

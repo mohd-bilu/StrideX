@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Min, Prefetch, Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import  redirect, render
 from django.utils import timezone
 
 from Admin_panel.category.models import Category
@@ -59,7 +59,6 @@ def get_best_offer(variant, now=None):
 
 def category_list(request):
     categories = Category.objects.filter(
-        is_active=True,
         is_deleted=False,
     ).order_by("category_name")
 
@@ -87,18 +86,20 @@ def product_list(request):
 
     products = (
         Product.objects.filter(
-            is_active=True,
             is_deleted=False,
             category__is_active=True,
             category__is_deleted=False,
-            variants__is_active=True,
             variants__is_deleted=False,
         )
         .select_related("category")
         .prefetch_related(
             "images",
-            "variants",
-            "variants__images",
+            Prefetch(
+                "variants",
+                queryset=Variant.objects.filter(
+                    is_deleted=False,
+                ).prefetch_related("images"),
+            ),
         )
         .annotate(min_price=Min("variants__price"))
         .distinct()
@@ -180,19 +181,27 @@ def product_list(request):
         "Product/shop.html",
         context,
     )
-
-
 def product_detail(request, product_id):
-    product = get_object_or_404(
-        Product.objects.select_related("category").prefetch_related(
-            "variants__images",
-        ),
-        id=product_id,
-        is_active=True,
-        is_deleted=False,
-        category__is_active=True,
-        category__is_deleted=False,
+    product = (
+        Product.objects
+        .select_related("category")
+        .prefetch_related("variants__images")
+        .filter(
+            id=product_id,
+            is_active=True,
+            is_deleted=False,
+            category__is_active=True,
+            category__is_deleted=False,
+        )
+        .first()
     )
+
+    if product is None:
+        return render(
+            request,
+            "Product/product_unavailable.html",
+            status=404,
+        )
 
     active_variants = list(
         product.variants.filter(
@@ -213,6 +222,7 @@ def product_detail(request, product_id):
 
     for item in active_variants:
         offer, discount = get_best_offer(item, now)
+
         offer_price = max(
             Decimal("0.00"),
             item.price - discount,
@@ -258,6 +268,7 @@ def product_detail(request, product_id):
 
     for item in active_variants:
         color = item.color.strip()
+
         if color and color not in colors:
             colors.append(color)
 
@@ -268,6 +279,8 @@ def product_detail(request, product_id):
             is_deleted=False,
             category__is_active=True,
             category__is_deleted=False,
+            variants__is_active=True,
+            variants__is_deleted=False,
         )
         .exclude(id=product.id)
         .prefetch_related(
@@ -279,6 +292,7 @@ def product_detail(request, product_id):
                 ).prefetch_related("images"),
             )
         )
+        .distinct()
     )
 
     wishlist_variant_ids = []

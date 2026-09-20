@@ -391,17 +391,30 @@ def place_order(request):
             1,
         )
 
-        variant = get_object_or_404(
-            Variant.objects.select_related(
+        variant = (
+            Variant.objects
+            .select_related(
                 "product",
                 "product__category",
-            ),
-            id=buy_now_variant_id,
-            is_active=True,
-            is_deleted=False,
-            product__is_active=True,
-            product__is_deleted=False,
+            )
+            .filter(
+                id=buy_now_variant_id,
+                is_active=True,
+                is_deleted=False,
+                product__is_active=True,
+                product__is_deleted=False,
+                product__category__is_active=True,
+                product__category__is_deleted=False,
+            )
+            .first()
         )
+
+        if variant is None:
+            messages.error(
+                request,
+                "The selected product is no longer available.",
+            )
+            return redirect("product:product_list")
 
         if variant.stock < buy_now_quantity:
             messages.error(
@@ -569,7 +582,6 @@ def place_order(request):
 
             order = Order.objects.create(
                 user=request.user,
-                address=address,
                 address_full_name=address.full_name,
                 address_phone_number=address.phone_number,
                 address_line1=address.address_line1,
@@ -701,6 +713,9 @@ def place_order(request):
             )
 
             request.session.modified = True
+
+        request.session["checkout_completed"] = True
+        request.session.modified = True
 
         messages.success(
             request,
@@ -838,8 +853,6 @@ def download_invoice(request, order_id):
         user=request.user,
         order_status__in=["DELIVERED", "RETURNED"],
     )
-
-    from django.template.loader import get_template
 
     template = get_template("user_order/invoice_pdf.html")
 
