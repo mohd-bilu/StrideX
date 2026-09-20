@@ -113,6 +113,7 @@ def cart(request):
     original_subtotal = Decimal("0.00")
     subtotal = Decimal("0.00")
     offer_discount = Decimal("0.00")
+    unavailable_count = 0
 
     if cart:
         (
@@ -120,6 +121,23 @@ def cart(request):
             subtotal,
             offer_discount,
         ) = get_cart_totals(cart)
+
+        cart_items = cart.items.select_related(
+            "variant__product__category"
+        )
+
+        for item in cart_items:
+            item.is_unavailable = (
+                not item.variant.is_active
+                or item.variant.is_deleted
+                or not item.variant.product.is_active
+                or item.variant.product.is_deleted
+                or not item.variant.product.category.is_active
+                or item.variant.product.category.is_deleted
+            )
+
+            if item.is_unavailable:
+                unavailable_count += 1
 
     context = {
         "cart": cart,
@@ -129,6 +147,7 @@ def cart(request):
         "discount": offer_discount,
         "shipping": Decimal("0.00"),
         "total": subtotal,
+        "unavailable_count": unavailable_count,
     }
 
     return render(
@@ -136,7 +155,6 @@ def cart(request):
         "Cart/cart.html",
         context,
     )
-
 
 def add_to_cart(request, variant_id):
     if not request.user.is_authenticated:
@@ -351,7 +369,6 @@ def remove_from_cart(request, item_id):
 
     return redirect("cart")
 
-
 @login_required
 def wishlist(request):
     search = request.GET.get(
@@ -364,7 +381,7 @@ def wishlist(request):
             user=request.user
         )
         .prefetch_related(
-            "items__variant__product",
+            "items__variant__product__category",
             "items__variant__images",
         )
         .first()
@@ -392,7 +409,6 @@ def wishlist(request):
             "search": search,
         },
     )
-
 
 def add_to_wishlist(request, variant_id):
     if not request.user.is_authenticated:

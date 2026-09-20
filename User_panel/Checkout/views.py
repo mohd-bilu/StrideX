@@ -161,18 +161,6 @@ def get_checkout_items(request, force_buy_now=False):
     for item in cart_items:
         variant = item.variant
 
-        if (
-            not variant.is_active
-            or variant.is_deleted
-            or not variant.product.is_active
-            or variant.product.is_deleted
-            or not variant.product.category.is_active
-            or variant.product.category.is_deleted
-        ):
-            raise ValueError(
-                f"{variant.product.product_name} is no longer available."
-            )
-
         if item.quantity > variant.stock:
             raise ValueError(
                 f"Only {variant.stock} quantity of "
@@ -331,6 +319,30 @@ def checkout(request):
     except ValueError as exc:
         messages.error(request, str(exc))
         return redirect("product:product_list")
+
+    if not is_buy_now:
+        unavailable_item = next(
+            (
+                variant
+                for variant, quantity in items
+                if (
+                    not variant.is_active
+                    or variant.is_deleted
+                    or not variant.product.is_active
+                    or variant.product.is_deleted
+                    or not variant.product.category.is_active
+                    or variant.product.category.is_deleted
+                )
+            ),
+            None,
+        )
+
+        if unavailable_item:
+            messages.error(
+                request,
+                "One or more products in your cart are no longer available."
+            )
+            return redirect("cart")
 
     original_subtotal, offer_subtotal, offer_discount, item_calculations = (
         calculate_checkout_totals(items)
