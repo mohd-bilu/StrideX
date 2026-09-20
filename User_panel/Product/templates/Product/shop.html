@@ -290,7 +290,9 @@ Product List
     text-decoration:none;
     color:inherit;
 }
-
+.clickable-card{
+    cursor:pointer;
+}
 .product-image{
     height:320px;
     background:#221712;
@@ -1166,7 +1168,13 @@ Product List
 
             {% with product.variants.first as variant %}
 
-                <div class="product-card">
+                {% if product.is_active %}
+                    <div
+                        class="product-card clickable-card"
+                        data-product-url="{% url 'product:product_detail' product.id %}">
+                {% else %}
+                    <div class="product-card">
+                {% endif %}
 
                     {% if product.is_active %}
 
@@ -1419,6 +1427,23 @@ Product List
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".clickable-card").forEach(function(card){
+
+        card.addEventListener("click", function(event){
+
+            if(event.target.closest("a, button")){
+                return;
+            }
+
+            const productUrl = this.dataset.productUrl;
+
+            if(productUrl){
+                window.location.href = productUrl;
+            }
+
+        });
+
+    });
 
     const filterOverlay = document.getElementById("filterOverlay");
     const openFilterButton = document.getElementById("openFilterModal");
